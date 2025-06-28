@@ -390,12 +390,17 @@ Provide personalized health advice based on this information.
 # Enhanced Grocery Agent - AI-Powered Shopping Assistant
 import sys
 import os
+from typing import List
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from config.settings import GEMINI_API_KEY
-from modules.user_preferences import get_user_preferences
-from modules.prompt_builder import build_recommendation_prompt
-from langchain_google_genai import ChatGoogleGenerativeAI
+try:
+    from config.settings import GEMINI_API_KEY
+    from modules.user_preferences import get_user_preferences
+    from modules.prompt_builder import build_recommendation_prompt
+    from langchain_google_genai import ChatGoogleGenerativeAI
+except ImportError:
+    # Fallback if grocery agent modules are not available
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 class ShoppingRequest(BaseModel):
     query: str
