@@ -876,7 +876,7 @@ const GroceryAgent = () => {
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
           <QuoteHeader 
-            quote="Your AI shopper understands you." 
+            quote="Your smart shopper understands you." 
             background={backgrounds.orderup}
           />
 
