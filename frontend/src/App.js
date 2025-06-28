@@ -789,14 +789,17 @@ const HealthPage = () => {
   );
 };
 
-// Grocery Agent Component (embedded from cloned repo)
+// Enhanced Grocery Agent Component with AI Integration
 const GroceryAgent = () => {
   const [query, setQuery] = useState('');
   const [budget, setBudget] = useState(500);
+  const [preferredBrands, setPreferredBrands] = useState(['MuscleBlaze', 'Organic India']);
+  const [diet, setDiet] = useState('high protein');
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState([]);
   const [currentStep, setCurrentStep] = useState('input');
+  const [aiResponse, setAiResponse] = useState('');
 
   const handleGetRecommendations = async () => {
     if (!query.trim()) return;
@@ -806,11 +809,12 @@ const GroceryAgent = () => {
       const response = await axios.post(`${API}/grocery/recommendations`, {
         query: query,
         budget: budget,
-        preferred_brands: ['MuscleBlaze', 'Organic India'],
-        diet: 'high protein'
+        preferred_brands: preferredBrands,
+        diet: diet
       });
       
-      setRecommendations(response.data.recommendations);
+      setRecommendations(response.data.recommendations || []);
+      setAiResponse(response.data.ai_response || '');
       setCurrentStep('recommendations');
     } catch (error) {
       console.error('Error:', error);
@@ -846,7 +850,19 @@ const GroceryAgent = () => {
     "I need high protein supplements for my workout",
     "Get me organic vegetables under 300 rupees",
     "Find muscle building supplements from MuscleBlaze",
-    "I want healthy snacks for my gym routine"
+    "I want healthy snacks for my gym routine",
+    "Need protein powder for post-workout recovery",
+    "Looking for organic skincare supplements"
+  ];
+
+  const brandOptions = [
+    'MuscleBlaze', 'Organic India', 'Patanjali', 'Dabur', 'Himalaya', 
+    'Amway', 'Herbalife', 'ON (Optimum Nutrition)', 'Dymatize', 'BSN'
+  ];
+
+  const dietOptions = [
+    'high protein', 'keto', 'vegan', 'vegetarian', 'paleo', 
+    'low carb', 'gluten free', 'organic', 'weight loss', 'muscle gain'
   ];
 
   return (
@@ -866,7 +882,7 @@ const GroceryAgent = () => {
 
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold text-white mb-4">Order Up</h1>
-            <p className="text-xl text-white/80">AI-Powered Smart Shopping</p>
+            <p className="text-xl text-white/80">AI-Powered Smart Shopping with Google Gemini</p>
           </div>
 
           {currentStep === 'input' && (
@@ -905,6 +921,44 @@ const GroceryAgent = () => {
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white/90 mb-2">
+                      🥗 Diet Preference
+                    </label>
+                    <select
+                      value={diet}
+                      onChange={(e) => setDiet(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 text-white"
+                    >
+                      {dietOptions.map(option => (
+                        <option key={option} value={option} className="bg-gray-800">
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-white/90 mb-2">
+                      🏷️ Preferred Brands
+                    </label>
+                    <select
+                      multiple
+                      value={preferredBrands}
+                      onChange={(e) => setPreferredBrands(Array.from(e.target.selectedOptions, option => option.value))}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 text-white h-20"
+                    >
+                      {brandOptions.map(brand => (
+                        <option key={brand} value={brand} className="bg-gray-800">
+                          {brand}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-white/60 mt-1">Hold Ctrl/Cmd to select multiple brands</p>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-white/90 mb-2">
                     💰 Budget: ₹{budget}
@@ -912,19 +966,29 @@ const GroceryAgent = () => {
                   <input
                     type="range"
                     min="100"
-                    max="2000"
+                    max="5000"
+                    step="50"
                     value={budget}
                     onChange={(e) => setBudget(parseInt(e.target.value))}
                     className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
                   />
+                  <div className="flex justify-between text-xs text-white/60 mt-1">
+                    <span>₹100</span>
+                    <span>₹5,000</span>
+                  </div>
                 </div>
 
                 <button
                   onClick={handleGetRecommendations}
                   disabled={loading || !query.trim()}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'AI is analyzing...' : '🤖 Get AI Recommendations'}
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>🤖 AI is analyzing your request...</span>
+                    </div>
+                  ) : '🤖 Get AI Recommendations with Gemini'}
                 </button>
               </div>
             </div>
@@ -932,38 +996,57 @@ const GroceryAgent = () => {
 
           {currentStep === 'recommendations' && (
             <div className="space-y-6">
+              {aiResponse && (
+                <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-lg p-6 border border-white/20">
+                  <h3 className="text-xl font-bold text-white mb-4">🧠 AI Analysis</h3>
+                  <div className="text-white/80 text-sm max-h-32 overflow-y-auto bg-black/20 p-4 rounded-lg">
+                    {aiResponse.substring(0, 300)}...
+                  </div>
+                </div>
+              )}
+              
               <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-lg p-6 border border-white/20">
                 <h3 className="text-xl font-bold text-white mb-6">🤖 AI Recommendations</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {recommendations.map((product, index) => (
                     <div
                       key={index}
-                      className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${
+                      className={`border-2 rounded-xl p-4 transition-all cursor-pointer transform hover:scale-105 ${
                         product.selected 
-                          ? 'border-green-500 bg-green-500/20' 
-                          : 'border-white/20 hover:border-purple-300 bg-white/10'
+                          ? 'border-green-500 bg-green-500/20 shadow-green-500/30 shadow-lg' 
+                          : 'border-white/20 hover:border-purple-300 bg-white/10 hover:bg-white/15'
                       }`}
                       onClick={() => toggleProductSelection(index)}
                     >
                       <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-bold text-white text-sm">{product.name}</h4>
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          product.selected ? 'bg-green-500 border-green-500' : 'border-white/50'
+                        <h4 className="font-bold text-white text-sm line-clamp-2">{product.name}</h4>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                          product.selected ? 'bg-green-500 border-green-500 scale-110' : 'border-white/50'
                         }`}>
                           {product.selected && <span className="text-white text-xs">✓</span>}
                         </div>
                       </div>
                       
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                           <span className="text-2xl font-bold text-purple-300">{product.price}</span>
-                          <span className="text-yellow-400">⭐ {product.rating}</span>
+                          <span className="text-yellow-400 flex items-center">
+                            <Star size={14} className="mr-1" />
+                            {product.rating}
+                          </span>
                         </div>
                         
-                        <p className="text-white/80 text-xs">{product.description}</p>
+                        {product.protein && (
+                          <div className="bg-orange-500/20 text-orange-200 px-2 py-1 rounded-full text-xs inline-block">
+                            💪 {product.protein}
+                          </div>
+                        )}
                         
-                        <div className="flex justify-between items-center">
+                        <p className="text-white/80 text-xs line-clamp-2">{product.description}</p>
+                        
+                        <div className="flex justify-between items-center pt-2 border-t border-white/10">
                           <span className="text-xs text-white/70">🏪 {product.platform}</span>
+                          <span className="text-xs text-green-400">✓ In Stock</span>
                         </div>
                       </div>
                     </div>
@@ -975,13 +1058,14 @@ const GroceryAgent = () => {
                     onClick={() => setCurrentStep('input')}
                     className="flex-1 bg-white/20 text-white py-3 px-6 rounded-xl font-semibold hover:bg-white/30 transition-colors"
                   >
-                    ← Back
+                    ← Back to Search
                   </button>
                   <button
                     onClick={createCart}
-                    className="flex-1 bg-green-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-green-700 transition-all"
+                    disabled={recommendations.filter(p => p.selected).length === 0}
+                    className="flex-1 bg-green-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Add to Cart ({recommendations.filter(p => p.selected).length})
+                    🛒 Add to Cart ({recommendations.filter(p => p.selected).length})
                   </button>
                 </div>
               </div>
@@ -991,26 +1075,40 @@ const GroceryAgent = () => {
           {currentStep === 'cart' && (
             <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-white/20">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-2">🛒 Your Cart</h2>
-                <p className="text-white/80">Ready for checkout!</p>
+                <h2 className="text-3xl font-bold text-white mb-2">🛒 Your Smart Cart</h2>
+                <p className="text-white/80">AI-curated products ready for checkout!</p>
               </div>
 
               <div className="space-y-4 mb-8">
                 {cart.cart_items && cart.cart_items.map((item, index) => (
-                  <div key={index} className="flex justify-between items-center p-4 bg-white/10 rounded-lg">
-                    <div>
+                  <div key={index} className="flex justify-between items-center p-4 bg-white/10 rounded-lg border border-white/20">
+                    <div className="flex-1">
                       <h4 className="font-semibold text-white">{item.name}</h4>
-                      <p className="text-sm text-white/70">{item.platform}</p>
+                      <div className="flex items-center space-x-4 mt-1">
+                        <p className="text-sm text-white/70">🏪 {item.platform}</p>
+                        {item.protein && (
+                          <span className="text-xs bg-orange-500/20 text-orange-200 px-2 py-1 rounded-full">
+                            💪 {item.protein}
+                          </span>
+                        )}
+                        <span className="text-xs text-yellow-400">⭐ {item.rating}</span>
+                      </div>
                     </div>
                     <div className="text-xl font-bold text-green-400">{item.price}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-white/20 pt-6">
-                <div className="flex justify-between items-center text-2xl font-bold mb-6">
-                  <span className="text-white">Total:</span>
-                  <span className="text-green-400">₹{cart.total_cost}</span>
+              <div className="border-t border-white/20 pt-6 space-y-4">
+                <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-4 border border-purple-500/30">
+                  <div className="flex justify-between items-center text-2xl font-bold mb-2">
+                    <span className="text-white">Total Amount:</span>
+                    <span className="text-green-400">₹{cart.total_cost}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-white/70">
+                    <span>Items: {cart.item_count}</span>
+                    <span>Delivery: Free</span>
+                  </div>
                 </div>
 
                 <div className="flex space-x-4">
@@ -1018,17 +1116,17 @@ const GroceryAgent = () => {
                     onClick={() => setCurrentStep('recommendations')}
                     className="flex-1 bg-white/20 text-white py-4 px-6 rounded-xl font-semibold hover:bg-white/30 transition-colors"
                   >
-                    ← Modify
+                    ← Modify Selection
                   </button>
                   <button
                     onClick={() => {
-                      alert('🎉 Order placed successfully!');
+                      alert('🎉 Order placed successfully! Your AI-curated groceries will be delivered soon.');
                       setCurrentStep('input');
                       setQuery('');
                       setRecommendations([]);
                       setCart([]);
                     }}
-                    className="flex-1 bg-green-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-green-700 transition-all"
+                    className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all transform hover:scale-105"
                   >
                     🎉 Place Order
                   </button>
