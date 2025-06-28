@@ -131,12 +131,29 @@ const Header = () => {
   );
 };
 
-// AI Chatbot Component
-const AIChatbot = () => {
+// Enhanced AI Health Chatbot Component
+const EnhancedAIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState('chat'); // 'chat', 'profile'
+  const [userProfile, setUserProfile] = useState({
+    weight: '',
+    allergies: '',
+    skin_concern: ''
+  });
+
+  // Predefined options for smart input
+  const weightOptions = [
+    '45-50kg', '50-55kg', '55-60kg', '60-65kg', '65-70kg', '70-75kg', 
+    '75-80kg', '80-85kg', '85-90kg', '90-95kg', '95-100kg', '100kg+'
+  ];
+
+  const skinConcernOptions = [
+    'Acne', 'Dry Skin', 'Oily Skin', 'Anti-aging', 'Tanning', 'Sensitive Skin',
+    'Dark Spots', 'Wrinkles', 'Blackheads', 'Dull Skin', 'General Care'
+  ];
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -149,99 +166,282 @@ const AIChatbot = () => {
     try {
       const response = await axios.post(`${API}/chat`, {
         user_id: 'demo-user',
-        message: userMessage
+        message: userMessage,
+        user_profile: userProfile.weight ? userProfile : null
       });
       
-      setMessages(prev => [...prev, { type: 'ai', content: response.data.response }]);
+      const botResponse = response.data;
+      
+      if (botResponse.requires_profile) {
+        setMessages(prev => [...prev, { type: 'ai', content: botResponse.response }]);
+        setCurrentStep('profile');
+      } else {
+        setMessages(prev => [...prev, { type: 'ai', content: botResponse.response }]);
+      }
     } catch (error) {
-      setMessages(prev => [...prev, { type: 'ai', content: 'Sorry, I had trouble processing your message. Please try again.' }]);
+      setMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: 'Sorry, I had trouble processing your message. Please try again.' 
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const submitProfile = () => {
+    if (!userProfile.weight || !userProfile.allergies || !userProfile.skin_concern) {
+      alert('Please fill in all fields to get personalized recommendations.');
+      return;
+    }
+
+    setMessages(prev => [...prev, { 
+      type: 'system', 
+      content: `Profile updated! Weight: ${userProfile.weight}, Allergies: ${userProfile.allergies}, Skin Concern: ${userProfile.skin_concern}` 
+    }]);
+    
+    setCurrentStep('chat');
+    
+    // Auto-send a follow-up message for recommendations
+    setTimeout(() => {
+      setMessages(prev => [...prev, { type: 'user', content: 'Now please give me personalized health recommendations' }]);
+      setIsLoading(true);
+      
+      axios.post(`${API}/chat`, {
+        user_id: 'demo-user',
+        message: 'Now please give me personalized health recommendations based on my profile',
+        user_profile: userProfile
+      }).then(response => {
+        setMessages(prev => [...prev, { type: 'ai', content: response.data.response }]);
+      }).catch(() => {
+        setMessages(prev => [...prev, { 
+          type: 'ai', 
+          content: 'I can help you with personalized workout plans, skincare routines, and diet recommendations!' 
+        }]);
+      }).finally(() => {
+        setIsLoading(false);
+      });
+    }, 1000);
+  };
+
+  const quickQuestions = [
+    "💪 Show me a workout plan",
+    "✨ Skincare routine for my skin type", 
+    "🥗 Healthy diet recommendations",
+    "🏃‍♂️ How to start exercising?",
+    "🧴 Best products for acne",
+    "🍎 Foods to avoid for allergies"
+  ];
+
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Chat Toggle Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center text-white"
-      >
-        <MessageCircle size={24} />
-      </motion.button>
-
-      {/* Chat Window */}
-      <AnimatePresence>
-        {isOpen && (
+    <>
+      {/* Footer Chatbot Toggle Button */}
+      <div className="fixed bottom-0 right-6 z-50">
+        <motion.button
+          whileHover={{ 
+            scale: 1.1, 
+            boxShadow: '0 0 30px rgba(168, 85, 247, 0.6)',
+            backgroundColor: 'rgba(168, 85, 247, 0.9)'
+          }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className="mb-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center text-white hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+          style={{
+            background: isOpen ? 'linear-gradient(135deg, #7c3aed, #ec4899)' : 'linear-gradient(135deg, #8b5cf6, #f472b6)'
+          }}
+        >
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="absolute bottom-20 right-0 w-80 h-96 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl overflow-hidden"
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
           >
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
-              <h3 className="font-semibold">Nutracía AI Assistant</h3>
-              <p className="text-sm opacity-90">Your wellness companion</p>
-            </div>
+            <MessageCircle size={24} />
+          </motion.div>
+        </motion.button>
 
-            {/* Messages */}
-            <div className="h-64 overflow-y-auto p-4 space-y-3">
-              {messages.length === 0 && (
-                <div className="text-white/70 text-sm">
-                  Hi! I'm here to help with your wellness journey. Ask me about workouts, nutrition, skincare, or health advice!
-                </div>
-              )}
-              {messages.map((msg, idx) => (
-                <div key={idx} className={`${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`inline-block p-3 rounded-lg max-w-xs ${
-                    msg.type === 'user' 
-                      ? 'bg-purple-500 text-white' 
-                      : 'bg-white/20 text-white backdrop-blur-sm'
-                  }`}>
-                    <p className="text-sm">{msg.content}</p>
+        {/* Chat Window */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.8 }}
+              className="absolute bottom-20 right-0 w-96 h-[500px] bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl overflow-hidden"
+            >
+              {/* Chat Header */}
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold">🏃‍♂️ Nutracía Health Coach</h3>
+                    <p className="text-sm opacity-90">Your AI wellness companion</p>
                   </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1 rounded-full hover:bg-white/20 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
-              ))}
-              {isLoading && (
-                <div className="text-left">
-                  <div className="inline-block p-3 rounded-lg bg-white/20 text-white">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+              </div>
+
+              {currentStep === 'chat' && (
+                <>
+                  {/* Messages */}
+                  <div className="h-80 overflow-y-auto p-4 space-y-3">
+                    {messages.length === 0 && (
+                      <div className="text-white/70 text-sm space-y-3">
+                        <div className="bg-purple-500/20 p-3 rounded-lg">
+                          Hi! I'm your AI Health Coach! 🤖✨
+                        </div>
+                        <div className="text-xs text-white/60">
+                          I can help with workouts, skincare, nutrition, and wellness advice!
+                        </div>
+                        
+                        {/* Quick Questions */}
+                        <div className="space-y-2">
+                          <div className="text-xs font-semibold text-white/80">Quick Questions:</div>
+                          {quickQuestions.map((question, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setInput(question)}
+                              className="block w-full text-left text-xs bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
+                            >
+                              {question}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {messages.map((msg, idx) => (
+                      <div key={idx} className={`${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
+                        <div className={`inline-block p-3 rounded-lg max-w-xs text-sm ${
+                          msg.type === 'user' 
+                            ? 'bg-purple-500 text-white' 
+                            : msg.type === 'system'
+                            ? 'bg-green-500/20 text-green-200 backdrop-blur-sm'
+                            : 'bg-white/20 text-white backdrop-blur-sm'
+                        }`}>
+                          <p>{msg.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {isLoading && (
+                      <div className="text-left">
+                        <div className="inline-block p-3 rounded-lg bg-white/20 text-white">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                              <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                            </div>
+                            <span className="text-xs">AI is thinking...</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Input */}
+                  <div className="p-4 border-t border-white/20">
+                    <div className="flex space-x-2">
+                      <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                        placeholder="Ask about workouts, diet, skincare..."
+                        className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                      />
+                      <button
+                        onClick={sendMessage}
+                        disabled={!input.trim() || isLoading}
+                        className="px-4 py-2 bg-purple-500 text-white rounded-lg disabled:opacity-50 hover:bg-purple-600 transition-colors text-sm"
+                      >
+                        Send
+                      </button>
                     </div>
                   </div>
+                </>
+              )}
+
+              {currentStep === 'profile' && (
+                <div className="p-4 space-y-4">
+                  <div className="text-center text-white mb-4">
+                    <h3 className="font-semibold">📋 Your Health Profile</h3>
+                    <p className="text-sm text-white/80">Help me personalize your recommendations</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* Weight Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/90 mb-1">
+                        Weight Range
+                      </label>
+                      <select
+                        value={userProfile.weight}
+                        onChange={(e) => setUserProfile(prev => ({...prev, weight: e.target.value}))}
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                      >
+                        <option value="" className="bg-gray-800">Select your weight range</option>
+                        {weightOptions.map(weight => (
+                          <option key={weight} value={weight} className="bg-gray-800">{weight}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Allergies Input */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/90 mb-1">
+                        Allergies
+                      </label>
+                      <input
+                        type="text"
+                        value={userProfile.allergies}
+                        onChange={(e) => setUserProfile(prev => ({...prev, allergies: e.target.value}))}
+                        placeholder="e.g., nuts, dairy, shellfish or 'none'"
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                      />
+                    </div>
+
+                    {/* Skin Concern Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/90 mb-1">
+                        Main Skin Concern
+                      </label>
+                      <select
+                        value={userProfile.skin_concern}
+                        onChange={(e) => setUserProfile(prev => ({...prev, skin_concern: e.target.value}))}
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                      >
+                        <option value="" className="bg-gray-800">Select your main concern</option>
+                        {skinConcernOptions.map(concern => (
+                          <option key={concern} value={concern} className="bg-gray-800">{concern}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2 mt-4">
+                    <button
+                      onClick={() => setCurrentStep('chat')}
+                      className="flex-1 bg-white/20 text-white py-2 px-3 rounded-lg text-sm hover:bg-white/30 transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={submitProfile}
+                      className="flex-1 bg-green-600 text-white py-2 px-3 rounded-lg text-sm hover:bg-green-700 transition-colors"
+                    >
+                      Save Profile
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
-
-            {/* Input */}
-            <div className="p-4 border-t border-white/20">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Ask me anything..."
-                  className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={!input.trim() || isLoading}
-                  className="px-4 py-2 bg-purple-500 text-white rounded-lg disabled:opacity-50 hover:bg-purple-600 transition-colors"
-                >
-                  Send
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
 
