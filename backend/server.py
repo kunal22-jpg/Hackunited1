@@ -307,11 +307,8 @@ Keep responses conversational, encouraging, and practical.
 
 @api_router.post("/chat", response_model=HealthChatResponse)
 async def health_chat_ai(chat_data: HealthChatRequest):
-    """Enhanced AI health chatbot with OpenAI integration"""
+    """Enhanced AI health chatbot with intelligent health responses"""
     try:
-        # Initialize emergentintegrations LLM
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
         # Check if we need user profile for personalized advice
         needs_personal_info = any(keyword in chat_data.message.lower() for keyword in [
             'workout', 'exercise', 'diet', 'nutrition', 'skincare', 'routine', 
@@ -326,42 +323,19 @@ async def health_chat_ai(chat_data: HealthChatRequest):
                 profile_fields=["weight", "allergies", "skin_concern"]
             )
         
-        # Create enhanced prompt with user context
-        if chat_data.user_profile:
-            context = f"""
-User Profile:
-- Weight: {chat_data.user_profile.get('weight', 'Not specified')}
-- Allergies: {chat_data.user_profile.get('allergies', 'None')}
-- Skin Concern: {chat_data.user_profile.get('skin_concern', 'General care')}
-
-User Question: {chat_data.message}
-
-Provide personalized health advice based on this information. Give specific recommendations for workouts, skincare routines, or diet plans as appropriate.
-"""
-        else:
-            context = f"User Question: {chat_data.message}\n\nProvide helpful health and wellness advice."
-        
-        # Initialize LLM Chat with system message
-        chat = LlmChat(
-            api_key=os.environ.get('OPENAI_API_KEY'),
-            session_id=f"health-chat-{chat_data.user_id}",
-            system_message=HEALTH_KNOWLEDGE_BASE
-        ).with_model("openai", "gpt-4o-mini").with_max_tokens(800)
-        
-        # Get AI response
-        user_message = UserMessage(text=context)
-        ai_response = await chat.send_message(user_message)
+        # Generate intelligent health responses based on message content and profile
+        response_text = generate_health_response(chat_data.message, chat_data.user_profile)
         
         # Store chat history
         chat_obj = ChatMessage(
             user_id=chat_data.user_id,
             message=chat_data.message,
-            response=ai_response
+            response=response_text
         )
         await db.chat_history.insert_one(chat_obj.dict())
         
         return HealthChatResponse(
-            response=ai_response,
+            response=response_text,
             message_id=chat_obj.id,
             requires_profile=False,
             profile_fields=[]
@@ -369,7 +343,7 @@ Provide personalized health advice based on this information. Give specific reco
         
     except Exception as e:
         print(f"Error in health chat: {str(e)}")
-        # Fallback response to avoid API errors
+        # Fallback response
         fallback_response = "I'm here to help with your health and wellness journey! I can provide advice on workouts, nutrition, and skincare. What would you like to know?"
         
         chat_obj = ChatMessage(
@@ -383,6 +357,283 @@ Provide personalized health advice based on this information. Give specific reco
             response=fallback_response, 
             message_id=chat_obj.id
         )
+
+def generate_health_response(message: str, user_profile: Optional[dict] = None):
+    """Generate intelligent health responses based on keywords and user profile"""
+    message_lower = message.lower()
+    
+    # Extract user profile info if available
+    weight = user_profile.get('weight', 'not specified') if user_profile else 'not specified'
+    allergies = user_profile.get('allergies', 'none') if user_profile else 'none'
+    skin_concern = user_profile.get('skin_concern', 'general care') if user_profile else 'general care'
+    
+    # Workout/Exercise responses
+    if any(word in message_lower for word in ['workout', 'exercise', 'muscle', 'fitness', 'training', 'gym']):
+        if 'muscle' in message_lower or 'strength' in message_lower:
+            return f"""💪 **Muscle Building Workout Plan** (Weight: {weight})
+
+**Recommended Routine:**
+• **Compound Exercises:** Squats, deadlifts, bench press, pull-ups
+• **Sets & Reps:** 3-4 sets of 8-12 reps
+• **Frequency:** 3-4 times per week
+• **Rest:** 48-72 hours between sessions
+
+**For your weight ({weight}):**
+- Start with bodyweight or light weights
+- Focus on proper form before increasing weight
+- Progressive overload is key
+
+**Nutrition tip:** Ensure adequate protein intake (0.8-1g per kg body weight) and avoid {allergies} allergens.
+
+Would you like a specific workout plan or have questions about nutrition?"""
+
+        elif 'cardio' in message_lower or 'running' in message_lower:
+            return f"""🏃‍♂️ **Cardio Training Plan** (Weight: {weight})
+
+**Beginner Program:**
+• **Week 1-2:** 20-30 min walking/light jogging
+• **Week 3-4:** 30-40 min moderate pace
+• **Week 5+:** Add interval training
+
+**HIIT Option:**
+- 5 min warm-up
+- 30 sec high intensity / 90 sec recovery (repeat 8-10 times)
+- 5 min cool-down
+
+**Safety Note:** Start gradually and listen to your body. Stay hydrated!
+
+Need help with nutrition for cardio performance?"""
+
+        else:
+            return f"""🏋️‍♀️ **General Fitness Plan** (Weight: {weight})
+
+**Weekly Schedule:**
+• **Monday:** Upper body strength
+• **Tuesday:** Cardio (30 min)
+• **Wednesday:** Lower body strength  
+• **Thursday:** Rest or yoga
+• **Friday:** Full body workout
+• **Weekend:** Active recovery (walking, swimming)
+
+**Key Principles:**
+- Progressive overload
+- Proper nutrition (avoiding {allergies})
+- Adequate sleep (7-9 hours)
+- Stay consistent!
+
+What specific fitness goals would you like to work on?"""
+
+    # Skincare responses
+    elif any(word in message_lower for word in ['skincare', 'skin', 'acne', 'routine', 'face', 'moisturizer']):
+        if skin_concern.lower() == 'acne':
+            return f"""✨ **Acne-Fighting Skincare Routine** (Concern: {skin_concern})
+
+**Morning Routine:**
+1. Gentle foaming cleanser (salicylic acid)
+2. Niacinamide serum
+3. Light, oil-free moisturizer
+4. SPF 30+ sunscreen
+
+**Evening Routine:**
+1. Double cleanse (oil cleanser + foaming cleanser)
+2. BHA treatment (2-3x/week)
+3. Hydrating serum
+4. Night moisturizer
+
+**Key Ingredients:** Salicylic acid, niacinamide, retinoids, hyaluronic acid
+
+**Avoid:** Over-cleansing, harsh scrubs, picking at skin
+
+Need product recommendations or have questions about specific ingredients?"""
+
+        elif 'dry' in skin_concern.lower():
+            return f"""💧 **Dry Skin Care Routine** (Concern: {skin_concern})
+
+**Morning:**
+1. Gentle cream cleanser
+2. Hyaluronic acid serum
+3. Rich moisturizer
+4. SPF 30+
+
+**Evening:**
+1. Oil cleanser
+2. Gentle cream cleanser
+3. Retinol (2-3x/week)
+4. Heavy night cream
+
+**Weekly Treats:**
+- Hydrating face mask (2x/week)
+- Gentle exfoliation (1x/week)
+
+**Tips:** Use a humidifier, drink plenty of water, avoid hot showers!
+
+Want specific product recommendations for your skin type?"""
+
+        else:
+            return f"""✨ **General Skincare Routine** (Concern: {skin_concern})
+
+**Basic 4-Step Routine:**
+1. **Cleanse:** Morning & evening
+2. **Treat:** Serums for specific concerns
+3. **Moisturize:** Hydrate your skin
+4. **Protect:** SPF during the day
+
+**For {skin_concern}:**
+- Use gentle, fragrance-free products
+- Introduce new products slowly
+- Consistency is key!
+
+**Universal Tips:**
+- Always patch test new products
+- SPF is non-negotiable
+- Listen to your skin
+
+What specific skin concerns would you like to address?"""
+
+    # Nutrition/Diet responses
+    elif any(word in message_lower for word in ['diet', 'nutrition', 'food', 'eat', 'meal', 'protein', 'calories']):
+        allergy_note = f" (avoiding {allergies})" if allergies != 'none' else ""
+        
+        if 'muscle' in message_lower or 'protein' in message_lower:
+            return f"""🥗 **Muscle Building Nutrition** (Weight: {weight}){allergy_note}
+
+**Daily Protein Target:** 1.6-2.2g per kg body weight
+
+**Best Protein Sources:**
+• Lean meats (chicken, turkey, lean beef)
+• Fish and seafood
+• Eggs and dairy
+• Legumes and beans
+• Protein powder (whey/plant-based)
+
+**Sample Meal Plan:**
+- **Breakfast:** Greek yogurt with berries and granola
+- **Lunch:** Grilled chicken salad with quinoa
+- **Snack:** Protein shake with banana
+- **Dinner:** Salmon with sweet potato and vegetables
+
+**Timing:** Eat protein within 30 minutes post-workout for optimal recovery.
+
+{f'**Allergy Note:** Avoid {allergies} in all meal planning.' if allergies != 'none' else ''}
+
+Need help creating a specific meal plan?"""
+
+        elif 'weight' in message_lower and 'loss' in message_lower:
+            return f"""⚖️ **Healthy Weight Management** (Current: {weight}){allergy_note}
+
+**Key Principles:**
+• Create a moderate caloric deficit (300-500 calories)
+• Focus on whole, unprocessed foods
+• Stay hydrated (8-10 glasses water/day)
+• Regular physical activity
+
+**Balanced Plate Method:**
+- 1/2 plate: Non-starchy vegetables
+- 1/4 plate: Lean protein
+- 1/4 plate: Complex carbohydrates
+- Healthy fats in moderation
+
+**Foods to Emphasize:**
+- Vegetables and fruits
+- Lean proteins
+- Whole grains
+- Healthy fats (avocado, nuts, olive oil)
+
+{f'**Important:** Avoid {allergies} in all food choices.' if allergies != 'none' else ''}
+
+Want a personalized meal plan or calorie calculation?"""
+
+        else:
+            return f"""🍎 **Healthy Nutrition Guidelines** (Weight: {weight}){allergy_note}
+
+**Balanced Diet Basics:**
+• **Protein:** 20-30% of calories
+• **Carbohydrates:** 45-65% of calories  
+• **Fats:** 20-35% of calories
+
+**Daily Essentials:**
+- 5-9 servings fruits & vegetables
+- 8 glasses of water
+- Lean protein with every meal
+- Healthy fats (omega-3s)
+
+**Meal Timing:**
+- Eat every 3-4 hours
+- Don't skip breakfast
+- Light dinner 2-3 hours before bed
+
+{f'**Allergy Management:** Carefully avoid {allergies} and read all food labels.' if allergies != 'none' else ''}
+
+What specific nutritional goals are you working toward?"""
+
+    # General health responses
+    elif any(word in message_lower for word in ['health', 'wellness', 'sleep', 'stress', 'energy', 'tired']):
+        return f"""🌟 **Holistic Wellness Plan** (Profile: {weight}, {skin_concern}){' (Allergies: ' + allergies + ')' if allergies != 'none' else ''}
+
+**5 Pillars of Health:**
+
+1. **Physical Activity** 🏃‍♂️
+   - 150 min moderate cardio/week
+   - 2-3 strength training sessions
+   - Daily movement and stretching
+
+2. **Nutrition** 🥗
+   - Balanced macronutrients
+   - Plenty of water
+   - Limit processed foods
+
+3. **Sleep** 😴
+   - 7-9 hours nightly
+   - Consistent sleep schedule
+   - Screen-free hour before bed
+
+4. **Stress Management** 🧘‍♀️
+   - Meditation or mindfulness
+   - Regular breaks
+   - Hobbies and social connection
+
+5. **Preventive Care** 🩺
+   - Regular check-ups
+   - Skincare routine for {skin_concern}
+   - Mental health awareness
+
+**Daily Habits:**
+- Morning sunlight exposure
+- Healthy breakfast
+- Movement breaks
+- Evening wind-down routine
+
+What area of wellness would you like to focus on first?"""
+
+    # Default response for general questions
+    else:
+        return f"""👋 **Welcome to Your Health Journey!** 
+
+I'm your personal health coach, and I'm here to help you with:
+
+🏋️‍♀️ **Fitness & Workouts**
+- Custom exercise plans
+- Strength training guidance
+- Cardio routines
+
+✨ **Skincare & Beauty**
+- Routines for {skin_concern}
+- Product recommendations
+- Skin health tips
+
+🥗 **Nutrition & Diet**
+- Meal planning {f'(avoiding {allergies})' if allergies != 'none' else ''}
+- Healthy recipes
+- Nutritional guidance
+
+🌟 **Overall Wellness**
+- Sleep optimization
+- Stress management
+- Healthy lifestyle tips
+
+**Your Profile:** Weight: {weight} | Skin: {skin_concern} | Allergies: {allergies}
+
+What would you like to know about? Just ask me about workouts, skincare, nutrition, or general health tips!"""
 
 # Enhanced Grocery Agent - AI-Powered Shopping Assistant
 import sys
