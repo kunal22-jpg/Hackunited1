@@ -248,6 +248,88 @@ def test_grocery_recommendations():
     ]
     
     all_passed = True
+def test_grocery_error_handling():
+    """Test error handling for grocery endpoints with invalid inputs"""
+    print("\n=== Testing Grocery API Error Handling ===")
+    
+    test_cases = [
+        {
+            "name": "Invalid budget (negative)",
+            "endpoint": "/grocery/recommendations",
+            "payload": {
+                "query": "Protein supplements",
+                "budget": -100,
+                "preferred_brands": ["MuscleBlaze"],
+                "diet": "high protein"
+            },
+            "expected_status": 200  # The API handles this gracefully
+        },
+        {
+            "name": "Invalid preferred_brands (not a list)",
+            "endpoint": "/grocery/recommendations",
+            "payload": {
+                "query": "Protein supplements",
+                "budget": 500,
+                "preferred_brands": "MuscleBlaze",  # Should be a list
+                "diet": "high protein"
+            },
+            "expected_status": 422  # Validation error
+        },
+        {
+            "name": "Missing required field (query)",
+            "endpoint": "/grocery/recommendations",
+            "payload": {
+                # "query" is missing
+                "budget": 500,
+                "preferred_brands": ["MuscleBlaze"],
+                "diet": "high protein"
+            },
+            "expected_status": 422  # Validation error
+        },
+        {
+            "name": "Invalid cart data (empty list)",
+            "endpoint": "/grocery/create-cart",
+            "payload": [],
+            "expected_status": 200  # Should handle empty list gracefully
+        },
+        {
+            "name": "Invalid cart data (not a list)",
+            "endpoint": "/grocery/create-cart",
+            "payload": {"products": "invalid"},
+            "expected_status": 422  # Validation error
+        }
+    ]
+    
+    all_passed = True
+    
+    for test_case in test_cases:
+        print(f"\n--- Testing: {test_case['name']} ---")
+        try:
+            response = requests.post(f"{API_URL}{test_case['endpoint']}", json=test_case['payload'])
+            print(f"Status Code: {response.status_code}")
+            
+            # Try to get response data, but don't fail if it's not valid JSON
+            try:
+                data = response.json()
+                print(f"Response: {json.dumps(data, indent=2)}")
+            except:
+                print("Response is not valid JSON")
+            
+            # Check if status code matches expected
+            assert response.status_code == test_case['expected_status'], \
+                f"Expected status code {test_case['expected_status']}, got {response.status_code}"
+            
+            print(f"✅ Test case '{test_case['name']}' passed")
+        except Exception as e:
+            print(f"❌ Test case '{test_case['name']}' failed: {str(e)}")
+            all_passed = False
+    
+    if all_passed:
+        print("\n✅ All error handling test cases passed")
+    else:
+        print("\n❌ Some error handling test cases failed")
+    
+    return all_passed
     all_recommendations = []
     
     for test_case in test_cases:
