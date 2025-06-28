@@ -399,7 +399,7 @@ def test_grocery_error_handling():
     else:
         print("\n❌ Some grocery recommendation test cases failed")
     
-    return all_passed, all_recommendations
+    return all_passed, all_recommendations, all_recommendations
 
 def test_grocery_cart_creation(recommendations):
     """Test the enhanced grocery cart creation endpoint"""
