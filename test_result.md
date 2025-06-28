@@ -309,6 +309,8 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Enhanced Grocery Agent Integration - Backend AI endpoints"
+    - "Enhanced Grocery Agent Integration - Frontend UI"
     - "Basic connectivity - Root endpoint"
     - "Data fetching - Workouts endpoint"
     - "Data fetching - Skincare endpoint"
@@ -316,8 +318,6 @@ test_plan:
     - "Data fetching - Health conditions endpoint"
     - "User management - User creation endpoint"
     - "Chat functionality - AI chat endpoint"
-    - "Grocery agent - Recommendations endpoint"
-    - "Grocery agent - Cart creation endpoint"
     - "Navigation & Header Testing"
     - "Home Page Testing"
     - "AI Chatbot Testing"
