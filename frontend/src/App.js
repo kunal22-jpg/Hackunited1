@@ -57,11 +57,13 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent font-['Cinzel_Decorative']">
-              Nutracía
-            </div>
-            <div className="text-sm text-white/80 font-light font-['Pacifico']">
-              Redefine Your Limits
+            <div className="flex flex-col">
+              <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent font-['Cinzel_Decorative']">
+                Nutracía
+              </div>
+              <div className="text-xs text-white/70 font-light font-['Pacifico'] -mt-1 ml-1">
+                Redefine Your Limits
+              </div>
             </div>
           </Link>
 
