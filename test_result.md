@@ -303,7 +303,14 @@ test_plan:
     - "Chat functionality - AI chat endpoint"
     - "Grocery agent - Recommendations endpoint"
     - "Grocery agent - Cart creation endpoint"
-  stuck_tasks: []
+    - "Navigation & Header Testing"
+    - "Home Page Testing"
+    - "AI Chatbot Testing"
+    - "Section Pages Testing"
+    - "Order Up Page Testing"
+    - "Responsive Design Testing"
+  stuck_tasks:
+    - "Section Pages Testing"
   test_all: true
   test_priority: "high_first"
 
