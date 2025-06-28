@@ -316,6 +316,14 @@ button:focus {
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glassmorphic,
+  .glassmorphic-enhanced {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(0, 0, 0, 0.8);
+  }
+}
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
