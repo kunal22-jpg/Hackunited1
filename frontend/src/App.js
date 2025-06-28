@@ -427,28 +427,45 @@ const CircularGallery = ({ items, onItemClick, type }) => {
     );
   }
 
-  const galleryItems = items.map((item, index) => ({
-    src: backgrounds[type] || backgrounds.home,
-    alt: item.title || `${type} item ${index + 1}`
+  // Create carousel items with titles and images
+  const carouselItems = items.map((item, index) => ({
+    content: (
+      <div className="text-center cursor-pointer" onClick={() => onItemClick(item)}>
+        <div 
+          className="w-24 h-24 bg-cover bg-center rounded-full border-4 border-white/30 hover:border-white/80 transition-all duration-300 transform hover:scale-110 shadow-lg"
+          style={{ 
+            backgroundImage: `url(${backgrounds[type] || backgrounds.home})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+        <h4 className="text-white font-semibold text-sm mt-3 max-w-20 mx-auto truncate bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
+          {item.title}
+        </h4>
+      </div>
+    )
   }));
 
   try {
     return (
       <div className="h-96 flex items-center justify-center">
         <div className="relative">
-          <FancyCarousel 
-            images={galleryItems}
-            carouselRadius={150}
-            centralImageRadius={80}
-            peripheralImageRadius={50}
-            autoRotateTime={3}
-            onImageClick={(index) => onItemClick(items[index])}
+          <CircularCarousel
+            items={carouselItems}
+            radius={120}
+            itemRadius={50}
+            itemsDisplayed={Math.min(items.length, 6)}
+            autoRotate={true}
+            autoRotateTime={4000}
+            rotationDirection="clockwise"
+            className="circular-gallery"
           />
-          {/* Overlay with item titles */}
+          
+          {/* Center instructions */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center">
-              <h3 className="text-white text-lg font-semibold bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
-                Click any image to explore
+              <h3 className="text-white text-lg font-semibold bg-black/60 px-4 py-2 rounded-lg backdrop-blur-sm">
+                Click any item to explore
               </h3>
             </div>
           </div>
@@ -456,27 +473,30 @@ const CircularGallery = ({ items, onItemClick, type }) => {
       </div>
     );
   } catch (error) {
-    console.error('Error rendering FancyCarousel:', error);
-    // Fallback to grid view
+    console.error('Error rendering CircularCarousel:', error);
+    // Enhanced fallback grid view
     return (
       <div className="h-96 overflow-y-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((item, index) => (
             <motion.div
               key={item.id || index}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 cursor-pointer"
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 cursor-pointer card-hover"
               onClick={() => onItemClick(item)}
             >
               <div 
-                className="h-32 bg-cover bg-center rounded-lg mb-4"
+                className="h-24 bg-cover bg-center rounded-lg mb-3 border-2 border-white/20"
                 style={{ backgroundImage: `url(${backgrounds[type] || backgrounds.home})` }}
               />
-              <h4 className="text-white font-semibold text-lg mb-2">{item.title}</h4>
-              <p className="text-white/80 text-sm line-clamp-2">{item.description}</p>
+              <h4 className="text-white font-semibold text-sm mb-2 line-clamp-2">{item.title}</h4>
+              <p className="text-white/70 text-xs line-clamp-2">{item.description}</p>
             </motion.div>
           ))}
+        </div>
+        <div className="text-center mt-4">
+          <p className="text-white/60 text-sm">Click any item to view details</p>
         </div>
       </div>
     );
