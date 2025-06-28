@@ -267,23 +267,125 @@ async def get_health_conditions():
     conditions = await db.health_conditions.find().to_list(1000)
     return [HealthConditionPlan(**condition) for condition in conditions]
 
-@api_router.post("/chat", response_model=dict)
-async def chat_with_ai(chat_data: ChatMessageCreate):
-    # Placeholder for AI chat integration
-    # This will be connected to OpenAI when API key is provided
-    response_text = f"Thank you for your message: '{chat_data.message}'. I'm here to help with your wellness journey! (AI integration pending API key)"
-    
-    chat_obj = ChatMessage(
-        user_id=chat_data.user_id,
-        message=chat_data.message,
-        response=response_text
-    )
-    await db.chat_history.insert_one(chat_obj.dict())
-    
-    return {
-        "response": response_text,
-        "message_id": chat_obj.id
-    }
+# Enhanced Health Chatbot Models
+class HealthChatRequest(BaseModel):
+    user_id: str
+    message: str
+    user_profile: Optional[dict] = None  # Contains weight, allergies, skin_concern, etc.
+
+class HealthChatResponse(BaseModel):
+    response: str
+    message_id: str
+    requires_profile: bool = False
+    profile_fields: List[str] = []
+
+# Health Knowledge Base
+HEALTH_KNOWLEDGE_BASE = """
+You are Nutracía AI Health Coach, an expert in fitness, nutrition, and skincare. You provide personalized recommendations based on:
+
+WORKOUT EXPERTISE:
+- Custom exercises, sets, reps, and weekly schedules
+- Strength training, cardio, HIIT, flexibility
+- Equipment-based and bodyweight workouts
+- Progress tracking and goal setting
+
+SKINCARE EXPERTISE:
+- Morning and evening routines
+- Product recommendations for different skin types
+- Acne, anti-aging, tanning, dry skin solutions
+- Ingredient knowledge and sun protection
+
+NUTRITION EXPERTISE:
+- Meal planning and diet recommendations
+- Allergy-conscious nutrition advice
+- Weight management strategies
+- Macronutrient balance and hydration
+
+Always ask for user details (weight, allergies, skin concerns) when providing personalized advice.
+Keep responses conversational, encouraging, and practical.
+"""
+
+@api_router.post("/chat", response_model=HealthChatResponse)
+async def health_chat_ai(chat_data: HealthChatRequest):
+    """Enhanced AI health chatbot with OpenAI integration"""
+    try:
+        # Initialize emergentintegrations LLM
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, SystemMessage
+        
+        # Create system message with health knowledge
+        system_message = SystemMessage(text=HEALTH_KNOWLEDGE_BASE)
+        
+        # Check if we need user profile for personalized advice
+        needs_personal_info = any(keyword in chat_data.message.lower() for keyword in [
+            'workout', 'exercise', 'diet', 'nutrition', 'skincare', 'routine', 
+            'recommend', 'plan', 'personalized', 'custom', 'my', 'help me'
+        ])
+        
+        if needs_personal_info and not chat_data.user_profile:
+            return HealthChatResponse(
+                response="I'd love to help you with personalized health advice! To give you the best recommendations, I need to know a bit about you. Could you please share your weight, any allergies you have, and your main skin concern?",
+                message_id=str(uuid.uuid4()),
+                requires_profile=True,
+                profile_fields=["weight", "allergies", "skin_concern"]
+            )
+        
+        # Create enhanced prompt with user context
+        if chat_data.user_profile:
+            context = f"""
+User Profile:
+- Weight: {chat_data.user_profile.get('weight', 'Not specified')}
+- Allergies: {chat_data.user_profile.get('allergies', 'None')}
+- Skin Concern: {chat_data.user_profile.get('skin_concern', 'General care')}
+
+User Question: {chat_data.message}
+
+Provide personalized health advice based on this information.
+"""
+        else:
+            context = f"User Question: {chat_data.message}\n\nProvide helpful health advice."
+        
+        # Initialize LLM Chat
+        chat = LlmChat(
+            api_key=os.environ.get('OPENAI_API_KEY'),
+            session_id=f"health-chat-{chat_data.user_id}",
+            system_message=system_message
+        ).with_model("openai", "gpt-4o-mini").with_max_tokens(800)
+        
+        # Get AI response
+        user_message = UserMessage(text=context)
+        ai_response = await chat.send_message(user_message)
+        
+        # Store chat history
+        chat_obj = ChatMessage(
+            user_id=chat_data.user_id,
+            message=chat_data.message,
+            response=ai_response
+        )
+        await db.chat_history.insert_one(chat_obj.dict())
+        
+        return HealthChatResponse(
+            response=ai_response,
+            message_id=chat_obj.id,
+            requires_profile=False,
+            profile_fields=[]
+        )
+        
+    except Exception as e:
+        print(f"Error in health chat: {str(e)}")
+        # Fallback response to avoid API errors
+        fallback_response = "I'm here to help with your health and wellness journey! I can provide advice on workouts, nutrition, and skincare. What would you like to know?"
+        
+        chat_obj = ChatMessage(
+            user_id=chat_data.user_id,
+            message=chat_data.message,
+            response=fallback_response
+        )
+        await db.chat_history.insert_one(chat_obj.dict())
+        
+        return HealthChatResponse(
+            response=fallback_response, 
+            message_id=chat_obj.id
+        )
 
 # Enhanced Grocery Agent - AI-Powered Shopping Assistant
 import sys
