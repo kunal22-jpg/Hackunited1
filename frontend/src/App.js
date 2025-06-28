@@ -58,7 +58,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <div className="flex flex-col">
-              <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent font-['Cinzel_Decorative']">
+              <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent font-['Cinzel_Decorative'] hover:from-yellow-300 hover:via-amber-400 hover:to-orange-600 transition-all duration-500 hover:drop-shadow-[0_0_10px_rgba(251,191,36,0.8)] hover:scale-105 cursor-pointer">
                 Nutracía
               </div>
               <div className="text-xs text-white/70 font-light font-['Pacifico'] -mt-1 ml-1">
