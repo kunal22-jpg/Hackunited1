@@ -456,7 +456,7 @@ const CircularGallery = ({ items, onItemClick, type }) => {
       <div className="h-96 flex items-center justify-center">
         <div className="relative w-full max-w-md">
           <CircularCarousel
-            type={CarouselTypes.STANDARD_2D}
+            type="standard-2d"
             mediaPool={mediaPool}
             slideComponent={({ content, onClick }) => <SlideComponent content={content} onClick={onClick} />}
             slideWidth={100}
