@@ -733,7 +733,7 @@ const HomePage = () => (
       </div>
     </div>
     
-    <AIChatbot />
+    <EnhancedAIChatbot />
   </div>
 );
 
