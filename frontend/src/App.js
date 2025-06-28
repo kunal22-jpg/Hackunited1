@@ -44,7 +44,7 @@ const Header = () => {
     { path: '/skincare', label: 'Skincare', icon: Sparkles, iconClass: 'header-skincare-icon' },
     { path: '/diet', label: 'Diet', icon: Apple, iconClass: 'header-diet-icon' },
     { path: '/health', label: 'Health', icon: Heart, iconClass: 'header-health-icon' },
-    { path: '/order-up', label: 'Order Up', icon: ShoppingCart, iconClass: '' }
+    { path: '/order-up', label: 'Order Up', icon: ShoppingCart, iconClass: 'header-orderup-icon' }
   ];
 
   return (
