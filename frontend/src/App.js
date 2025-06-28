@@ -536,10 +536,10 @@ const HomePage = () => (
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
             {[
-              { path: '/workout', label: 'Workouts', icon: Dumbbell, color: 'from-red-500 to-orange-500' },
-              { path: '/skincare', label: 'Skincare', icon: Sparkles, color: 'from-pink-500 to-purple-500' },
-              { path: '/diet', label: 'Diet Plans', icon: Apple, color: 'from-green-500 to-emerald-500' },
-              { path: '/health', label: 'Health', icon: Heart, color: 'from-blue-500 to-cyan-500' }
+              { path: '/workout', label: 'Workouts', icon: Dumbbell, color: 'from-red-500 to-orange-500', animation: 'icon-bounce' },
+              { path: '/skincare', label: 'Skincare', icon: Sparkles, color: 'from-pink-500 to-purple-500', animation: 'icon-shake' },
+              { path: '/diet', label: 'Diet Plans', icon: Apple, color: 'from-green-500 to-emerald-500', animation: 'icon-spin' },
+              { path: '/health', label: 'Health', icon: Heart, color: 'from-blue-500 to-cyan-500', animation: 'icon-pulse' }
             ].map((item) => {
               const Icon = item.icon;
               return (
@@ -549,7 +549,7 @@ const HomePage = () => (
                     whileTap={{ scale: 0.95 }}
                     className={`bg-gradient-to-br ${item.color} p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300`}
                   >
-                    <Icon size={32} className="text-white mx-auto mb-3" />
+                    <Icon size={32} className={`text-white mx-auto mb-3 ${item.animation}`} />
                     <p className="text-white font-semibold">{item.label}</p>
                   </motion.div>
                 </Link>
