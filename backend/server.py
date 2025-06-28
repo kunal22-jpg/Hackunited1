@@ -286,6 +286,10 @@ async def chat_with_ai(chat_data: ChatMessageCreate):
     }
 
 # Enhanced Grocery Agent - AI-Powered Shopping Assistant
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from config.settings import GEMINI_API_KEY
 from modules.user_preferences import get_user_preferences
 from modules.prompt_builder import build_recommendation_prompt
