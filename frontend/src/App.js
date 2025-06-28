@@ -39,12 +39,12 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/workout', label: 'Workout', icon: Dumbbell },
-    { path: '/skincare', label: 'Skincare', icon: Sparkles },
-    { path: '/diet', label: 'Diet', icon: Apple },
-    { path: '/health', label: 'Health', icon: Heart },
-    { path: '/order-up', label: 'Order Up', icon: ShoppingCart }
+    { path: '/', label: 'Home', icon: Home, iconClass: '' },
+    { path: '/workout', label: 'Workout', icon: Dumbbell, iconClass: 'header-workout-icon' },
+    { path: '/skincare', label: 'Skincare', icon: Sparkles, iconClass: 'header-skincare-icon' },
+    { path: '/diet', label: 'Diet', icon: Apple, iconClass: 'header-diet-icon' },
+    { path: '/health', label: 'Health', icon: Heart, iconClass: 'header-health-icon' },
+    { path: '/order-up', label: 'Order Up', icon: ShoppingCart, iconClass: '' }
   ];
 
   return (
