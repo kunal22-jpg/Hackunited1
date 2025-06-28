@@ -417,23 +417,71 @@ const Modal = ({ isOpen, onClose, item, type }) => {
 
 // Circular Gallery Component
 const CircularGallery = ({ items, onItemClick, type }) => {
-  const galleryItems = items.map((item) => ({
+  if (!items || items.length === 0) {
+    return (
+      <div className="h-96 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading {type} content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const galleryItems = items.map((item, index) => ({
     src: backgrounds[type] || backgrounds.home,
-    alt: item.title
+    alt: item.title || `${type} item ${index + 1}`
   }));
 
-  return (
-    <div className="h-96 flex items-center justify-center">
-      <FancyCarousel 
-        images={galleryItems}
-        carouselRadius={150}
-        centralImageRadius={80}
-        peripheralImageRadius={50}
-        autoRotateTime={3}
-        onImageClick={(index) => onItemClick(items[index])}
-      />
-    </div>
-  );
+  try {
+    return (
+      <div className="h-96 flex items-center justify-center">
+        <div className="relative">
+          <FancyCarousel 
+            images={galleryItems}
+            carouselRadius={150}
+            centralImageRadius={80}
+            peripheralImageRadius={50}
+            autoRotateTime={3}
+            onImageClick={(index) => onItemClick(items[index])}
+          />
+          {/* Overlay with item titles */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-center">
+              <h3 className="text-white text-lg font-semibold bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
+                Click any image to explore
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering FancyCarousel:', error);
+    // Fallback to grid view
+    return (
+      <div className="h-96 overflow-y-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((item, index) => (
+            <motion.div
+              key={item.id || index}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 cursor-pointer"
+              onClick={() => onItemClick(item)}
+            >
+              <div 
+                className="h-32 bg-cover bg-center rounded-lg mb-4"
+                style={{ backgroundImage: `url(${backgrounds[type] || backgrounds.home})` }}
+              />
+              <h4 className="text-white font-semibold text-lg mb-2">{item.title}</h4>
+              <p className="text-white/80 text-sm line-clamp-2">{item.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 };
 
 // Page Components
