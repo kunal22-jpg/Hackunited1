@@ -529,35 +529,6 @@ const HomePage = () => (
           <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent mb-6 font-['Cinzel_Decorative']">
             Nutracía
           </h1>
-          <p className="text-2xl md:text-3xl text-white/90 mb-8 font-light">
-            Redefine Your Limits with AI-Powered Wellness
-          </p>
-          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto">
-            Experience the future of health with our glassmorphic AI platform that personalizes your workout, skincare, diet, and wellness journey.
-          </p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-            {[
-              { path: '/workout', label: 'Workouts', icon: Dumbbell, color: 'from-red-500 to-orange-500', animation: 'icon-bounce' },
-              { path: '/skincare', label: 'Skincare', icon: Sparkles, color: 'from-pink-500 to-purple-500', animation: 'icon-shake' },
-              { path: '/diet', label: 'Diet Plans', icon: Apple, color: 'from-green-500 to-emerald-500', animation: 'icon-spin' },
-              { path: '/health', label: 'Health', icon: Heart, color: 'from-blue-500 to-cyan-500', animation: 'icon-pulse' }
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link key={item.path} to={item.path}>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`bg-gradient-to-br ${item.color} p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300`}
-                  >
-                    <Icon size={32} className={`text-white mx-auto mb-3 ${item.animation}`} />
-                    <p className="text-white font-semibold">{item.label}</p>
-                  </motion.div>
-                </Link>
-              );
-            })}
-          </div>
         </motion.div>
       </div>
     </div>
