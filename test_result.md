@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the Nutracía wellness backend API comprehensively"
+user_problem_statement: "Change the font of 'Redefine Your Limits' text in header to Pacifico font and add hover animations to workout and skincare section icons"
 
 backend:
   - task: "Basic connectivity - Root endpoint"
