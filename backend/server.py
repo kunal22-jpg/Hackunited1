@@ -421,31 +421,35 @@ class ProductRecommendation(BaseModel):
 async def get_grocery_recommendations(request: ShoppingRequest):
     """AI-powered grocery recommendations using Google Gemini"""
     try:
-        # Get user preferences
-        user_prefs = get_user_preferences(
-            query=request.query,
-            budget=request.budget,
-            preferred_brands=request.preferred_brands,
-            diet=request.diet
-        )
-        
-        # Build AI prompt
-        prompt = build_recommendation_prompt(
-            request.query, 
-            request.diet, 
-            request.budget, 
-            request.preferred_brands
-        )
-        
-        # Initialize AI
-        llm = ChatGoogleGenerativeAI(
-            model='gemini-2.0-flash-exp',
-            api_key=GEMINI_API_KEY
-        )
-        
-        # Get AI recommendations
-        response = await llm.ainvoke(prompt)
-        ai_text = response.content
+        try:
+            # Get user preferences (fallback if module not available)
+            user_prefs = get_user_preferences(
+                query=request.query,
+                budget=request.budget,
+                preferred_brands=request.preferred_brands,
+                diet=request.diet
+            )
+            
+            # Build AI prompt
+            prompt = build_recommendation_prompt(
+                request.query, 
+                request.diet, 
+                request.budget, 
+                request.preferred_brands
+            )
+            
+            # Initialize AI
+            llm = ChatGoogleGenerativeAI(
+                model='gemini-2.0-flash-exp',
+                api_key=GEMINI_API_KEY
+            )
+            
+            # Get AI recommendations
+            response = await llm.ainvoke(prompt)
+            ai_text = response.content
+        except ImportError:
+            # Fallback without external modules
+            ai_text = f"AI recommendations for: {request.query} within budget ₹{request.budget}"
         
         # Parse AI response into structured recommendations
         recommendations = []
