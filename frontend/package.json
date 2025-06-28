@@ -9,6 +9,7 @@
     "framer-motion": "^12.19.2",
     "lucide-react": "^0.525.0",
     "mongoose": "^8.16.1",
+    "motion-utils": "^12.19.0",
     "react": "^19.0.0",
     "react-circular-carousel-ts": "^1.1.8",
     "react-dom": "^19.0.0",
