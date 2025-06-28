@@ -344,12 +344,33 @@ button:focus {
   filter: drop-shadow(0 0 6px #ef4444);
 }
 
+.header-orderup-icon:hover {
+  animation: cartShake 0.6s ease-in-out;
+  color: #f97316 !important;
+  filter: drop-shadow(0 0 8px #f97316);
+}
+
 @keyframes homeGlow {
   0%, 100% {
     transform: scale(1);
   }
   50% {
     transform: scale(1.15) rotate(5deg);
+  }
+}
+
+@keyframes cartShake {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  25% {
+    transform: translateX(-3px) scale(1.1);
+  }
+  50% {
+    transform: translateX(3px) scale(1.15);
+  }
+  75% {
+    transform: translateX(-2px) scale(1.1);
   }
 }
 
