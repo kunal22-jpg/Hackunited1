@@ -310,10 +310,7 @@ async def health_chat_ai(chat_data: HealthChatRequest):
     """Enhanced AI health chatbot with OpenAI integration"""
     try:
         # Initialize emergentintegrations LLM
-        from emergentintegrations.llm.chat import LlmChat, UserMessage, SystemMessage
-        
-        # Create system message with health knowledge
-        system_message = SystemMessage(text=HEALTH_KNOWLEDGE_BASE)
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
         
         # Check if we need user profile for personalized advice
         needs_personal_info = any(keyword in chat_data.message.lower() for keyword in [
@@ -339,16 +336,16 @@ User Profile:
 
 User Question: {chat_data.message}
 
-Provide personalized health advice based on this information.
+Provide personalized health advice based on this information. Give specific recommendations for workouts, skincare routines, or diet plans as appropriate.
 """
         else:
-            context = f"User Question: {chat_data.message}\n\nProvide helpful health advice."
+            context = f"User Question: {chat_data.message}\n\nProvide helpful health and wellness advice."
         
-        # Initialize LLM Chat
+        # Initialize LLM Chat with system message
         chat = LlmChat(
             api_key=os.environ.get('OPENAI_API_KEY'),
             session_id=f"health-chat-{chat_data.user_id}",
-            system_message=system_message
+            system_message=HEALTH_KNOWLEDGE_BASE
         ).with_model("openai", "gpt-4o-mini").with_max_tokens(800)
         
         # Get AI response
