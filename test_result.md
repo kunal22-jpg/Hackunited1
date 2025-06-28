@@ -102,7 +102,33 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Integrate the grocery-agent repository functionality from https://github.com/kunal22-jpg/grocery-agent.git into the existing Order Up section, replacing the placeholder functionality with AI-powered recommendations using Google Gemini while maintaining the transparent theme design."
+user_problem_statement: "Clone the Nutracity health coach repository and create an enhanced chatbot that can answer questions based on the repository content. The chatbot should be positioned in the footer with animations and hover effects, use smart input collection (dropdowns for weight, typing for allergies), maintain the glassmorphism theme, and be powered by OpenAI API to provide personalized health, fitness, skincare, and nutrition advice."
+
+backend:
+  - task: "Enhanced Health Chatbot API Integration"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Created comprehensive health chatbot API endpoint with OpenAI integration using emergentintegrations. Added health knowledge base, user profile collection, and personalized response generation. Includes smart profile requirements detection and fallback responses."
+
+frontend:
+  - task: "Enhanced Health Chatbot UI - Footer Position with Animations"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Created enhanced health chatbot component positioned in footer with beautiful animations and hover effects. Implemented smart input collection with weight dropdowns, allergy text input, and skin concern selection. Maintains glassmorphism theme with proper profile collection flow and quick question suggestions. Includes proper state management for chat/profile modes."
 
 backend:
   - task: "Basic connectivity - Root endpoint"
