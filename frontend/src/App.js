@@ -60,7 +60,7 @@ const Header = () => {
             <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent font-['Cinzel_Decorative']">
               Nutracía
             </div>
-            <div className="text-sm text-white/80 font-light">
+            <div className="text-sm text-white/80 font-light font-['Pacifico']">
               Redefine Your Limits
             </div>
           </Link>
