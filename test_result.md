@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Change the font of 'Redefine Your Limits' text in header to Pacifico font and add hover animations to workout and skincare section icons"
+user_problem_statement: "Integrate the grocery-agent repository functionality from https://github.com/kunal22-jpg/grocery-agent.git into the existing Order Up section, replacing the placeholder functionality with AI-powered recommendations using Google Gemini while maintaining the transparent theme design."
 
 backend:
   - task: "Basic connectivity - Root endpoint"
