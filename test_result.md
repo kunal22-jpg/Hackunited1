@@ -228,6 +228,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "Verified that the 'Redefine Your Limits' text in the header is using the Pacifico font family as required. All header navigation icons have the correct animation classes: header-workout-icon, header-skincare-icon, header-diet-icon, and header-health-icon. Hover animations work correctly on both desktop and mobile: Workout (Dumbbell) icon animates with lifting motion and changes to black, Skincare (Sparkles) icon has sparkle/glow animation with golden color, Diet (Apple) icon grows and turns green, and Health (Heart) icon turns red with heartbeat animation. Home page navigation cards also have their original animations (bounce, shake, spin, pulse) intact."
+      - working: true
+        agent: "testing"
+        comment: "Verified that the 'Redefine Your Limits' subscript under 'Nutracía' in the header is correctly implemented with Pacifico font, smaller size, and proper positioning. The Home icon in the header navigation has the golden/amber glow animation on hover as required. All header navigation icons have their respective animations working correctly: Home (golden glow), Workout (black color and lifting motion), Skincare (golden sparkle/glow), Diet (green color with growth), and Health (red color with heartbeat)."
 
   - task: "Home Page Testing"
     implemented: true
@@ -240,6 +243,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "Home page loads correctly with proper background image. Logo and tagline ('Nutracía' and 'Redefine Your Limits') are displayed correctly. Navigation cards to different sections (Workouts, Skincare, Diet Plans, Health) are visible and clickable."
+      - working: true
+        agent: "testing"
+        comment: "Verified that the home page has been successfully simplified - the descriptive text 'Redefine Your Limits with AI-Powered Wellness' and 'Experience the future of health...' has been removed, the navigation boxes below the main title have been removed, and only the large 'Nutracía' title remains centered on the page with the AI Chatbot still present."
 
   - task: "AI Chatbot Testing"
     implemented: true
