@@ -313,6 +313,86 @@ button:focus {
   animation: iconPulse 0.6s ease-in-out;
 }
 
+/* Header Navigation Icon Animations */
+.header-workout-icon:hover {
+  animation: dumbbellLift 0.8s ease-in-out;
+  color: #000000 !important;
+  transform: rotate(15deg);
+}
+
+.header-skincare-icon:hover {
+  animation: sparkleGlow 1s ease-in-out infinite;
+  color: #ffd700 !important;
+  filter: drop-shadow(0 0 8px #ffd700);
+}
+
+.header-diet-icon:hover {
+  animation: appleGrow 0.6s ease-in-out;
+  color: #22c55e !important;
+  filter: drop-shadow(2px 2px 4px #16a34a);
+}
+
+.header-health-icon:hover {
+  animation: heartBeat 0.8s ease-in-out infinite;
+  color: #ef4444 !important;
+  filter: drop-shadow(0 0 6px #ef4444);
+}
+
+@keyframes dumbbellLift {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(15deg) translateY(-3px);
+  }
+  50% {
+    transform: rotate(10deg) translateY(-6px);
+  }
+  75% {
+    transform: rotate(20deg) translateY(-3px);
+  }
+}
+
+@keyframes sparkleGlow {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 4px #ffd700);
+  }
+  25% {
+    transform: scale(1.1) rotate(90deg);
+    filter: drop-shadow(0 0 8px #ffd700);
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    filter: drop-shadow(0 0 12px #ffd700);
+  }
+  75% {
+    transform: scale(1.1) rotate(270deg);
+    filter: drop-shadow(0 0 8px #ffd700);
+  }
+}
+
+@keyframes appleGrow {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
 @keyframes iconBounce {
   0%, 20%, 60%, 100% {
     transform: translateY(0);
