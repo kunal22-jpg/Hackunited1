@@ -80,7 +80,7 @@ const Header = () => {
                       : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={18} className={item.iconClass} />
                   <span className="font-medium">{item.label}</span>
                 </Link>
               );
