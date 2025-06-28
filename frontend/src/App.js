@@ -39,7 +39,7 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home, iconClass: '' },
+    { path: '/', label: 'Home', icon: Home, iconClass: 'header-home-icon' },
     { path: '/workout', label: 'Workout', icon: Dumbbell, iconClass: 'header-workout-icon' },
     { path: '/skincare', label: 'Skincare', icon: Sparkles, iconClass: 'header-skincare-icon' },
     { path: '/diet', label: 'Diet', icon: Apple, iconClass: 'header-diet-icon' },
