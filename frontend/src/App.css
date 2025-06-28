@@ -314,6 +314,12 @@ button:focus {
 }
 
 /* Header Navigation Icon Animations */
+.header-home-icon:hover {
+  animation: homeGlow 0.6s ease-in-out;
+  color: #fbbf24 !important;
+  filter: drop-shadow(0 0 8px #fbbf24);
+}
+
 .header-workout-icon:hover {
   animation: dumbbellLift 0.8s ease-in-out;
   color: #000000 !important;
@@ -336,6 +342,15 @@ button:focus {
   animation: heartBeat 0.8s ease-in-out infinite;
   color: #ef4444 !important;
   filter: drop-shadow(0 0 6px #ef4444);
+}
+
+@keyframes homeGlow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
 }
 
 @keyframes dumbbellLift {
