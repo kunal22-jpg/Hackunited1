@@ -196,29 +196,128 @@ def test_chat_functionality(user_id):
         return False
 
 def test_grocery_recommendations():
-    """Test the grocery recommendations endpoint"""
-    print("\n=== Testing Grocery Recommendations Endpoint ===")
-    try:
-        query_data = {
-            "diet_type": "high-protein",
-            "allergies": ["peanuts"],
-            "goals": ["muscle building"]
+    """Test the enhanced grocery recommendations endpoint with multiple test cases"""
+    print("\n=== Testing Enhanced Grocery Recommendations Endpoint ===")
+    
+    test_cases = [
+        {
+            "name": "Simple protein supplement query",
+            "payload": {
+                "query": "I need a good whey protein supplement for muscle building",
+                "budget": 2000,
+                "preferred_brands": ["MuscleBlaze", "Optimum Nutrition"],
+                "diet": "high protein"
+            }
+        },
+        {
+            "name": "Vegetable query under budget",
+            "payload": {
+                "query": "Fresh organic vegetables for my weekly meal prep",
+                "budget": 500,
+                "preferred_brands": ["Organic India", "24 Mantra"],
+                "diet": "vegetarian"
+            }
+        },
+        {
+            "name": "Complex query with specific brand preferences",
+            "payload": {
+                "query": "Protein bars and healthy snacks for office from MuscleBlaze",
+                "budget": 1000,
+                "preferred_brands": ["MuscleBlaze", "RiteBite"],
+                "diet": "high protein low carb"
+            }
+        },
+        {
+            "name": "Edge case - empty query",
+            "payload": {
+                "query": "",
+                "budget": 500,
+                "preferred_brands": ["MuscleBlaze"],
+                "diet": "high protein"
+            }
+        },
+        {
+            "name": "Edge case - very low budget",
+            "payload": {
+                "query": "Protein supplements",
+                "budget": 50,
+                "preferred_brands": ["MuscleBlaze"],
+                "diet": "high protein"
+            }
         }
-        
-        response = requests.post(f"{API_URL}/grocery/recommendations", json=query_data)
-        print(f"Status Code: {response.status_code}")
-        data = response.json()
-        print(f"Grocery recommendations: {json.dumps(data, indent=2)}")
-        
-        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
-        assert "recommendations" in data, "Response missing 'recommendations' field"
-        assert isinstance(data["recommendations"], list), "'recommendations' is not a list"
-        
-        print("✅ Grocery recommendations endpoint test passed")
-        return True, data["recommendations"]
-    except Exception as e:
-        print(f"❌ Grocery recommendations endpoint test failed: {str(e)}")
-        return False, None
+    ]
+    
+    all_passed = True
+    all_recommendations = []
+    
+    for test_case in test_cases:
+        print(f"\n--- Testing: {test_case['name']} ---")
+        try:
+            response = requests.post(f"{API_URL}/grocery/recommendations", json=test_case['payload'])
+            print(f"Status Code: {response.status_code}")
+            data = response.json()
+            print(f"Response status: {data.get('status', 'unknown')}")
+            print(f"Found {len(data.get('recommendations', []))} recommendations")
+            
+            # Basic validation
+            assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+            assert "recommendations" in data, "Response missing 'recommendations' field"
+            assert isinstance(data["recommendations"], list), "'recommendations' is not a list"
+            
+            # Validate AI integration
+            assert "ai_response" in data, "Response missing 'ai_response' field - AI integration may not be working"
+            assert data["ai_response"], "AI response is empty - AI integration may not be working"
+            
+            # Validate user preferences
+            assert "user_preferences" in data, "Response missing 'user_preferences' field"
+            assert data["user_preferences"]["query"] == test_case["payload"]["query"], "Query in preferences doesn't match request"
+            
+            # Validate recommendations structure
+            if data["recommendations"]:
+                sample_rec = data["recommendations"][0]
+                print(f"Sample recommendation: {json.dumps(sample_rec, indent=2)}")
+                
+                # Check required fields
+                assert "name" in sample_rec, "Recommendation missing 'name' field"
+                assert "price" in sample_rec, "Recommendation missing 'price' field"
+                assert "description" in sample_rec, "Recommendation missing 'description' field"
+                assert "rating" in sample_rec, "Recommendation missing 'rating' field"
+                assert "platform" in sample_rec, "Recommendation missing 'platform' field"
+                
+                # Check if recommendations are relevant to the query
+                if test_case["payload"]["query"]:
+                    query_terms = test_case["payload"]["query"].lower().split()
+                    found_relevance = False
+                    
+                    # Check if any query term appears in name or description
+                    for term in query_terms:
+                        if len(term) > 3:  # Only check meaningful terms
+                            if term in sample_rec["name"].lower() or term in sample_rec["description"].lower():
+                                found_relevance = True
+                                break
+                    
+                    if not found_relevance and "protein" in test_case["payload"]["diet"].lower():
+                        # For protein diet, check if protein info is available
+                        if sample_rec.get("protein"):
+                            found_relevance = True
+                    
+                    assert found_relevance, f"Recommendations don't seem relevant to the query: {test_case['payload']['query']}"
+                
+                # Save recommendations for cart creation test
+                if not all_recommendations and len(data["recommendations"]) >= 2:
+                    all_recommendations = data["recommendations"]
+            
+            print(f"✅ Test case '{test_case['name']}' passed")
+        except Exception as e:
+            print(f"❌ Test case '{test_case['name']}' failed: {str(e)}")
+            all_passed = False
+    
+    if all_passed:
+        print("\n✅ All grocery recommendation test cases passed")
+    else:
+        print("\n❌ Some grocery recommendation test cases failed")
+    
+    return all_passed, all_recommendations
 
 def test_grocery_cart_creation(recommendations):
     """Test the grocery cart creation endpoint"""
