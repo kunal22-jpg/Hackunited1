@@ -882,7 +882,7 @@ const GroceryAgent = () => {
 
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold text-white mb-4">Order Up</h1>
-            <p className="text-xl text-white/80">AI-Powered Smart Shopping with Google Gemini</p>
+            <p className="text-xl text-white/80">AI-Powered Smart Shopping with NUTRACITY AI</p>
           </div>
 
           {currentStep === 'input' && (
