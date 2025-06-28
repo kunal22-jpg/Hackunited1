@@ -116,7 +116,7 @@ const Header = () => {
                     onClick={() => setIsMenuOpen(false)}
                     className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all"
                   >
-                    <Icon size={20} />
+                    <Icon size={20} className={item.iconClass} />
                     <span>{item.label}</span>
                   </Link>
                 );
