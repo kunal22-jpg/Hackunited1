@@ -167,18 +167,15 @@ body {
 }
 
 /* Circular Gallery Custom Styles */
-.FancyCarousel {
+.circular-gallery {
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
 }
 
-.FancyCarousel img {
-  border-radius: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+.circular-gallery .carousel-item {
   transition: all 0.3s ease;
 }
 
-.FancyCarousel img:hover {
-  border-color: rgba(255, 255, 255, 0.8);
+.circular-gallery .carousel-item:hover {
   transform: scale(1.1);
 }
 
