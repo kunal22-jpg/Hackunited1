@@ -16,7 +16,7 @@ import {
   User,
   MessageCircle
 } from 'lucide-react';
-import { FancyCarousel } from 'react-fancy-circular-carousel';
+import FancyCarousel from 'react-fancy-circular-carousel';
 import 'react-fancy-circular-carousel/FancyCarousel.css';
 import './App.css';
 import axios from 'axios';
