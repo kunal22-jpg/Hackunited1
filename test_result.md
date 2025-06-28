@@ -189,29 +189,29 @@ backend:
         agent: "testing"
         comment: "Chat endpoint (/api/chat) is working correctly. Returns a placeholder response and stores the message in the database. Note: This is using a placeholder response as the OpenAI integration is pending an API key."
 
-  - task: "Grocery agent - Recommendations endpoint"
+  - task: "Enhanced Grocery Agent Integration - Backend AI endpoints"
     implemented: true
-    working: true
+    working: "needs_testing"
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
+    priority: "high"
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "testing"
-        comment: "Grocery recommendations endpoint (/api/grocery/recommendations) is working correctly. Returns placeholder recommendations as expected."
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Integrated advanced grocery agent functionality from external repository. Added Google Gemini AI integration with langchain-google-genai, updated /api/grocery/recommendations endpoint with sophisticated AI-powered product recommendations, enhanced /api/grocery/create-cart endpoint, added config and modules for user preferences and prompt building. API key configured from external repo."
 
-  - task: "Grocery agent - Cart creation endpoint"
+  - task: "Enhanced Grocery Agent Integration - Frontend UI"
     implemented: true
-    working: true
-    file: "/app/backend/server.py"
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
     stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
+    priority: "high"
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "testing"
-        comment: "Grocery cart creation endpoint (/api/grocery/create-cart) is working correctly. Successfully creates a cart with the selected items and calculates the total cost."
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Enhanced GroceryAgent component with AI integration while maintaining beautiful transparent theme. Added brand selection, diet preferences, enhanced product cards with protein info, improved loading states, AI analysis display, and better cart interface. Maintains existing glassmorphism design language."
 
 frontend:
   - task: "Navigation & Header Testing"
