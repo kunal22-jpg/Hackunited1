@@ -320,18 +320,28 @@ def test_grocery_recommendations():
     return all_passed, all_recommendations
 
 def test_grocery_cart_creation(recommendations):
-    """Test the grocery cart creation endpoint"""
-    print("\n=== Testing Grocery Cart Creation Endpoint ===")
-    if not recommendations:
-        print("❌ Grocery cart creation test skipped: No recommendations available")
+    """Test the enhanced grocery cart creation endpoint"""
+    print("\n=== Testing Enhanced Grocery Cart Creation Endpoint ===")
+    if not recommendations or len(recommendations) < 2:
+        print("❌ Grocery cart creation test skipped: Not enough recommendations available")
         return False
     
     try:
-        # Select all recommendations for the cart
-        for item in recommendations:
-            item["selected"] = True
+        # Select only some recommendations for the cart to test partial selection
+        selected_products = []
+        for i, item in enumerate(recommendations):
+            # Select every other item
+            item_copy = item.copy()
+            item_copy["selected"] = (i % 2 == 0)
+            selected_products.append(item_copy)
         
-        response = requests.post(f"{API_URL}/grocery/create-cart", json=recommendations)
+        # Ensure at least one item is selected
+        if not any(item["selected"] for item in selected_products):
+            selected_products[0]["selected"] = True
+        
+        print(f"Sending {len(selected_products)} products to cart, with {sum(1 for item in selected_products if item['selected'])} selected")
+        
+        response = requests.post(f"{API_URL}/grocery/create-cart", json=selected_products)
         print(f"Status Code: {response.status_code}")
         data = response.json()
         print(f"Created cart: {json.dumps(data, indent=2)}")
@@ -340,11 +350,27 @@ def test_grocery_cart_creation(recommendations):
         assert "cart_items" in data, "Response missing 'cart_items' field"
         assert "total_cost" in data, "Response missing 'total_cost' field"
         assert "status" in data, "Response missing 'status' field"
+        assert data["status"] == "cart_created", "Cart status is not 'cart_created'"
         
-        print("✅ Grocery cart creation endpoint test passed")
+        # Verify only selected items are in the cart
+        selected_count = sum(1 for item in selected_products if item["selected"])
+        assert len(data["cart_items"]) == selected_count, f"Expected {selected_count} items in cart, got {len(data['cart_items'])}"
+        
+        # Verify total cost calculation
+        expected_total = 0
+        for item in selected_products:
+            if item["selected"]:
+                price_str = item["price"]
+                price_num = int(price_str.replace('₹', '').replace(',', ''))
+                expected_total += price_num
+        
+        assert data["total_cost"] == expected_total, f"Expected total cost {expected_total}, got {data['total_cost']}"
+        assert data["item_count"] == selected_count, f"Expected item count {selected_count}, got {data['item_count']}"
+        
+        print("✅ Enhanced grocery cart creation endpoint test passed")
         return True
     except Exception as e:
-        print(f"❌ Grocery cart creation endpoint test failed: {str(e)}")
+        print(f"❌ Enhanced grocery cart creation endpoint test failed: {str(e)}")
         return False
 
 def run_all_tests():
