@@ -475,10 +475,11 @@ def run_all_tests():
     # Test chat functionality
     results["chat_functionality"] = test_chat_functionality(user_id)
     
-    # Test grocery agent
+    # Test enhanced grocery agent
     grocery_recommendations_result, recommendations = test_grocery_recommendations()
     results["grocery_recommendations"] = grocery_recommendations_result
     results["grocery_cart_creation"] = test_grocery_cart_creation(recommendations)
+    results["grocery_error_handling"] = test_grocery_error_handling()
     
     # Print summary
     print("\n=== Test Summary ===")
