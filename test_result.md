@@ -312,8 +312,7 @@ test_plan:
     - "Section Pages Testing"
     - "Order Up Page Testing"
     - "Responsive Design Testing"
-  stuck_tasks:
-    - "Section Pages Testing"
+  stuck_tasks: []
   test_all: true
   test_priority: "high_first"
 
