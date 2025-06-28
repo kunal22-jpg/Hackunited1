@@ -921,44 +921,6 @@ const GroceryAgent = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-white/90 mb-2">
-                      🥗 Diet Preference
-                    </label>
-                    <select
-                      value={diet}
-                      onChange={(e) => setDiet(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 text-white"
-                    >
-                      {dietOptions.map(option => (
-                        <option key={option} value={option} className="bg-gray-800">
-                          {option.charAt(0).toUpperCase() + option.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white/90 mb-2">
-                      🏷️ Preferred Brands
-                    </label>
-                    <select
-                      multiple
-                      value={preferredBrands}
-                      onChange={(e) => setPreferredBrands(Array.from(e.target.selectedOptions, option => option.value))}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 text-white h-20"
-                    >
-                      {brandOptions.map(brand => (
-                        <option key={brand} value={brand} className="bg-gray-800">
-                          {brand}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-white/60 mt-1">Hold Ctrl/Cmd to select multiple brands</p>
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-white/90 mb-2">
                     💰 Budget: ₹{budget}
@@ -988,7 +950,7 @@ const GroceryAgent = () => {
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span>🤖 AI is analyzing your request...</span>
                     </div>
-                  ) : '🤖 Get AI Recommendations with Gemini'}
+                  ) : '🤖 Get AI Recommendations'}
                 </button>
               </div>
             </div>
