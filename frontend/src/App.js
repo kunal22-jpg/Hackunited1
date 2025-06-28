@@ -427,44 +427,49 @@ const CircularGallery = ({ items, onItemClick, type }) => {
     );
   }
 
-  // Create carousel items with titles and images
-  const carouselItems = items.map((item, index) => ({
-    content: (
-      <div className="text-center cursor-pointer" onClick={() => onItemClick(item)}>
-        <div 
-          className="w-24 h-24 bg-cover bg-center rounded-full border-4 border-white/30 hover:border-white/80 transition-all duration-300 transform hover:scale-110 shadow-lg"
-          style={{ 
-            backgroundImage: `url(${backgrounds[type] || backgrounds.home})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-        <h4 className="text-white font-semibold text-sm mt-3 max-w-20 mx-auto truncate bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-          {item.title}
-        </h4>
-      </div>
-    )
+  // Create a custom slide component for each item
+  const SlideComponent = ({ content, onClick }) => (
+    <div className="text-center cursor-pointer w-full h-full" onClick={onClick}>
+      <div 
+        className="w-20 h-20 bg-cover bg-center rounded-full border-4 border-white/30 hover:border-white/80 transition-all duration-300 transform hover:scale-110 shadow-lg mx-auto"
+        style={{ 
+          backgroundImage: `url(${backgrounds[type] || backgrounds.home})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      />
+      <h4 className="text-white font-semibold text-xs mt-2 max-w-20 mx-auto truncate bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
+        {content.title}
+      </h4>
+    </div>
+  );
+
+  // Create media pool for the carousel
+  const mediaPool = items.map((item, index) => ({
+    id: item.id || index,
+    content: item,
+    onClick: () => onItemClick(item)
   }));
 
   try {
     return (
       <div className="h-96 flex items-center justify-center">
-        <div className="relative">
+        <div className="relative w-full max-w-md">
           <CircularCarousel
-            items={carouselItems}
-            radius={120}
-            itemRadius={50}
-            itemsDisplayed={Math.min(items.length, 6)}
-            autoRotate={true}
-            autoRotateTime={4000}
-            rotationDirection="clockwise"
+            type={CarouselTypes.STANDARD_2D}
+            mediaPool={mediaPool}
+            slideComponent={({ content, onClick }) => <SlideComponent content={content} onClick={onClick} />}
+            slideWidth={100}
+            slideGap={10}
+            aspectRatio="1/1"
+            customControls={false}
             className="circular-gallery"
           />
           
           {/* Center instructions */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center">
-              <h3 className="text-white text-lg font-semibold bg-black/60 px-4 py-2 rounded-lg backdrop-blur-sm">
+              <h3 className="text-white text-sm font-semibold bg-black/60 px-3 py-2 rounded-lg backdrop-blur-sm">
                 Click any item to explore
               </h3>
             </div>
