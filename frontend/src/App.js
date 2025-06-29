@@ -1013,6 +1013,9 @@ const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [personalizedWorkouts, setPersonalizedWorkouts] = useState([]);
+  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
+  const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {
     fetchWorkouts();
@@ -1025,6 +1028,41 @@ const WorkoutPage = () => {
     } catch (error) {
       console.error('Error fetching workouts:', error);
     }
+  };
+
+  const generatePersonalizedRecommendations = async () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!userData.id) {
+      alert('Please login to generate personalized recommendations');
+      return;
+    }
+
+    setIsGeneratingPersonalized(true);
+    try {
+      const personalizedRequest = {
+        user_id: userData.id,
+        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
+        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
+        wellness_goals: userData.goals || ['general fitness'],
+        health_conditions: userData.chronic_conditions || [],
+        age: userData.age || 25,
+        gender: userData.gender || 'male',
+        fitness_level: userData.fitness_level || 'beginner'
+      };
+
+      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
+      
+      if (response.data.success) {
+        setPersonalizedWorkouts(response.data.recommendations.workout || []);
+        setShowPersonalized(true);
+      } else {
+        alert('Failed to generate personalized recommendations. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error generating personalized recommendations:', error);
+      alert('Error generating recommendations. Please try again.');
+    }
+    setIsGeneratingPersonalized(false);
   };
 
   const handleWorkoutClick = (workout) => {
