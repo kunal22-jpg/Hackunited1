@@ -1083,16 +1083,16 @@ def test_personalized_wellness_recommendations_alt():
     """Test the personalized wellness recommendations API endpoint with alternative data"""
     print("\n=== Testing Personalized Wellness Recommendations Endpoint (Alternative Data) ===")
     try:
-        # Alternative test data
+        # Alternative test data - significantly different from the first test
         request_data = {
-            "user_id": "test-user-456",
-            "weight": "85 kg", 
+            "user_id": "test-user-alt",
+            "weight": "62 kg", 
             "allergies": "gluten, shellfish",
             "wellness_goals": ["weight loss", "stress reduction"],
             "health_conditions": ["high blood pressure"],
             "age": 42,
             "gender": "female",
-            "fitness_level": "beginner"
+            "fitness_level": "advanced"
         }
         
         print(f"Sending request with alternative data: {json.dumps(request_data, indent=2)}")
@@ -1137,6 +1137,19 @@ def test_personalized_wellness_recommendations_alt():
                 assert "youtube_video" in rec, f"{category} recommendation missing 'youtube_video' field"
                 assert "product_links" in rec, f"{category} recommendation missing 'product_links' field"
                 assert isinstance(rec["product_links"], list), f"'product_links' in {category} recommendation is not a list"
+                
+                # Check for personalization based on user data
+                if category == "workout":
+                    assert "advanced" in rec["description"].lower() or "advanced" in rec["level"].lower(), \
+                        f"Workout recommendation doesn't mention user's fitness level (advanced)"
+                elif category == "diet":
+                    assert "gluten" in rec["description"].lower() or "shellfish" in rec["description"].lower() or \
+                           "allergies" in rec["description"].lower(), \
+                        f"Diet recommendation doesn't address user's allergies (gluten, shellfish)"
+                elif category == "health":
+                    assert "blood pressure" in rec["description"].lower() or \
+                           "hypertension" in rec["description"].lower(), \
+                        f"Health recommendation doesn't address user's health condition (high blood pressure)"
         
         # Check if health category has motivational quotes
         if recommendations["health"] and len(recommendations["health"]) > 0:
@@ -1144,6 +1157,18 @@ def test_personalized_wellness_recommendations_alt():
                 assert "motivational_quote" in health_rec, "Health recommendation missing 'motivational_quote' field"
                 assert health_rec["motivational_quote"], "Health recommendation has empty motivational quote"
                 print(f"Health recommendation includes motivational quote: {health_rec['motivational_quote']}")
+        
+        # Check YouTube links and product links format
+        for category, recs in recommendations.items():
+            for rec in recs:
+                # Validate YouTube link format
+                assert rec["youtube_video"].startswith("https://www.youtube.com"), \
+                    f"YouTube link in {category} recommendation is not properly formatted: {rec['youtube_video']}"
+                
+                # Validate product links format
+                for link in rec["product_links"]:
+                    assert link.startswith("https://"), \
+                        f"Product link in {category} recommendation is not properly formatted: {link}"
         
         print("✅ Personalized wellness recommendations endpoint test (alternative data) passed")
         return True
