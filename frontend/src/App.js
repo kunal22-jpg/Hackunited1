@@ -926,50 +926,204 @@ const Modal = ({ isOpen, onClose, item, type }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="text-white">
-                    <div className="text-2xl font-bold">{item.calories}</div>
-                    <div className="text-sm text-white/80">Calories</div>
+                    <div className="text-2xl font-bold">{item.duration || (item.prep_time ? `${item.prep_time} min` : 'N/A')}</div>
+                    <div className="text-sm text-white/80">{item.duration ? 'Duration' : 'Prep Time'}</div>
                   </div>
                 </div>
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="text-white">
-                    <div className="text-2xl font-bold">{item.prep_time}</div>
-                    <div className="text-sm text-white/80">Minutes</div>
+                    <div className="text-2xl font-bold">{item.level || (item.calories || 'N/A')}</div>
+                    <div className="text-sm text-white/80">{item.level ? 'Difficulty' : 'Calories'}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Ingredients:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {item.ingredients?.map((ingredient, idx) => (
-                    <span key={idx} className="bg-green-500/20 text-green-200 px-3 py-1 rounded-full text-sm">
-                      {ingredient}
-                    </span>
-                  ))}
+              {/* Requirements Section (Enhanced for AI content) */}
+              {(item.requirements || item.ingredients) && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">
+                    {item.requirements ? 'Requirements:' : 'Ingredients:'}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(item.requirements || item.ingredients)?.map((req, idx) => (
+                      <span key={idx} className="bg-green-500/20 text-green-200 px-3 py-1 rounded-full text-sm">
+                        {req}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Steps Section (New for AI content) */}
+              {item.steps && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Preparation Steps:</h4>
+                  <ol className="space-y-2">
+                    {item.steps.map((step, idx) => (
+                      <li key={idx} className="text-white/80">{idx + 1}. {step}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {/* YouTube Video Section */}
+              {item.youtube_video && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <Play size={18} />
+                    <span>Recipe Tutorial</span>
+                  </h4>
+                  <a
+                    href={item.youtube_video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Play size={16} />
+                    <span>Watch Recipe on YouTube</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Product Links Section */}
+              {item.product_links && item.product_links.length > 0 && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span>🛒</span>
+                    <span>Get Ingredients</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {item.product_links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
+                      >
+                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'Shop Ingredients'}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {type === 'health' && (
             <div className="space-y-4">
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Daily Routine:</h4>
-                <ul className="space-y-2">
-                  {item.daily_routine?.map((routine, idx) => (
-                    <li key={idx} className="text-white/80">• {routine}</li>
-                  ))}
-                </ul>
+              {/* Duration and Level */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-white">
+                    <div className="text-lg font-bold">{item.duration || 'Daily'}</div>
+                    <div className="text-sm text-white/80">Duration</div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-white">
+                    <div className="text-lg font-bold">{item.level || 'Personalized'}</div>
+                    <div className="text-sm text-white/80">Level</div>
+                  </div>
+                </div>
               </div>
+
+              {/* Requirements Section */}
+              {item.requirements && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Requirements:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {item.requirements.map((req, idx) => (
+                      <span key={idx} className="bg-blue-500/20 text-blue-200 px-3 py-1 rounded-full text-sm">
+                        {req}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Steps Section (Enhanced for AI content) */}
+              {(item.steps || item.daily_routine) && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">
+                    {item.steps ? 'Daily Steps:' : 'Daily Routine:'}
+                  </h4>
+                  <ol className="space-y-2">
+                    {(item.steps || item.daily_routine)?.map((step, idx) => (
+                      <li key={idx} className="text-white/80">
+                        {item.steps ? `${idx + 1}. ${step}` : `• ${step}`}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
               
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Lifestyle Tips:</h4>
-                <ul className="space-y-2">
-                  {item.lifestyle_tips?.map((tip, idx) => (
-                    <li key={idx} className="text-white/80">• {tip}</li>
-                  ))}
-                </ul>
-              </div>
+              {/* Lifestyle Tips */}
+              {item.lifestyle_tips && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Lifestyle Tips:</h4>
+                  <ul className="space-y-2">
+                    {item.lifestyle_tips.map((tip, idx) => (
+                      <li key={idx} className="text-white/80">• {tip}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Motivational Quote (New for AI content) */}
+              {item.motivational_quote && (
+                <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-lg p-4 border border-pink-500/30">
+                  <h4 className="font-semibold text-white mb-2 flex items-center space-x-2">
+                    <span>💪</span>
+                    <span>Motivation</span>
+                  </h4>
+                  <p className="text-white/90 font-medium italic text-center">
+                    "{item.motivational_quote}"
+                  </p>
+                </div>
+              )}
+
+              {/* YouTube Video Section */}
+              {item.youtube_video && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <Play size={18} />
+                    <span>Health Management Guide</span>
+                  </h4>
+                  <a
+                    href={item.youtube_video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Play size={16} />
+                    <span>Watch on YouTube</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Product Links Section */}
+              {item.product_links && item.product_links.length > 0 && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span>🏥</span>
+                    <span>Health Products</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {item.product_links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm transition-colors"
+                      >
+                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'Health Products'}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
