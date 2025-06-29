@@ -1287,7 +1287,7 @@ const HealthPage = () => {
       />
       
       <div className="relative z-10 pt-20 px-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-screen-2xl mx-auto">
           <div className="text-center mb-3">
             <h1 className="text-3xl font-bold text-white mb-4">Health Conditions</h1>
             <p className="text-lg text-white/80">Personalized support for your health journey</p>
