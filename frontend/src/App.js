@@ -1061,7 +1061,7 @@ const WorkoutPage = () => {
           </div>
 
           {workouts.length > 0 && (
-            <CircularGallery 
+            <CircularGalleryOGL 
               items={workouts}
               onItemClick={handleWorkoutClick}
               type="workout"
