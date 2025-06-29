@@ -814,36 +814,90 @@ const Modal = ({ isOpen, onClose, item, type }) => {
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="flex items-center space-x-2 text-white">
                     <Clock size={18} />
-                    <span>{item.duration} minutes</span>
+                    <span>{item.duration || `${item.duration} minutes`}</span>
                   </div>
                 </div>
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="flex items-center space-x-2 text-white">
                     <Star size={18} />
-                    <span className="capitalize">{item.difficulty}</span>
+                    <span className="capitalize">{item.level || item.difficulty}</span>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Muscle Groups:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {item.muscle_groups?.map((group, idx) => (
-                    <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm capitalize">
-                      {group}
-                    </span>
-                  ))}
+              {/* Requirements Section (Enhanced for AI content) */}
+              {(item.requirements || item.muscle_groups) && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">
+                    {item.requirements ? 'Requirements:' : 'Muscle Groups:'}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(item.requirements || item.muscle_groups)?.map((req, idx) => (
+                      <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm capitalize">
+                        {req}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Instructions:</h4>
-                <ul className="space-y-2">
-                  {item.instructions?.map((instruction, idx) => (
-                    <li key={idx} className="text-white/80">• {instruction}</li>
-                  ))}
-                </ul>
-              </div>
+              {/* Steps/Instructions Section (Enhanced for AI content) */}
+              {(item.steps || item.instructions) && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">
+                    {item.steps ? 'Steps:' : 'Instructions:'}
+                  </h4>
+                  <ol className="space-y-2">
+                    {(item.steps || item.instructions)?.map((step, idx) => (
+                      <li key={idx} className="text-white/80">
+                        {item.steps ? `${idx + 1}. ${step}` : `• ${step}`}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {/* YouTube Video Section (New for AI content) */}
+              {item.youtube_video && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <Play size={18} />
+                    <span>Tutorial Video</span>
+                  </h4>
+                  <a
+                    href={item.youtube_video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Play size={16} />
+                    <span>Watch on YouTube</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Product Links Section (New for AI content) */}
+              {item.product_links && item.product_links.length > 0 && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span>🛒</span>
+                    <span>Recommended Products</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {item.product_links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
+                      >
+                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'View Products'}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
