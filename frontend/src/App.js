@@ -1701,7 +1701,7 @@ const GetStartedPage = () => {
         ...formData,
         wellnessGoals: currentGoals.filter(g => g !== goal)
       });
-    } else if (currentGoals.length < 3) {
+    } else {
       setFormData({
         ...formData,
         wellnessGoals: [...currentGoals, goal]
