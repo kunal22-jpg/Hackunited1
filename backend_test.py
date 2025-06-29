@@ -1047,6 +1047,43 @@ def test_personalized_wellness_recommendations():
                 elif category == "diet" and "peanuts" in rec["description"].lower():
                     print(f"✓ Diet recommendation correctly addresses user's allergies (peanuts)")
         
+        # Enhanced validation for workout recommendations
+        workout_recs = recommendations["workout"]
+        print("\n=== Enhanced Validation for Workout Recommendations ===")
+        for i, workout in enumerate(workout_recs):
+            print(f"\nValidating workout recommendation {i+1}: {workout.get('title', 'Unknown')}")
+            
+            # Check workout-specific fields
+            assert "duration" in workout, "Workout recommendation missing 'duration' field"
+            assert "level" in workout, "Workout recommendation missing 'level' field"
+            assert "requirements" in workout, "Workout recommendation missing 'requirements' field"
+            assert isinstance(workout["requirements"], list), "'requirements' in workout recommendation is not a list"
+            
+            # Validate content relevance to user profile
+            assert workout["level"].lower() in ["beginner", "beginner to intermediate", "all levels", "suitable for beginners"], \
+                f"Workout level '{workout['level']}' doesn't match user's beginner fitness level"
+            
+            # Check if workout addresses user's goals
+            goals_addressed = False
+            for goal in request_data["wellness_goals"]:
+                if goal.lower() in workout["description"].lower() or goal.lower() in workout["title"].lower():
+                    goals_addressed = True
+                    print(f"✓ Workout recommendation addresses user goal: {goal}")
+                    break
+            
+            # Check if workout addresses user's health conditions
+            if any(condition.lower() in workout["description"].lower() for condition in request_data["health_conditions"]):
+                print(f"✓ Workout recommendation addresses user's health condition: {request_data['health_conditions'][0]}")
+            
+            # Validate YouTube link format for workout videos
+            assert workout["youtube_video"].startswith("https://www.youtube.com"), \
+                f"YouTube link in workout recommendation is not properly formatted: {workout['youtube_video']}"
+            
+            # Validate steps are detailed enough
+            assert len(workout["steps"]) >= 3, f"Workout steps should have at least 3 items, found {len(workout['steps'])}"
+            
+            print(f"✓ Workout recommendation {i+1} validated successfully")
+        
         # Check if health category has motivational quotes
         if recommendations["health"] and len(recommendations["health"]) > 0:
             for health_rec in recommendations["health"]:
