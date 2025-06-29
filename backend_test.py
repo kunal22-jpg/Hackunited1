@@ -357,8 +357,8 @@ def test_auth_validation():
     return all_passed
 
 def test_workouts_endpoint():
-    """Test the workouts endpoint"""
-    print("\n=== Testing Workouts Endpoint ===")
+    """Test the workouts endpoint with enhanced validation for exercise data"""
+    print("\n=== Testing Workouts Endpoint with Enhanced Exercise Data ===")
     try:
         response = requests.get(f"{API_URL}/workouts")
         print(f"Status Code: {response.status_code}")
@@ -366,17 +366,59 @@ def test_workouts_endpoint():
         print(f"Found {len(data)} workouts")
         assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
         assert isinstance(data, list), "Response is not a list"
-        if len(data) > 0:
-            print(f"Sample workout: {json.dumps(data[0], indent=2)}")
-            # Validate workout structure
-            assert "id" in data[0], "Workout missing 'id' field"
-            assert "title" in data[0], "Workout missing 'title' field"
-            assert "description" in data[0], "Workout missing 'description' field"
-        print("✅ Workouts endpoint test passed")
-        return True
+        assert len(data) >= 3, f"Expected at least 3 workout plans, found {len(data)}"
+        
+        # Validate each workout has the required fields and proper structure
+        required_fields = [
+            "id", "title", "description", "muscle_groups", "equipment", 
+            "duration", "difficulty", "video_url", "instructions"
+        ]
+        
+        for i, workout in enumerate(data):
+            print(f"\nValidating workout {i+1}: {workout.get('title', 'Unknown')}")
+            
+            # Check all required fields exist
+            for field in required_fields:
+                assert field in workout, f"Workout missing '{field}' field"
+            
+            # Validate field types
+            assert isinstance(workout["id"], str), "Workout 'id' is not a string"
+            assert isinstance(workout["title"], str), "Workout 'title' is not a string"
+            assert isinstance(workout["description"], str), "Workout 'description' is not a string"
+            assert isinstance(workout["muscle_groups"], list), "Workout 'muscle_groups' is not a list"
+            assert isinstance(workout["equipment"], list), "Workout 'equipment' is not a list"
+            assert isinstance(workout["duration"], int), "Workout 'duration' is not an integer"
+            assert isinstance(workout["difficulty"], str), "Workout 'difficulty' is not a string"
+            assert isinstance(workout["video_url"], str), "Workout 'video_url' is not a string"
+            assert isinstance(workout["instructions"], list), "Workout 'instructions' is not a list"
+            
+            # Validate content
+            assert len(workout["title"]) > 0, "Workout title is empty"
+            assert len(workout["description"]) > 0, "Workout description is empty"
+            assert len(workout["muscle_groups"]) > 0, "Workout has no muscle groups"
+            assert workout["duration"] > 0, "Workout duration must be positive"
+            assert workout["difficulty"] in ["beginner", "intermediate", "advanced"], f"Invalid difficulty: {workout['difficulty']}"
+            assert workout["video_url"].startswith("http"), "Video URL is not properly formatted"
+            assert len(workout["instructions"]) > 0, "Workout has no instructions"
+            
+            print(f"✓ Workout {i+1} validated successfully")
+            
+            # Print detailed info for the first workout
+            if i == 0:
+                print(f"Sample workout details:")
+                print(f"  Title: {workout['title']}")
+                print(f"  Description: {workout['description']}")
+                print(f"  Muscle Groups: {', '.join(workout['muscle_groups'])}")
+                print(f"  Equipment: {', '.join(workout['equipment'])}")
+                print(f"  Duration: {workout['duration']} minutes")
+                print(f"  Difficulty: {workout['difficulty']}")
+                print(f"  Instructions: {len(workout['instructions'])} steps")
+        
+        print("\n✅ Workouts endpoint test passed with enhanced validation")
+        return True, data
     except Exception as e:
         print(f"❌ Workouts endpoint test failed: {str(e)}")
-        return False
+        return False, None
 
 def test_skincare_endpoint():
     """Test the skincare endpoint"""
