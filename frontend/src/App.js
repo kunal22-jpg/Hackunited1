@@ -16,7 +16,7 @@ import {
   User,
   MessageCircle
 } from 'lucide-react';
-import { Carousel as CircularCarousel } from 'react-circular-carousel-ts';
+import CircularGallery from './CircularGallery';
 import './App.css';
 import axios from 'axios';
 
