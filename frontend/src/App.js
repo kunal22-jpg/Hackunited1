@@ -1556,17 +1556,75 @@ const SkincarePage = () => {
       
       <div className="relative z-10 pt-20 px-6">
         <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-3">
+          <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-white mb-4">Skincare Routines</h1>
             <p className="text-lg text-white/80">Glow with science-backed skincare</p>
+            
+            {/* Personalized Recommendations Button */}
+            <div className="mt-6 mb-6">
+              <button
+                onClick={generatePersonalizedRecommendations}
+                disabled={isGeneratingPersonalized}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
+              >
+                {isGeneratingPersonalized ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>🤖 AI is creating your personalized skincare...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🤖</span>
+                    <span>Generate My Personalized Skincare</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Toggle between Regular and Personalized */}
+            {personalizedSkincare.length > 0 && (
+              <div className="flex justify-center space-x-4 mb-4">
+                <button
+                  onClick={() => setShowPersonalized(false)}
+                  className={`px-6 py-2 rounded-lg transition-all ${
+                    !showPersonalized 
+                      ? 'bg-white/20 text-white border border-white/40' 
+                      : 'bg-white/10 text-white/70 hover:bg-white/15'
+                  }`}
+                >
+                  General Routines
+                </button>
+                <button
+                  onClick={() => setShowPersonalized(true)}
+                  className={`px-6 py-2 rounded-lg transition-all ${
+                    showPersonalized 
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                      : 'bg-white/10 text-white/70 hover:bg-white/15'
+                  }`}
+                >
+                  My AI Skincare ({personalizedSkincare.length})
+                </button>
+              </div>
+            )}
           </div>
 
-          {routines.length > 0 && (
+          {/* Display Skincare Routines */}
+          {showPersonalized && personalizedSkincare.length > 0 ? (
+            <CircularGalleryOGL 
+              items={personalizedSkincare}
+              onItemClick={handleRoutineClick}
+              type="skincare"
+            />
+          ) : routines.length > 0 ? (
             <CircularGalleryOGL 
               items={routines}
               onItemClick={handleRoutineClick}
               type="skincare"
             />
+          ) : (
+            <div className="text-center text-white/60 py-8">
+              <p>Loading skincare routines...</p>
+            </div>
           )}
         </div>
       </div>
