@@ -1977,94 +1977,92 @@ const GetStartedPage = () => {
 
       case 2:
         return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-white mb-4">Vital Stats</h3>
+          <div className="space-y-8">
+            <h3 className="text-xl font-semibold text-white mb-6">Vital Stats</h3>
             
-            {/* Age and Gender Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">Age</label>
+            {/* Age Section */}
+            <div className="w-full">
+              <label className="block text-white/80 text-sm font-medium mb-3">Age</label>
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                placeholder="Age in years"
+                min="1"
+                max="120"
+                required
+              />
+            </div>
+
+            {/* Gender Section */}
+            <div className="w-full">
+              <label className="block text-white/80 text-sm font-medium mb-3">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                required
+              >
+                <option value="" className="bg-gray-800">Select gender</option>
+                <option value="male" className="bg-gray-800">Male</option>
+                <option value="female" className="bg-gray-800">Female</option>
+                <option value="other" className="bg-gray-800">Other</option>
+                <option value="prefer-not-to-say" className="bg-gray-800">Prefer not to say</option>
+              </select>
+            </div>
+
+            {/* Height Section */}
+            <div className="w-full">
+              <label className="block text-white/80 text-sm font-medium mb-3">Height</label>
+              <div className="flex space-x-3">
                 <input
                   type="number"
-                  name="age"
-                  value={formData.age}
+                  name="height"
+                  value={formData.height}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                  placeholder="Age in years"
-                  min="1"
-                  max="120"
+                  className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  placeholder="Height"
+                  step="0.1"
                   required
                 />
-              </div>
-
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">Gender</label>
                 <select
-                  name="gender"
-                  value={formData.gender}
+                  name="heightUnit"
+                  value={formData.heightUnit}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                  required
+                  className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
                 >
-                  <option value="" className="bg-gray-800">Select gender</option>
-                  <option value="male" className="bg-gray-800">Male</option>
-                  <option value="female" className="bg-gray-800">Female</option>
-                  <option value="other" className="bg-gray-800">Other</option>
-                  <option value="prefer-not-to-say" className="bg-gray-800">Prefer not to say</option>
+                  <option value="cm" className="bg-gray-800">cm</option>
+                  <option value="feet" className="bg-gray-800">feet</option>
                 </select>
               </div>
             </div>
 
-            {/* Height and Weight Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">Height</label>
-                <div className="flex space-x-2">
-                  <input
-                    type="number"
-                    name="height"
-                    value={formData.height}
-                    onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                    placeholder="Height"
-                    step="0.1"
-                    required
-                  />
-                  <select
-                    name="heightUnit"
-                    value={formData.heightUnit}
-                    onChange={handleInputChange}
-                    className="px-3 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="cm" className="bg-gray-800">cm</option>
-                    <option value="feet" className="bg-gray-800">feet</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">Weight</label>
-                <div className="flex space-x-2">
-                  <input
-                    type="number"
-                    name="weight"
-                    value={formData.weight}
-                    onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                    placeholder="Weight"
-                    step="0.1"
-                    required
-                  />
-                  <select
-                    name="weightUnit"
-                    value={formData.weightUnit}
-                    onChange={handleInputChange}
-                    className="px-3 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="kg" className="bg-gray-800">kg</option>
-                    <option value="lbs" className="bg-gray-800">lbs</option>
-                  </select>
-                </div>
+            {/* Weight Section */}
+            <div className="w-full">
+              <label className="block text-white/80 text-sm font-medium mb-3">Weight</label>
+              <div className="flex space-x-3">
+                <input
+                  type="number"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  placeholder="Weight"
+                  step="0.1"
+                  required
+                />
+                <select
+                  name="weightUnit"
+                  value={formData.weightUnit}
+                  onChange={handleInputChange}
+                  className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
+                >
+                  <option value="kg" className="bg-gray-800">kg</option>
+                  <option value="lbs" className="bg-gray-800">lbs</option>
+                </select>
               </div>
             </div>
           </div>
