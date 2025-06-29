@@ -281,6 +281,150 @@ async def init_sample_data():
 async def root():
     return {"message": "Nutracía AI Wellness API is running"}
 
+# Authentication Routes
+@api_router.post("/auth/signup", response_model=AuthResponse)
+async def signup_user(signup_data: SignupRequest):
+    """Register a new user with complete profile data"""
+    try:
+        # Validate password confirmation
+        if signup_data.password != signup_data.confirmPassword:
+            return AuthResponse(
+                success=False,
+                message="Passwords do not match"
+            )
+        
+        # Check if email already exists
+        existing_user = await db.users.find_one({"email": signup_data.email})
+        if existing_user:
+            return AuthResponse(
+                success=False,
+                message="Email already registered. Please use a different email or login."
+            )
+        
+        # Hash the password
+        hashed_password = hash_password(signup_data.password)
+        
+        # Prepare user document with all signup data
+        user_doc = {
+            "id": str(uuid.uuid4()),
+            "name": signup_data.name,
+            "email": signup_data.email,
+            "password": hashed_password,
+            "age": signup_data.age,
+            "gender": signup_data.gender,
+            "height": signup_data.height,
+            "height_unit": signup_data.heightUnit,
+            "weight": signup_data.weight,
+            "weight_unit": signup_data.weightUnit,
+            "allergies": signup_data.allergies,
+            "chronic_conditions": signup_data.chronicConditions,
+            "goals": signup_data.wellnessGoals,
+            "fitness_level": signup_data.fitnessLevel,
+            "diet_type": signup_data.dietPreference,
+            "skin_type": signup_data.skinType,
+            "smart_cart_enabled": signup_data.smartCartOptIn,
+            "created_at": datetime.utcnow()
+        }
+        
+        # Insert user into database
+        result = await db.users.insert_one(user_doc)
+        
+        # Return user data without password
+        user_response = user_doc.copy()
+        user_response.pop("password")
+        user_response["_id"] = str(result.inserted_id)
+        
+        return AuthResponse(
+            success=True,
+            message="Registration successful! Welcome to Nutracía!",
+            user=user_response,
+            user_id=user_doc["id"]
+        )
+        
+    except Exception as e:
+        return AuthResponse(
+            success=False,
+            message=f"Registration failed: {str(e)}"
+        )
+
+@api_router.post("/auth/login", response_model=AuthResponse)
+async def login_user(login_data: LoginRequest):
+    """Authenticate user and return profile data"""
+    try:
+        # Find user by email
+        user = await db.users.find_one({"email": login_data.email})
+        if not user:
+            return AuthResponse(
+                success=False,
+                message="Invalid email or password"
+            )
+        
+        # Verify password
+        if not verify_password(login_data.password, user["password"]):
+            return AuthResponse(
+                success=False,
+                message="Invalid email or password"
+            )
+        
+        # Return user data without password
+        user_response = user.copy()
+        user_response.pop("password")
+        if "_id" in user_response:
+            user_response["_id"] = str(user_response["_id"])
+        
+        return AuthResponse(
+            success=True,
+            message="Login successful! Welcome back to Nutracía!",
+            user=user_response,
+            user_id=user.get("id", str(user.get("_id", "")))
+        )
+        
+    except Exception as e:
+        return AuthResponse(
+            success=False,
+            message=f"Login failed: {str(e)}"
+        )
+
+@api_router.get("/auth/user/{user_id}", response_model=AuthResponse)
+async def get_user_profile(user_id: str):
+    """Retrieve user profile by ID"""
+    try:
+        # Try to find by custom id first, then by MongoDB _id
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            # Try finding by MongoDB _id if it's a valid ObjectId format
+            try:
+                from bson import ObjectId
+                if ObjectId.is_valid(user_id):
+                    user = await db.users.find_one({"_id": ObjectId(user_id)})
+            except:
+                pass
+        
+        if not user:
+            return AuthResponse(
+                success=False,
+                message="User not found"
+            )
+        
+        # Return user data without password
+        user_response = user.copy()
+        user_response.pop("password", None)  # Remove password if it exists
+        if "_id" in user_response:
+            user_response["_id"] = str(user_response["_id"])
+        
+        return AuthResponse(
+            success=True,
+            message="User profile retrieved successfully",
+            user=user_response,
+            user_id=user.get("id", str(user.get("_id", "")))
+        )
+        
+    except Exception as e:
+        return AuthResponse(
+            success=False,
+            message=f"Failed to retrieve user profile: {str(e)}"
+        )
+
 @api_router.post("/users", response_model=UserProfile)
 async def create_user(user_data: UserProfileCreate):
     user_dict = user_data.dict()
