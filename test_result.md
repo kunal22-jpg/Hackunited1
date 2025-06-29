@@ -377,7 +377,9 @@ test_plan:
   current_focus:
     - "Authentication System Implementation"
     - "Authentication Frontend Integration"
-  stuck_tasks: []
+    - "Quote-Only Pages for Non-Authenticated Users"
+  stuck_tasks:
+    - "Quote-Only Pages for Non-Authenticated Users"
   test_all: false
   test_priority: "high_first"
 
