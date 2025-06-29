@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Clone the Nutracity health coach repository and create an enhanced chatbot that can answer questions based on the repository content. The chatbot should be positioned in the footer with animations and hover effects, use smart input collection (dropdowns for weight, typing for allergies), maintain the glassmorphism theme, and be powered by OpenAI API to provide personalized health, fitness, skincare, and nutrition advice."
+user_problem_statement: "Clone the Nutracity health coach repository and create an enhanced chatbot that can answer questions based on the repository content. The chatbot should be positioned in the footer with animations and hover effects, use smart input collection (dropdowns for weight, typing for allergies), maintain the glassmorphism theme, and be powered by OpenAI API to provide personalized health, fitness, skincare, and nutrition advice. LATEST REQUEST: Add a Get Started button in the top right corner that opens a login/signup page showcasing all application features."
 
 backend:
   - task: "Enhanced Health Chatbot API Integration"
