@@ -36,7 +36,39 @@ const backgrounds = {
 // Header Component
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+
+  // Check if user is logged in on component mount and location change
+  useEffect(() => {
+    const checkUserStatus = () => {
+      const user = localStorage.getItem('user');
+      const userId = localStorage.getItem('userId');
+      
+      if (user && userId) {
+        setIsLoggedIn(true);
+        setCurrentUser(JSON.parse(user));
+      } else {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
+    };
+
+    checkUserStatus();
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    setShowUserMenu(false);
+    // Optionally redirect to home page
+    window.location.href = '/';
+  };
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home, iconClass: 'header-home-icon' },
