@@ -94,7 +94,7 @@ const Header = () => {
             {/* Get Started Button - Desktop */}
             <Link
               to="/get-started"
-              className="hidden md:block px-6 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-full hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="hidden md:block px-6 py-2 get-started-button text-white font-semibold rounded-full transform transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Get Started
             </Link>
