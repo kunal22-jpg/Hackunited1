@@ -1380,6 +1380,112 @@ const WorkoutPage = () => {
   const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
   const [showPersonalized, setShowPersonalized] = useState(false);
 
+  // Enhanced Exercise Dataset
+  const enhancedExerciseData = [
+    {
+      id: 1,
+      title: "Crunches",
+      description: "Classic abdominal exercise for core strength",
+      videoUrl: "https://www.youtube.com/embed/Xyd_fa5zoEU",
+      duration: "15–20 minutes",
+      level: "Beginner",
+      steps: [
+        "Lie on your back with knees bent and feet flat",
+        "Place your hands behind your head",
+        "Engage your core and lift your shoulders",
+        "Exhale while crunching up, inhale returning",
+        "Repeat for 3 sets of 15 reps"
+      ],
+      requirements: ["Exercise mat", "Comfortable clothing"],
+      muscle_groups: ["Core", "Abs", "Hip flexors"]
+    },
+    {
+      id: 2,
+      title: "Dumbbell Bench Press",
+      description: "Upper body strength training for chest and arms",
+      videoUrl: "https://www.youtube.com/embed/vthMCtgVtFw",
+      duration: "30–45 minutes",
+      level: "Intermediate",
+      steps: [
+        "Lie on a flat bench with a dumbbell in each hand",
+        "Hold weights at shoulder level, palms forward",
+        "Press upward until arms are fully extended",
+        "Lower dumbbells slowly back to start",
+        "Repeat for 3 sets of 10 reps"
+      ],
+      requirements: ["Dumbbells", "Flat bench", "Spotter recommended"],
+      muscle_groups: ["Chest", "Shoulders", "Triceps"]
+    },
+    {
+      id: 3,
+      title: "Squats",
+      description: "Fundamental lower body exercise for overall strength",
+      videoUrl: "https://www.youtube.com/embed/aclHkVaku9U",
+      duration: "20–30 minutes",
+      level: "All Levels",
+      steps: [
+        "Stand with feet shoulder-width apart",
+        "Push hips back and lower down",
+        "Keep knees behind toes and chest up",
+        "Push through heels to stand up",
+        "Repeat for 3 sets of 12–15 reps"
+      ],
+      requirements: ["None", "Optional: weights for added intensity"],
+      muscle_groups: ["Quadriceps", "Glutes", "Hamstrings", "Core"]
+    },
+    {
+      id: 4,
+      title: "Push-ups",
+      description: "Classic upper body bodyweight exercise",
+      videoUrl: "https://www.youtube.com/embed/IODxDxX7oi4",
+      duration: "10–15 minutes",
+      level: "All Levels",
+      steps: [
+        "Start in plank position with hands shoulder-width apart",
+        "Lower body until chest nearly touches floor",
+        "Keep core tight and body in straight line",
+        "Push back up to starting position",
+        "Repeat for 3 sets of 8-12 reps"
+      ],
+      requirements: ["None", "Exercise mat optional"],
+      muscle_groups: ["Chest", "Shoulders", "Triceps", "Core"]
+    },
+    {
+      id: 5,
+      title: "Deadlifts",
+      description: "Compound movement for total body strength",
+      videoUrl: "https://www.youtube.com/embed/1ZXobu7JvvE",
+      duration: "35–50 minutes",
+      level: "Advanced",
+      steps: [
+        "Stand with feet hip-width apart, bar over mid-foot",
+        "Bend at hips and knees to grip the bar",
+        "Keep chest up and back straight",
+        "Drive through heels to lift the bar",
+        "Stand tall, then lower with control"
+      ],
+      requirements: ["Barbell", "Weight plates", "Proper form essential"],
+      muscle_groups: ["Hamstrings", "Glutes", "Back", "Core", "Traps"]
+    },
+    {
+      id: 6,
+      title: "Plank",
+      description: "Isometric core strengthening exercise",
+      videoUrl: "https://www.youtube.com/embed/ASdvN_XEl_c",
+      duration: "5–10 minutes",
+      level: "All Levels",
+      steps: [
+        "Start in push-up position on forearms",
+        "Keep body in straight line from head to heels",
+        "Engage core and breathe normally",
+        "Hold position for 30-60 seconds",
+        "Rest and repeat 3-5 times"
+      ],
+      requirements: ["Exercise mat"],
+      muscle_groups: ["Core", "Shoulders", "Back"]
+    }
+  ];
+
   useEffect(() => {
     fetchWorkouts();
   }, []);
@@ -1387,9 +1493,24 @@ const WorkoutPage = () => {
   const fetchWorkouts = async () => {
     try {
       const response = await axios.get(`${API}/workouts`);
-      setWorkouts(response.data);
+      // Merge backend data with enhanced exercise data
+      const backendWorkouts = response.data;
+      const enhancedWorkouts = backendWorkouts.map((workout, index) => {
+        const enhancedData = enhancedExerciseData[index % enhancedExerciseData.length];
+        return {
+          ...workout,
+          ...enhancedData,
+          // Keep original title if it exists, otherwise use enhanced title
+          title: workout.title || enhancedData.title,
+          // Keep original description if it exists
+          description: workout.description || enhancedData.description
+        };
+      });
+      setWorkouts(enhancedWorkouts);
     } catch (error) {
       console.error('Error fetching workouts:', error);
+      // Fallback to enhanced exercise data if backend fails
+      setWorkouts(enhancedExerciseData);
     }
   };
 
