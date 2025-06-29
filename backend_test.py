@@ -1061,5 +1061,76 @@ def run_all_tests():
     
     return results
 
+def test_personalized_wellness_recommendations_alt():
+    """Test the personalized wellness recommendations API endpoint with alternative data"""
+    print("\n=== Testing Personalized Wellness Recommendations Endpoint (Alternative Data) ===")
+    try:
+        # Alternative test data
+        request_data = {
+            "user_id": "test-user-456",
+            "weight": "85 kg", 
+            "allergies": "gluten, shellfish",
+            "wellness_goals": ["weight loss", "stress reduction"],
+            "health_conditions": ["high blood pressure"],
+            "age": 42,
+            "gender": "female",
+            "fitness_level": "beginner"
+        }
+        
+        print(f"Sending request with alternative data: {json.dumps(request_data, indent=2)}")
+        response = requests.post(f"{API_URL}/wellness/personalized-recommendations", json=request_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        # Print a summary of the response
+        print(f"Response success: {data.get('success', False)}")
+        print(f"Response message: {data.get('message', 'No message')}")
+        
+        # Basic validation
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        assert "recommendations" in data, "Response missing 'recommendations' field"
+        
+        # Validate recommendations structure
+        recommendations = data["recommendations"]
+        assert isinstance(recommendations, dict), "'recommendations' is not a dictionary"
+        
+        # Check if all 4 required categories are present
+        required_categories = ["workout", "diet", "skincare", "health"]
+        for category in required_categories:
+            assert category in recommendations, f"Missing '{category}' category in recommendations"
+            assert isinstance(recommendations[category], list), f"'{category}' recommendations is not a list"
+            assert len(recommendations[category]) > 0, f"No recommendations found for '{category}' category"
+        
+        # Validate the structure of each recommendation
+        for category, recs in recommendations.items():
+            print(f"\nFound {len(recs)} recommendations for {category} category")
+            for i, rec in enumerate(recs):
+                # Print the first recommendation in each category for inspection
+                if i == 0:
+                    print(f"Sample {category} recommendation: {json.dumps(rec, indent=2)}")
+                
+                # Validate required fields
+                assert "title" in rec, f"{category} recommendation missing 'title' field"
+                assert "description" in rec, f"{category} recommendation missing 'description' field"
+                assert "steps" in rec, f"{category} recommendation missing 'steps' field"
+                assert isinstance(rec["steps"], list), f"'steps' in {category} recommendation is not a list"
+                assert "youtube_video" in rec, f"{category} recommendation missing 'youtube_video' field"
+                assert "product_links" in rec, f"{category} recommendation missing 'product_links' field"
+                assert isinstance(rec["product_links"], list), f"'product_links' in {category} recommendation is not a list"
+        
+        # Check if health category has motivational quotes
+        if recommendations["health"] and len(recommendations["health"]) > 0:
+            for health_rec in recommendations["health"]:
+                assert "motivational_quote" in health_rec, "Health recommendation missing 'motivational_quote' field"
+                assert health_rec["motivational_quote"], "Health recommendation has empty motivational quote"
+                print(f"Health recommendation includes motivational quote: {health_rec['motivational_quote']}")
+        
+        print("✅ Personalized wellness recommendations endpoint test (alternative data) passed")
+        return True
+    except Exception as e:
+        print(f"❌ Personalized wellness recommendations endpoint test (alternative data) failed: {str(e)}")
+        return False
 if __name__ == "__main__":
     run_all_tests()
