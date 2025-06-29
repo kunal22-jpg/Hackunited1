@@ -931,7 +931,7 @@ const Modal = ({ isOpen, onClose, item, type }) => {
   );
 };
 
-// Circular Gallery Component
+// New Circular Gallery Component using OGL
 const CircularGallery = ({ items, onItemClick, type }) => {
   if (!items || items.length === 0) {
     return (
@@ -944,60 +944,23 @@ const CircularGallery = ({ items, onItemClick, type }) => {
     );
   }
 
-  // Create a custom slide component for each item
-  const SlideComponent = ({ content, onClick }) => (
-    <div className="text-center cursor-pointer w-full h-full" onClick={onClick}>
-      <div 
-        className="w-20 h-20 bg-cover bg-center rounded-full border-4 border-white/30 hover:border-white/80 transition-all duration-300 transform hover:scale-110 shadow-lg mx-auto"
-        style={{ 
-          backgroundImage: `url(${backgrounds[type] || backgrounds.home})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      />
-      <h4 className="text-white font-semibold text-xs mt-2 max-w-20 mx-auto truncate bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-        {content.title}
-      </h4>
-    </div>
-  );
-
-  // Create media pool for the carousel
-  const mediaPool = items.map((item, index) => ({
-    id: item.id || index,
-    content: item,
-    onClick: () => onItemClick(item)
+  // Transform items to match the expected format for the new component
+  const transformedItems = items.map(item => ({
+    image: `https://picsum.photos/seed/${item.id || Math.random()}/800/600?grayscale`,
+    text: item.title || item.name || 'Item'
   }));
 
-  try {
-    return (
-      <div className="h-96 flex items-center justify-center">
-        <div className="relative w-full max-w-md">
-          <CircularCarousel
-            type="standard-2d"
-            mediaPool={mediaPool}
-            slideComponent={({ content, onClick }) => <SlideComponent content={content} onClick={onClick} />}
-            slideWidth={100}
-            slideGap={10}
-            aspectRatio="1/1"
-            customControls={false}
-            className="circular-gallery"
-          />
-          
-          {/* Center instructions */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center">
-              <h3 className="text-white text-sm font-semibold bg-black/60 px-3 py-2 rounded-lg backdrop-blur-sm">
-                Click any item to explore
-              </h3>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  } catch (error) {
-    console.error('Error rendering CircularCarousel:', error);
-    // Enhanced fallback grid view
-    return (
+  return (
+    <div style={{ height: '600px', position: 'relative' }}>
+      <CircularGallery 
+        items={transformedItems}
+        bend={3} 
+        textColor="#ffffff" 
+        borderRadius={0.05} 
+      />
+    </div>
+  );
+};
       <div className="h-96 overflow-y-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((item, index) => (
