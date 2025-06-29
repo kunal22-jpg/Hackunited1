@@ -950,17 +950,22 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
     text: item.title || item.name || 'Item'
   }));
 
-  return (
-    <div style={{ height: '600px', position: 'relative' }}>
-      <CircularGallery 
-        items={transformedItems}
-        bend={3} 
-        textColor="#ffffff" 
-        borderRadius={0.05} 
-      />
-    </div>
-  );
-};
+  // Try to use WebGL gallery, fallback to grid if needed
+  try {
+    return (
+      <div style={{ height: '600px', position: 'relative' }}>
+        <CircularGallery 
+          items={transformedItems}
+          bend={3} 
+          textColor="#ffffff" 
+          borderRadius={0.05} 
+        />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error rendering WebGL gallery, falling back to grid view:", error);
+    // Fallback to grid view if WebGL fails
+    return (
       <div className="h-96 overflow-y-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((item, index) => (
