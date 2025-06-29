@@ -191,6 +191,18 @@ const Header = () => {
     checkUserStatus();
   }, [location]);
 
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest('.user-menu-container')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserMenu]);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('userId');
