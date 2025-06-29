@@ -275,7 +275,7 @@ const Header = () => {
                 Get Started
               </Link>
             ) : (
-              <div className="hidden md:block relative">
+              <div className="hidden md:block relative user-menu-container">
                 {/* User Menu Button */}
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
