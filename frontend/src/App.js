@@ -2200,7 +2200,7 @@ const GetStartedPage = () => {
         return (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-white mb-4">Wellness Goals</h3>
-            <p className="text-white/60 text-sm mb-4">Select up to 3 goals ({formData.wellnessGoals.length}/3)</p>
+            <p className="text-white/60 text-sm mb-4">Select your wellness goals ({formData.wellnessGoals.length} selected)</p>
             
             <div className="grid grid-cols-2 gap-3">
               {wellnessGoalOptions.map(goal => (
@@ -2208,15 +2208,10 @@ const GetStartedPage = () => {
                   key={goal.id}
                   type="button"
                   onClick={() => handleGoalsSelect(goal.id)}
-                  disabled={!formData.wellnessGoals.includes(goal.id) && formData.wellnessGoals.length >= 3}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
                     formData.wellnessGoals.includes(goal.id)
                       ? 'border-amber-400 bg-amber-400/20 text-white'
                       : 'border-white/20 bg-white/10 text-white/80 hover:bg-white/20'
-                  } ${
-                    !formData.wellnessGoals.includes(goal.id) && formData.wellnessGoals.length >= 3
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'cursor-pointer'
                   }`}
                 >
                   <div className="text-2xl mb-2">{goal.icon}</div>
