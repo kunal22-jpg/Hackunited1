@@ -2707,10 +2707,11 @@ const HealthQuotePage = () => (
 
 const OrderUpQuotePage = () => (
   <div className="min-h-screen relative overflow-hidden">
-    <VideoBackground 
-      videoSrc="/video/workout.mp4" 
-      overlay="bg-black/65"
+    <div 
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ backgroundImage: `url(${backgrounds.orderup})` }}
     />
+    <div className="absolute inset-0 bg-black/65" />
     
     <div className="relative z-10 pt-32 px-6">
       <div className="max-w-4xl mx-auto text-center">
