@@ -1156,6 +1156,248 @@ async def create_grocery_cart(selected_products: List[dict]):
         print(f"Error creating cart: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating cart: {str(e)}")
 
+# Personalized Wellness Recommendation System
+@api_router.post("/wellness/personalized-recommendations", response_model=PersonalizedWellnessResponse)
+async def generate_personalized_wellness_recommendations(request: PersonalizedWellnessRequest):
+    """Generate AI-powered personalized recommendations for all wellness categories"""
+    try:
+        # Prepare user profile summary
+        profile_summary = f"""
+        Weight: {request.weight}
+        Allergies: {request.allergies}
+        Wellness Goals: {', '.join(request.wellness_goals)}
+        Health Conditions: {', '.join(request.health_conditions)}
+        Age: {request.age}
+        Gender: {request.gender}
+        Fitness Level: {request.fitness_level}
+        """
+        
+        # Generate recommendations for all categories
+        recommendations = {}
+        
+        # 1. WORKOUT RECOMMENDATIONS
+        workout_prompt = f"""
+        Based on user profile: {profile_summary}
+        
+        Generate 3 personalized workout recommendations in this EXACT JSON format (array of objects):
+        [
+          {{
+            "title": "Progressive Strength Building",
+            "description": "Build lean muscle mass and increase strength with progressive overload training designed for {request.fitness_level} level.",
+            "duration": "45-60 min",
+            "level": "Beginner to Advanced",
+            "requirements": ["Dumbbells or resistance bands", "Bench or sturdy chair", "Proper form guidance"],
+            "steps": ["5 min dynamic warm-up", "Compound movements: 3 sets x 8-12 reps", "Progressive overload each week", "Cool down stretches: 5 min"],
+            "youtube_video": "https://www.youtube.com/results?search_query=strength+training+{request.fitness_level}+workout",
+            "product_links": ["https://amazon.com/s?k=adjustable+dumbbells+home+gym", "https://flipkart.com/search?q=resistance+bands+fitness"],
+            "image_url": "workout_strength_building.jpg"
+          }}
+        ]
+        
+        IMPORTANT: Return ONLY the JSON array, no other text.
+        """
+        
+        # 2. DIET RECOMMENDATIONS  
+        diet_prompt = f"""
+        Based on user profile: {profile_summary}
+        AVOID these allergies: {request.allergies}
+        
+        Generate 3 personalized diet recommendations in this EXACT JSON format (array of objects):
+        [
+          {{
+            "title": "High Protein Power Bowl",
+            "description": "Muscle-building meal with complete nutrition designed for {request.weight} weight goals, avoiding {request.allergies}.",
+            "duration": "25 min prep",
+            "level": "Easy to Prepare",
+            "requirements": ["Fresh ingredients (avoiding {request.allergies})", "Cooking utensils", "15-20 minutes prep time"],
+            "steps": ["Prep vegetables: 5 min", "Cook protein source: 10 min", "Assemble bowl with healthy fats", "Add seasonings and serve"],
+            "youtube_video": "https://www.youtube.com/results?search_query=healthy+protein+bowl+recipe+{'+'.join(request.wellness_goals)}",
+            "product_links": ["https://amazon.com/s?k=organic+vegetables+fresh", "https://flipkart.com/search?q=lean+protein+sources"],
+            "image_url": "diet_power_bowl.jpg"
+          }}
+        ]
+        
+        IMPORTANT: Return ONLY the JSON array, no other text.
+        """
+        
+        # 3. SKINCARE RECOMMENDATIONS
+        skincare_prompt = f"""
+        Based on user profile: {profile_summary}
+        
+        Generate 3 personalized skincare recommendations in this EXACT JSON format (array of objects):
+        [
+          {{
+            "title": "Morning Glow Routine",
+            "description": "Start your day with radiant skin using this science-backed routine tailored for {request.age} year old {request.gender}.",
+            "duration": "10-15 min",
+            "level": "Suitable for All Skin Types",
+            "requirements": ["Gentle cleanser", "Vitamin C serum", "Moisturizer with SPF", "Clean hands"],
+            "steps": ["Cleanse with lukewarm water: 2 min", "Apply vitamin C serum: 1 min", "Moisturize evenly: 2 min", "Apply SPF 30+ sunscreen: 2 min"],
+            "youtube_video": "https://www.youtube.com/results?search_query=morning+skincare+routine+{request.gender}+{request.age}",
+            "product_links": ["https://amazon.com/s?k=morning+skincare+routine+products", "https://flipkart.com/search?q=sunscreen+spf+50+daily"],
+            "image_url": "skincare_morning_routine.jpg"
+          }}
+        ]
+        
+        IMPORTANT: Return ONLY the JSON array, no other text.
+        """
+        
+        # 4. HEALTH RECOMMENDATIONS
+        health_conditions_str = ', '.join(request.health_conditions) if request.health_conditions else 'general wellness'
+        health_prompt = f"""
+        Based on user profile: {profile_summary}
+        Focus on: {health_conditions_str}
+        
+        Generate 3 personalized health management recommendations in this EXACT JSON format (array of objects):
+        [
+          {{
+            "title": "Daily Wellness Management",
+            "description": "Holistic approach to managing {health_conditions_str} while achieving your wellness goals.",
+            "duration": "Ongoing Daily Routine",
+            "level": "Personalized for Your Conditions",
+            "requirements": ["Daily commitment", "Health monitoring tools", "Professional guidance when needed"],
+            "steps": ["Morning health check: 5 min", "Medication/supplement routine if needed", "Physical activity as recommended", "Evening reflection and planning"],
+            "youtube_video": "https://www.youtube.com/results?search_query=health+management+{health_conditions_str.replace(' ', '+')}+wellness",
+            "product_links": ["https://amazon.com/s?k=health+monitoring+devices+wellness", "https://flipkart.com/search?q=health+supplements+wellness"],
+            "image_url": "health_wellness_management.jpg",
+            "motivational_quote": "Every step you take towards better health is a victory. BELIEVE NUTRACIAA YOU WILL HEAL SOON! 💪✨"
+          }}
+        ]
+        
+        IMPORTANT: Return ONLY the JSON array, no other text.
+        """
+        
+        # Generate recommendations using OpenAI
+        categories = {
+            'workout': workout_prompt,
+            'diet': diet_prompt, 
+            'skincare': skincare_prompt,
+            'health': health_prompt
+        }
+        
+        for category, prompt in categories.items():
+            try:
+                response = openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a professional wellness coach. Return ONLY valid JSON arrays as requested, no additional text or formatting."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=1500,
+                    temperature=0.7
+                )
+                
+                # Parse the response
+                ai_response = response.choices[0].message.content.strip()
+                
+                # Clean the response to ensure it's valid JSON
+                ai_response = ai_response.replace('```json', '').replace('```', '').strip()
+                
+                # Parse JSON response
+                category_recommendations = json.loads(ai_response)
+                
+                # Convert to WellnessRecommendation objects
+                recommendations[category] = []
+                for rec_data in category_recommendations:
+                    rec_data['category'] = category
+                    recommendation = WellnessRecommendation(**rec_data)
+                    recommendations[category].append(recommendation)
+                    
+            except Exception as e:
+                print(f"Error generating {category} recommendations: {str(e)}")
+                # Fallback recommendations
+                recommendations[category] = get_fallback_recommendations(category, request)
+        
+        # Store recommendations in database for future reference
+        recommendation_doc = {
+            "user_id": request.user_id,
+            "timestamp": datetime.utcnow(),
+            "user_profile": profile_summary,
+            "recommendations": {
+                category: [rec.dict() for rec in recs] 
+                for category, recs in recommendations.items()
+            }
+        }
+        await db.personalized_recommendations.insert_one(recommendation_doc)
+        
+        return PersonalizedWellnessResponse(
+            success=True,
+            message="Personalized wellness recommendations generated successfully!",
+            recommendations=recommendations
+        )
+        
+    except Exception as e:
+        print(f"Error in personalized wellness recommendations: {str(e)}")
+        return PersonalizedWellnessResponse(
+            success=False,
+            message=f"Failed to generate recommendations: {str(e)}",
+            recommendations={}
+        )
+
+def get_fallback_recommendations(category: str, request: PersonalizedWellnessRequest) -> List[WellnessRecommendation]:
+    """Provide fallback recommendations if AI generation fails"""
+    fallback_data = {
+        'workout': [
+            {
+                "category": "workout",
+                "title": "Personalized Strength Training",
+                "description": f"Custom workout plan for {request.fitness_level} level focusing on your goals.",
+                "duration": "30-45 min",
+                "level": request.fitness_level.title(),
+                "requirements": ["Basic equipment", "Proper form", "Consistency"],
+                "steps": ["Warm up", "Main exercises", "Cool down", "Stretch"],
+                "youtube_video": f"https://www.youtube.com/results?search_query={request.fitness_level}+workout+routine",
+                "product_links": ["https://amazon.com/s?k=home+gym+equipment", "https://flipkart.com/search?q=fitness+accessories"],
+                "image_url": "workout_default.jpg"
+            }
+        ],
+        'diet': [
+            {
+                "category": "diet",
+                "title": "Balanced Nutrition Plan",
+                "description": f"Healthy meal plan avoiding {request.allergies} and supporting your goals.",
+                "duration": "30 min prep",
+                "level": "Easy to Follow",
+                "requirements": ["Fresh ingredients", "Basic cooking skills", "Meal planning"],
+                "steps": ["Plan meals", "Shop ingredients", "Prep in advance", "Cook and enjoy"],
+                "youtube_video": f"https://www.youtube.com/results?search_query=healthy+meal+prep+{'+'.join(request.wellness_goals)}",
+                "product_links": ["https://amazon.com/s?k=healthy+cooking+ingredients", "https://flipkart.com/search?q=organic+food+items"],
+                "image_url": "diet_default.jpg"
+            }
+        ],
+        'skincare': [
+            {
+                "category": "skincare",
+                "title": "Daily Skincare Routine",
+                "description": f"Simple skincare routine perfect for {request.age} year old {request.gender}.",
+                "duration": "10 min",
+                "level": "Beginner Friendly",
+                "requirements": ["Gentle cleanser", "Moisturizer", "Sunscreen", "Consistency"],
+                "steps": ["Cleanse", "Treat", "Moisturize", "Protect"],
+                "youtube_video": f"https://www.youtube.com/results?search_query=skincare+routine+{request.gender}+{request.age}",
+                "product_links": ["https://amazon.com/s?k=basic+skincare+products", "https://flipkart.com/search?q=skincare+essentials"],
+                "image_url": "skincare_default.jpg"
+            }
+        ],
+        'health': [
+            {
+                "category": "health",
+                "title": "Wellness Management",
+                "description": f"Comprehensive health approach for your wellness journey.",
+                "duration": "Daily routine",
+                "level": "Personalized",
+                "requirements": ["Commitment", "Regular monitoring", "Professional guidance"],
+                "steps": ["Monitor health", "Stay active", "Eat well", "Rest properly"],
+                "youtube_video": f"https://www.youtube.com/results?search_query=health+wellness+management",
+                "product_links": ["https://amazon.com/s?k=health+monitoring+tools", "https://flipkart.com/search?q=wellness+supplements"],
+                "image_url": "health_default.jpg",
+                "motivational_quote": "Your health journey is unique and every step forward matters. BELIEVE NUTRACIAA YOU WILL HEAL SOON! 🌟"
+            }
+        ]
+    }
+    
+    return [WellnessRecommendation(**rec) for rec in fallback_data.get(category, [])]
+
 # Include the router in the main app
 app.include_router(api_router)
 
