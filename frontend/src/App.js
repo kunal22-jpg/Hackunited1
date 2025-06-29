@@ -1421,12 +1421,32 @@ const GroceryAgent = () => {
     'low carb', 'gluten free', 'organic', 'weight loss', 'muscle gain'
   ];
 
+  const handleSectionHover = (isHovering) => {
+    const orderupIcon = document.querySelector('.header-orderup-icon');
+    if (orderupIcon) {
+      if (isHovering) {
+        orderupIcon.style.animation = 'cartShake 0.6s ease-in-out';
+        orderupIcon.style.color = '#f97316';
+        orderupIcon.style.filter = 'drop-shadow(0 0 8px #f97316)';
+      } else {
+        orderupIcon.style.animation = '';
+        orderupIcon.style.color = '';
+        orderupIcon.style.filter = '';
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <VideoBackground 
-        videoSrc="/video/workout.mp4" 
-        overlay="bg-black/60"
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      onMouseEnter={() => handleSectionHover(true)}
+      onMouseLeave={() => handleSectionHover(false)}
+    >
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgrounds.orderup})` }}
       />
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
