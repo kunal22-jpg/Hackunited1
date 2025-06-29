@@ -1471,6 +1471,9 @@ const SkincarePage = () => {
   const [routines, setRoutines] = useState([]);
   const [selectedRoutine, setSelectedRoutine] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [personalizedSkincare, setPersonalizedSkincare] = useState([]);
+  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
+  const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {
     fetchRoutines();
@@ -1483,6 +1486,41 @@ const SkincarePage = () => {
     } catch (error) {
       console.error('Error fetching skincare routines:', error);
     }
+  };
+
+  const generatePersonalizedRecommendations = async () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!userData.id) {
+      alert('Please login to generate personalized recommendations');
+      return;
+    }
+
+    setIsGeneratingPersonalized(true);
+    try {
+      const personalizedRequest = {
+        user_id: userData.id,
+        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
+        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
+        wellness_goals: userData.goals || ['general wellness'],
+        health_conditions: userData.chronic_conditions || [],
+        age: userData.age || 25,
+        gender: userData.gender || 'female',
+        fitness_level: userData.fitness_level || 'beginner'
+      };
+
+      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
+      
+      if (response.data.success) {
+        setPersonalizedSkincare(response.data.recommendations.skincare || []);
+        setShowPersonalized(true);
+      } else {
+        alert('Failed to generate personalized recommendations. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error generating personalized recommendations:', error);
+      alert('Error generating recommendations. Please try again.');
+    }
+    setIsGeneratingPersonalized(false);
   };
 
   const handleRoutineClick = (routine) => {
