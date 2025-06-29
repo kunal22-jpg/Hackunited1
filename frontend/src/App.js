@@ -1305,7 +1305,7 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
   // Try to use WebGL gallery, fallback to grid if needed
   try {
     return (
-      <div style={{ height: '600px', position: 'relative' }}>
+      <div style={{ height: '100%', position: 'relative' }}>
         <div 
           id="circular-gallery-container"
           style={{ height: '100%', cursor: 'pointer' }}
@@ -1341,23 +1341,23 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
     console.error("Error rendering WebGL gallery, falling back to grid view:", error);
     // Enhanced fallback grid view
     return (
-      <div className="h-96 overflow-y-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="h-full overflow-y-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-full">
           {clickableItems.map((item, index) => (
             <motion.div
               key={item.id || index}
               whileHover={{ scale: 1.05, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 cursor-pointer card-hover"
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/20 cursor-pointer card-hover h-fit"
               onClick={() => onItemClick(item)}
             >
               <div 
-                className="h-24 bg-cover bg-center rounded-lg mb-3 border-2 border-white/20"
+                className="h-20 bg-cover bg-center rounded-lg mb-2 border-2 border-white/20"
                 style={{ 
                   backgroundImage: `url(${item.image_url || generateRelevantImage(type, item.title, index)})` 
                 }}
               />
-              <h4 className="text-white font-semibold text-sm mb-2 line-clamp-2">{item.title}</h4>
+              <h4 className="text-white font-semibold text-xs mb-1 line-clamp-2">{item.title}</h4>
               <p className="text-white/70 text-xs line-clamp-2">{item.description}</p>
               {item.level && (
                 <p className="text-amber-300 text-xs mt-1">Level: {item.level}</p>
