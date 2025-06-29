@@ -36,6 +36,42 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Authentication Models
+class SignupRequest(BaseModel):
+    # Basic Credentials
+    name: str
+    email: str
+    password: str
+    confirmPassword: str
+    agreeTerms: bool
+    # Vital Stats  
+    age: int
+    gender: str
+    height: float
+    heightUnit: str = "cm"
+    weight: float
+    weightUnit: str = "kg"
+    # Allergies & Medical
+    allergies: List[str] = []
+    chronicConditions: List[str] = []
+    # Wellness Goals
+    wellnessGoals: List[str] = []
+    # Lifestyle & Preferences
+    fitnessLevel: str
+    dietPreference: str
+    skinType: str
+    smartCartOptIn: bool = False
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class AuthResponse(BaseModel):
+    success: bool
+    message: str
+    user: Optional[Dict[str, Any]] = None
+    user_id: Optional[str] = None
+
 # User Models
 class UserProfile(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
