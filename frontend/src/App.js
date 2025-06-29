@@ -1324,8 +1324,11 @@ const GroceryAgent = () => {
 
 // Get Started Page - Login/Signup with Feature Showcase
 const GetStartedPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('login');
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     // Basic Credentials
     email: '',
