@@ -252,15 +252,74 @@ const Header = () => {
             })}
           </nav>
 
-          {/* Get Started Button & Mobile Menu Button */}
+          {/* Get Started Button & User Menu & Mobile Menu Button */}
           <div className="flex items-center space-x-3">
-            {/* Get Started Button - Desktop */}
-            <Link
-              to="/get-started"
-              className="hidden md:block px-6 py-2 get-started-button text-white font-semibold rounded-full transform transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </Link>
+            {/* Conditional rendering: Get Started Button or User Menu - Desktop */}
+            {!isLoggedIn ? (
+              <Link
+                to="/get-started"
+                className="hidden md:block px-6 py-2 get-started-button text-white font-semibold rounded-full transform transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Get Started
+              </Link>
+            ) : (
+              <div className="hidden md:block relative">
+                {/* User Menu Button */}
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+                    <User size={16} className="text-white" />
+                  </div>
+                  <span className="text-white font-medium">{currentUser?.name?.split(' ')[0] || 'User'}</span>
+                  <motion.div
+                    animate={{ rotate: showUserMenu ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
+                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </motion.div>
+                </button>
+
+                {/* User Dropdown Menu */}
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-xl z-50"
+                    >
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            setShowProfilePopup(true);
+                            setShowUserMenu(false);
+                          }}
+                          className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3"
+                        >
+                          <User size={16} />
+                          <span>Profile</span>
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                          </svg>
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
