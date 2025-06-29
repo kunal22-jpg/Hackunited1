@@ -257,6 +257,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "VERIFICATION TESTING COMPLETED: Tested the endpoint with the exact sample data from the review request (30-year-old beginner male with peanut allergies, weight loss and muscle building goals, back pain). Also tested with alternative data (42-year-old advanced female with gluten/shellfish allergies, weight loss and stress reduction goals, high blood pressure). Both tests passed successfully. The API correctly personalizes workout recommendations based on fitness level and diet recommendations based on allergies. All recommendations include properly formatted YouTube links and product links. Health recommendations consistently include motivational quotes as required. The OpenAI integration is working correctly with the new API key."
+      - working: true
+        agent: "testing"
+        comment: "WORKOUT INTEGRATION TESTING COMPLETED: Verified that the personalized wellness recommendations API properly integrates with the workout data. The workout recommendations match the user's fitness level (beginner, intermediate, or advanced) and address the user's wellness goals. Each workout recommendation includes all required fields (title, description, duration, level, requirements, steps, YouTube video, product links) with proper data types and structure. The workout recommendations are personalized based on the user's profile, including fitness level, goals, and health conditions."
 
 frontend:
   - task: "Authentication Frontend Integration"
