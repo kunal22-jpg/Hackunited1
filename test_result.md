@@ -584,7 +584,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "STEP 1: Remove AI Personalized Workout Feature"
+    - "STEP 2: Fix Modal Content Mismatch"  
+    - "STEP 3: Expand to 8 Unique Workout Cards"
+    - "STEP 4: Create 12-Card Gallery Structure"
+    - "STEP 5: Modal Behavior & Styling Verification"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
