@@ -128,6 +128,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Workouts endpoint (/api/workouts) is working correctly. Returns 3 workout plans with all required fields."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE TESTING COMPLETED: Enhanced workout data is working correctly. The /api/workouts endpoint returns 3 workout plans with all required fields (id, title, description, muscle_groups, equipment, duration, difficulty, video_url, instructions). Each workout has the correct data types and structure. The workout data is properly integrated with the personalized recommendations endpoint, which returns workout recommendations that match the user's fitness level and goals. The health chatbot also provides workout advice based on the user's profile."
 
   - task: "Data fetching - Skincare endpoint"
     implemented: true
