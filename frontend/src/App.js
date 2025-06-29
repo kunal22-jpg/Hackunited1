@@ -1137,7 +1137,7 @@ const SkincarePage = () => {
           </div>
 
           {routines.length > 0 && (
-            <CircularGallery 
+            <CircularGalleryOGL 
               items={routines}
               onItemClick={handleRoutineClick}
               type="skincare"
