@@ -248,6 +248,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "COMPREHENSIVE TESTING COMPLETED: The personalized wellness recommendations API endpoint is working correctly. The endpoint successfully accepts user data and returns personalized recommendations for all four required categories (workout, diet, skincare, health). Each recommendation includes the required fields: title, description, steps, YouTube videos, and product links. The health category recommendations also include motivational quotes as expected. The API properly handles the OpenAI integration, generating personalized content based on the user's profile data. When OpenAI cannot generate personalized content, the API falls back to default recommendations that still match the user's profile. The response structure matches the expected format with success status, message, and recommendations organized by category."
+      - working: true
+        agent: "testing"
+        comment: "ADDITIONAL TESTING COMPLETED: Tested the endpoint with two different user profiles to verify personalization. First test used the sample data from the review request (28-year-old intermediate male with nuts/dairy allergies, muscle building and better skin goals, mild acne). Second test used different data (42-year-old beginner female with gluten/shellfish allergies, weight loss and stress reduction goals, high blood pressure). Both tests passed successfully, with recommendations properly tailored to each user's profile. The fallback system works correctly when OpenAI doesn't generate personalized content, providing default recommendations that still match the user's profile data. The health recommendations consistently include motivational quotes as required."
 
 frontend:
   - task: "Authentication Frontend Integration"
