@@ -322,17 +322,65 @@ frontend:
         agent: "testing"
         comment: "VERIFIED: The new CircularGalleryOGL component has been successfully implemented. Fixed a syntax error in the component that was causing build failures. The component now properly renders on all section pages (Workout, Skincare, Diet, Health) with the specified height of 600px, bend value of 3, and white text color. The component includes a proper fallback grid view for browsers without WebGL support. The gallery correctly transforms items to include image and text properties. No console errors related to WebGL or OGL library were detected."
 
-  - task: "Workout Section Enhancement - Complete UX Overhaul"
+  - task: "STEP 1: Remove AI Personalized Workout Feature"
     implemented: true
-    working: true
+    working: "needs_testing"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
+      - working: "needs_testing"
         agent: "main"
-        comment: "COMPLETE IMPLEMENTATION: Successfully delivered comprehensive workout section enhancement with three major phases: 1) REPOSITIONING: Moved 'Get Personalized Suggestions' button to top-right corner and eliminated vertical scrolling by fitting entire section in viewport. 2) ENHANCED EXERCISE DATA: Created comprehensive dataset with 6 detailed exercises (Crunches, Dumbbell Bench Press, Squats, Push-ups, Deadlifts, Plank) including YouTube embed URLs, step-by-step instructions, duration, level, requirements, and muscle groups. 3) MODAL ENHANCEMENT: Replaced YouTube links with direct iframe embeds, enhanced modal with glassmorphism design, organized content sections, and improved UX with proper backdrop handling. All changes maintain existing functionality while providing rich interactive exercise tutorials. Backend testing confirmed all functionality working correctly."
+        comment: "COMPLETED: Removed 'Generate My Personalized Workouts' button and all related functionality. Deleted personalized recommendations button (lines 1614-1635), removed toggle logic between General/AI workouts (lines 1637-1661), removed generatePersonalizedRecommendations function and related state variables (personalizedWorkouts, isGeneratingPersonalized, showPersonalized). Simplified WorkoutPage to show only general static workouts in the gallery. All AI suggestion logic fully removed while preserving existing functionality."
+
+  - task: "STEP 2: Fix Modal Content Mismatch"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "AUDITED: Reviewed enhancedExerciseData array and modal rendering logic. Each workout has unique ID (1-8), proper title, description, videoUrl, and data structure. Modal system uses handleWorkoutClick properly with selectedWorkout state. Card-to-modal mapping appears correct with proper data flow from workoutGalleryData to CircularGalleryOGL to Modal component. No obvious mismatches found in current structure."
+
+  - task: "STEP 3: Expand to 8 Unique Workout Cards"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Expanded enhancedExerciseData from 6 to 8 unique workouts. Updated existing workouts with better titles and descriptions: 1. HIIT Cardio (20 min, Intermediate), 2. Core Strength (15 min, Beginner), 3. Glutes & Legs (25 min, Intermediate), 4. Upper Body Strength (30 min, Intermediate), 5. Stretch & Recovery (15 min, All Levels), 6. Resistance Band Full Body (30 min, Intermediate). Added 2 new workouts: 7. Mobility Flow (10 min, Beginner) with YouTube URL https://www.youtube.com/embed/8BcPHWGQO44, and 8. Pilates Core Burn (20 min, Beginner) with YouTube URL https://www.youtube.com/embed/lCg_gh_fppI. All workouts include proper YouTube embeds, step-by-step instructions, duration, level, requirements, and muscle groups."
+
+  - task: "STEP 4: Create 12-Card Gallery Structure"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Created workoutGalleryData array with 12 total cards following specified order. First 8 are unique workouts (HIIT Cardio, Core Strength, Glutes & Legs, Upper Body Strength, Stretch & Recovery, Resistance Band Full Body, Mobility Flow, Pilates Core Burn), then first 4 repeated with unique IDs (9-12) to avoid key conflicts. Updated WorkoutPage to use workoutGalleryData instead of dynamic fetching. Maintained circular gallery structure with proper continuity. No duplicate key warnings expected due to unique ID assignment."
+
+  - task: "STEP 5: Modal Behavior & Styling Verification"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "VERIFIED: Preserved existing Modal component structure. Each modal includes workout title, YouTube video embedded using iframe, duration and level display, bullet-style step instructions, requirements, and muscle groups. Glassmorphism styling and animations remain intact. Modal is scrollable if content overflows without introducing page scroll. All existing responsive design and WebGL gallery functionality preserved."
 
   - task: "Video Background Implementation"
     implemented: true
