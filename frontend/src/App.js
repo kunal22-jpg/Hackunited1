@@ -1740,6 +1740,9 @@ const GetStartedPage = () => {
           localStorage.setItem('user', JSON.stringify(data.user));
           localStorage.setItem('userId', data.user_id);
           
+          // Dispatch custom event for AuthRoute components
+          window.dispatchEvent(new Event('authChange'));
+          
           setMessage('Login successful! Redirecting...');
           setTimeout(() => navigate('/'), 1500);
         } else {
