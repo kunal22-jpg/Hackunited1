@@ -2072,7 +2072,7 @@ const GetStartedPage = () => {
 
       case 3:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <h3 className="text-xl font-semibold text-white mb-4">Allergies & Medical</h3>
             
             <div>
@@ -2093,6 +2093,28 @@ const GetStartedPage = () => {
                   </button>
                 ))}
               </div>
+              
+              {/* Custom Allergy Input */}
+              <div className="mb-3">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    name="customAllergy"
+                    value={formData.customAllergy}
+                    onChange={handleInputChange}
+                    className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Add custom allergy..."
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCustomAllergyAdd}
+                    className="px-4 py-2 bg-amber-400 text-gray-900 rounded-lg hover:bg-amber-500 transition-all font-medium"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
               {formData.allergies.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {formData.allergies.map(allergy => (
@@ -2116,7 +2138,7 @@ const GetStartedPage = () => {
 
             <div>
               <label className="block text-white/80 text-sm font-medium mb-2">Chronic Conditions</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 mb-3">
                 {chronicConditionOptions.map(condition => (
                   <label key={condition} className="flex items-center space-x-2 cursor-pointer">
                     <input
@@ -2129,6 +2151,47 @@ const GetStartedPage = () => {
                   </label>
                 ))}
               </div>
+
+              {/* Custom Chronic Condition Input */}
+              <div className="mb-3">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    name="customChronicCondition"
+                    value={formData.customChronicCondition}
+                    onChange={handleInputChange}
+                    className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Add custom chronic condition..."
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCustomChronicConditionAdd}
+                    className="px-4 py-2 bg-amber-400 text-gray-900 rounded-lg hover:bg-amber-500 transition-all font-medium"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              {formData.chronicConditions.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.chronicConditions.map(condition => (
+                    <span
+                      key={condition}
+                      className="px-3 py-1 bg-blue-400/20 text-blue-300 rounded-full text-sm flex items-center space-x-2"
+                    >
+                      <span>{condition}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleMultiSelect('chronicConditions', condition)}
+                        className="text-blue-300 hover:text-white"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         );
