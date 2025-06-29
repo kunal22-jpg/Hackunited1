@@ -2195,11 +2195,10 @@ const GetStartedPage = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgrounds.home})` }}
+      <VideoBackground 
+        videoSrc="/video/login.mp4" 
+        overlay="bg-black/40"
       />
-      <div className="absolute inset-0 bg-black/40" />
       
       <div className="relative min-h-screen flex items-center justify-center p-4 pt-16">
         {/* Title Section - Moved Higher */}
