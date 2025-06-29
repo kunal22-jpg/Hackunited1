@@ -1216,8 +1216,27 @@ const DietPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleSectionHover = (isHovering) => {
+    const dietIcon = document.querySelector('.header-diet-icon');
+    if (dietIcon) {
+      if (isHovering) {
+        dietIcon.style.animation = 'appleGrow 0.6s ease-in-out';
+        dietIcon.style.color = '#22c55e';
+        dietIcon.style.filter = 'drop-shadow(2px 2px 4px #16a34a)';
+      } else {
+        dietIcon.style.animation = '';
+        dietIcon.style.color = '';
+        dietIcon.style.filter = '';
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      onMouseEnter={() => handleSectionHover(true)}
+      onMouseLeave={() => handleSectionHover(false)}
+    >
       <VideoBackground 
         videoSrc="/video/diet.mp4" 
         overlay="bg-black/50"
@@ -1225,11 +1244,6 @@ const DietPage = () => {
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <QuoteHeader 
-            quote="Eat vibrant, live radiant." 
-            background={backgrounds.diet}
-          />
-          
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Diet Plans</h1>
             <p className="text-xl text-white/80">Nutrition that fuels your potential</p>
