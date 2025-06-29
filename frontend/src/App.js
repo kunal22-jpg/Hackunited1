@@ -1325,26 +1325,200 @@ const GroceryAgent = () => {
 // Get Started Page - Login/Signup with Feature Showcase
 const GetStartedPage = () => {
   const [activeTab, setActiveTab] = useState('login');
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
+    // Basic Credentials
     email: '',
     password: '',
     name: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    agreeTerms: false,
+    // Vital Stats
+    age: '',
+    gender: '',
+    height: '',
+    heightUnit: 'cm',
+    weight: '',
+    weightUnit: 'kg',
+    // Allergies & Medical
+    allergies: [],
+    chronicConditions: [],
+    // Wellness Goals
+    wellnessGoals: [],
+    // Lifestyle & Preferences
+    fitnessLevel: '',
+    dietPreference: '',
+    skinType: '',
+    smartCartOptIn: false
   });
 
   const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', { tab: activeTab, data: formData });
-    alert(`${activeTab === 'login' ? 'Login' : 'Signup'} functionality will be implemented!`);
+  const handleMultiSelect = (name, value) => {
+    const currentValues = formData[name];
+    const updatedValues = currentValues.includes(value)
+      ? currentValues.filter(item => item !== value)
+      : [...currentValues, value];
+    setFormData({
+      ...formData,
+      [name]: updatedValues
+    });
   };
+
+  const handleGoalsSelect = (goal) => {
+    const currentGoals = formData.wellnessGoals;
+    if (currentGoals.includes(goal)) {
+      setFormData({
+        ...formData,
+        wellnessGoals: currentGoals.filter(g => g !== goal)
+      });
+    } else if (currentGoals.length < 3) {
+      setFormData({
+        ...formData,
+        wellnessGoals: [...currentGoals, goal]
+      });
+    }
+  };
+
+  const handleAllergyAdd = (allergy) => {
+    if (allergy && !formData.allergies.includes(allergy)) {
+      setFormData({
+        ...formData,
+        allergies: [...formData.allergies, allergy]
+      });
+    }
+  };
+
+  const handleAllergyRemove = (allergy) => {
+    setFormData({
+      ...formData,
+      allergies: formData.allergies.filter(a => a !== allergy)
+    });
+  };
+
+  const validateStep = (step) => {
+    switch (step) {
+      case 1:
+        return formData.name && formData.email && formData.password && 
+               formData.confirmPassword && formData.agreeTerms &&
+               formData.password === formData.confirmPassword;
+      case 2:
+        return formData.age && formData.gender && formData.height && formData.weight;
+      case 3:
+        return true; // Optional fields
+      case 4:
+        return formData.wellnessGoals.length > 0;
+      case 5:
+        return formData.fitnessLevel && formData.dietPreference && formData.skinType;
+      default:
+        return false;
+    }
+  };
+
+  const nextStep = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, 5));
+    } else {
+      alert('Please fill in all required fields');
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (activeTab === 'login') {
+      // Handle login
+      console.log('Login attempt:', { email: formData.email, password: formData.password });
+      alert('Login functionality will be implemented!');
+      return;
+    }
+
+    // Handle signup
+    if (!validateStep(5)) {
+      alert('Please complete all required fields');
+      return;
+    }
+
+    try {
+      const userProfile = {
+        // Basic info
+        name: formData.name,
+        email: formData.email,
+        password: formData.password, // In real app, this should be hashed
+        
+        // Vital stats
+        age: parseInt(formData.age),
+        gender: formData.gender,
+        height: {
+          value: parseFloat(formData.height),
+          unit: formData.heightUnit
+        },
+        weight: {
+          value: parseFloat(formData.weight),
+          unit: formData.weightUnit
+        },
+        
+        // Medical info
+        allergies: formData.allergies,
+        chronicConditions: formData.chronicConditions,
+        
+        // Goals and preferences
+        wellnessGoals: formData.wellnessGoals,
+        fitnessLevel: formData.fitnessLevel,
+        dietPreference: formData.dietPreference,
+        skinType: formData.skinType,
+        smartCartOptIn: formData.smartCartOptIn,
+        
+        // Metadata
+        createdAt: new Date().toISOString(),
+        profileComplete: true
+      };
+
+      console.log('User profile to save:', userProfile);
+      
+      // In a real implementation, you would send this to your backend
+      // const response = await axios.post(`${API}/users/register`, userProfile);
+      
+      alert('Registration successful! (Backend integration pending)');
+      // Redirect to dashboard or home
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Registration failed. Please try again.');
+    }
+  };
+
+  const wellnessGoalOptions = [
+    { id: 'muscle-gain', label: 'Muscle Gain', icon: '💪' },
+    { id: 'fat-loss', label: 'Fat Loss', icon: '🔥' },
+    { id: 'glowing-skin', label: 'Glowing Skin', icon: '✨' },
+    { id: 'acne-control', label: 'Acne Control', icon: '🎯' },
+    { id: 'anti-aging', label: 'Anti-Aging', icon: '🧴' },
+    { id: 'boost-immunity', label: 'Boost Immunity', icon: '🛡️' },
+    { id: 'manage-diabetes', label: 'Manage Diabetes', icon: '📊' },
+    { id: 'improve-flexibility', label: 'Improve Flexibility', icon: '🤸' },
+    { id: 'healthy-aging', label: 'Healthy Aging', icon: '🌱' },
+    { id: 'general-fitness', label: 'General Fitness', icon: '🏃' }
+  ];
+
+  const chronicConditionOptions = [
+    'PCOS', 'Diabetes', 'Asthma', 'Hypertension', 'Thyroid', 
+    'Arthritis', 'Heart Disease', 'None'
+  ];
+
+  const commonAllergies = [
+    'Nuts', 'Dairy', 'Gluten', 'Shellfish', 'Eggs', 'Soy', 'Fish', 'Peanuts'
+  ];
 
   const features = [
     {
@@ -1385,6 +1559,355 @@ const GetStartedPage = () => {
     }
   ];
 
+  const renderSignupStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Basic Credentials</h3>
+            
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                placeholder="Create a password"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Confirm Password</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
+
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                name="agreeTerms"
+                checked={formData.agreeTerms}
+                onChange={handleInputChange}
+                className="mt-1 w-4 h-4 text-amber-400 bg-white/10 border-white/20 rounded focus:ring-amber-400"
+                required
+              />
+              <label className="text-white/80 text-sm">
+                I agree to the <span className="text-amber-400 hover:text-amber-300 cursor-pointer">Terms and Privacy Policy</span>
+              </label>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Vital Stats</h3>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  placeholder="Age in years"
+                  min="1"
+                  max="120"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  required
+                >
+                  <option value="" className="bg-gray-800">Select gender</option>
+                  <option value="male" className="bg-gray-800">Male</option>
+                  <option value="female" className="bg-gray-800">Female</option>
+                  <option value="other" className="bg-gray-800">Other</option>
+                  <option value="prefer-not-to-say" className="bg-gray-800">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Height</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="number"
+                    name="height"
+                    value={formData.height}
+                    onChange={handleInputChange}
+                    className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Height"
+                    step="0.1"
+                    required
+                  />
+                  <select
+                    name="heightUnit"
+                    value={formData.heightUnit}
+                    onChange={handleInputChange}
+                    className="px-3 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="cm" className="bg-gray-800">cm</option>
+                    <option value="feet" className="bg-gray-800">feet</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Weight</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="number"
+                    name="weight"
+                    value={formData.weight}
+                    onChange={handleInputChange}
+                    className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Weight"
+                    step="0.1"
+                    required
+                  />
+                  <select
+                    name="weightUnit"
+                    value={formData.weightUnit}
+                    onChange={handleInputChange}
+                    className="px-3 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="kg" className="bg-gray-800">kg</option>
+                    <option value="lbs" className="bg-gray-800">lbs</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Allergies & Medical</h3>
+            
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Allergies</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {commonAllergies.map(allergy => (
+                  <button
+                    key={allergy}
+                    type="button"
+                    onClick={() => handleAllergyAdd(allergy)}
+                    className={`px-3 py-1 rounded-full text-sm transition-all ${
+                      formData.allergies.includes(allergy)
+                        ? 'bg-amber-400 text-gray-900'
+                        : 'bg-white/10 text-white/80 hover:bg-white/20'
+                    }`}
+                  >
+                    {allergy}
+                  </button>
+                ))}
+              </div>
+              {formData.allergies.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.allergies.map(allergy => (
+                    <span
+                      key={allergy}
+                      className="px-3 py-1 bg-amber-400/20 text-amber-300 rounded-full text-sm flex items-center space-x-2"
+                    >
+                      <span>{allergy}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleAllergyRemove(allergy)}
+                        className="text-amber-300 hover:text-white"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Chronic Conditions</label>
+              <div className="grid grid-cols-2 gap-2">
+                {chronicConditionOptions.map(condition => (
+                  <label key={condition} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.chronicConditions.includes(condition)}
+                      onChange={() => handleMultiSelect('chronicConditions', condition)}
+                      className="w-4 h-4 text-amber-400 bg-white/10 border-white/20 rounded focus:ring-amber-400"
+                    />
+                    <span className="text-white/80 text-sm">{condition}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Wellness Goals</h3>
+            <p className="text-white/60 text-sm mb-4">Select up to 3 goals ({formData.wellnessGoals.length}/3)</p>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {wellnessGoalOptions.map(goal => (
+                <button
+                  key={goal.id}
+                  type="button"
+                  onClick={() => handleGoalsSelect(goal.id)}
+                  disabled={!formData.wellnessGoals.includes(goal.id) && formData.wellnessGoals.length >= 3}
+                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    formData.wellnessGoals.includes(goal.id)
+                      ? 'border-amber-400 bg-amber-400/20 text-white'
+                      : 'border-white/20 bg-white/10 text-white/80 hover:bg-white/20'
+                  } ${
+                    !formData.wellnessGoals.includes(goal.id) && formData.wellnessGoals.length >= 3
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer'
+                  }`}
+                >
+                  <div className="text-2xl mb-2">{goal.icon}</div>
+                  <div className="font-medium text-sm">{goal.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Lifestyle & Preferences</h3>
+            
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Fitness Level</label>
+              <div className="grid grid-cols-3 gap-2">
+                {['beginner', 'intermediate', 'advanced'].map(level => (
+                  <label key={level} className="cursor-pointer">
+                    <input
+                      type="radio"
+                      name="fitnessLevel"
+                      value={level}
+                      checked={formData.fitnessLevel === level}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <div className={`p-3 rounded-lg border-2 text-center transition-all capitalize ${
+                      formData.fitnessLevel === level
+                        ? 'border-amber-400 bg-amber-400/20 text-white'
+                        : 'border-white/20 bg-white/10 text-white/80 hover:bg-white/20'
+                    }`}>
+                      {level}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Diet Preference</label>
+              <select
+                name="dietPreference"
+                value={formData.dietPreference}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                required
+              >
+                <option value="" className="bg-gray-800">Select diet preference</option>
+                <option value="vegetarian" className="bg-gray-800">Vegetarian</option>
+                <option value="non-vegetarian" className="bg-gray-800">Non-Vegetarian</option>
+                <option value="vegan" className="bg-gray-800">Vegan</option>
+                <option value="keto" className="bg-gray-800">Keto</option>
+                <option value="jain" className="bg-gray-800">Jain</option>
+                <option value="gluten-free" className="bg-gray-800">Gluten-Free</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2">Skin Type</label>
+              <select
+                name="skinType"
+                value={formData.skinType}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                required
+              >
+                <option value="" className="bg-gray-800">Select skin type</option>
+                <option value="dry" className="bg-gray-800">Dry</option>
+                <option value="oily" className="bg-gray-800">Oily</option>
+                <option value="combination" className="bg-gray-800">Combination</option>
+                <option value="sensitive" className="bg-gray-800">Sensitive</option>
+                <option value="not-sure" className="bg-gray-800">Not Sure</option>
+              </select>
+            </div>
+
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                name="smartCartOptIn"
+                checked={formData.smartCartOptIn}
+                onChange={handleInputChange}
+                className="mt-1 w-4 h-4 text-amber-400 bg-white/10 border-white/20 rounded focus:ring-amber-400"
+              />
+              <label className="text-white/80 text-sm">
+                Allow Smart Cart to recommend items weekly
+              </label>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div 
@@ -1394,7 +1917,7 @@ const GetStartedPage = () => {
       <div className="absolute inset-0 bg-black/40" />
       
       <div className="relative min-h-screen flex items-center justify-center p-4 pt-24">
-        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-center">
+        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-start">
           {/* Features Showcase */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -1438,7 +1961,7 @@ const GetStartedPage = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20"
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 max-h-[80vh] overflow-y-auto"
           >
             {/* Tab Switcher */}
             <div className="flex mb-6 bg-white/10 rounded-xl p-1">
@@ -1453,7 +1976,10 @@ const GetStartedPage = () => {
                 Login
               </button>
               <button
-                onClick={() => setActiveTab('signup')}
+                onClick={() => {
+                  setActiveTab('signup');
+                  setCurrentStep(1);
+                }}
                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
                   activeTab === 'signup'
                     ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg'
@@ -1464,85 +1990,108 @@ const GetStartedPage = () => {
               </button>
             </div>
 
-            {/* Form */}
+            {/* Progress Bar for Signup */}
+            {activeTab === 'signup' && (
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-white/60">Step {currentStep} of 5</span>
+                  <span className="text-sm text-white/60">{Math.round((currentStep / 5) * 100)}%</span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${(currentStep / 5) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Form Content */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {activeTab === 'signup' && (
-                <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
+              {activeTab === 'login' ? (
+                // Login Form (unchanged)
+                <>
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 px-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    Login to Nutracía
+                  </button>
+                </>
+              ) : (
+                // Multi-step Signup Form
+                <>
+                  {renderSignupStep()}
+                  
+                  {/* Navigation Buttons */}
+                  <div className="flex justify-between pt-4">
+                    {currentStep > 1 && (
+                      <button
+                        type="button"
+                        onClick={prevStep}
+                        className="px-6 py-2 bg-white/10 text-white/80 rounded-lg hover:bg-white/20 transition-all"
+                      >
+                        Previous
+                      </button>
+                    )}
+                    
+                    <div className="ml-auto">
+                      {currentStep < 5 ? (
+                        <button
+                          type="button"
+                          onClick={nextStep}
+                          className="px-6 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transition-all"
+                        >
+                          Next
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          className="px-6 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
+                          Join Nutracía
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
-
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-
-              {activeTab === 'signup' && (
-                <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full py-3 px-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-              >
-                {activeTab === 'login' ? 'Login to Nutracía' : 'Join Nutracía'}
-              </button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-white/60 text-sm">
                 {activeTab === 'login' ? "Don't have an account? " : "Already have an account? "}
                 <button
-                  onClick={() => setActiveTab(activeTab === 'login' ? 'signup' : 'login')}
+                  onClick={() => {
+                    setActiveTab(activeTab === 'login' ? 'signup' : 'login');
+                    setCurrentStep(1);
+                  }}
                   className="text-amber-400 hover:text-amber-300 font-medium"
                 >
                   {activeTab === 'login' ? 'Sign up' : 'Login'}
