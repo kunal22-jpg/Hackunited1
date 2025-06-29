@@ -1795,6 +1795,10 @@ const GetStartedPage = () => {
           // Store user data and redirect
           localStorage.setItem('user', JSON.stringify(data.user));
           localStorage.setItem('userId', data.user_id);
+          
+          // Dispatch custom event for AuthRoute components
+          window.dispatchEvent(new Event('authChange'));
+          
           setMessage('Registration successful! Redirecting...');
           setTimeout(() => navigate('/'), 1500);
         } else {
