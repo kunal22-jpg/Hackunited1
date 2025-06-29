@@ -448,11 +448,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Authentication System Implementation"
-    - "Authentication Frontend Integration"
-    - "Quote-Only Pages for Non-Authenticated Users"
-  stuck_tasks:
-    - "Quote-Only Pages for Non-Authenticated Users"
+    - "Home Section - Dark Overlay Removed"
+    - "Quote Sections Removed"
+    - "Small Round Logo Removed"
+    - "Section-Wide Hover Effects"
+    - "Order Up Section - Reverted to Image Background"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
