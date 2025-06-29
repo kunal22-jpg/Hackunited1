@@ -1520,44 +1520,7 @@ const GetStartedPage = () => {
     'Nuts', 'Dairy', 'Gluten', 'Shellfish', 'Eggs', 'Soy', 'Fish', 'Peanuts'
   ];
 
-  const features = [
-    {
-      icon: MessageCircle,
-      title: 'AI Health Chatbot',
-      description: 'Get personalized health advice from our OpenAI-powered wellness assistant',
-      color: 'from-blue-400 to-blue-600'
-    },
-    {
-      icon: ShoppingCart,
-      title: 'Smart Grocery Shopping',
-      description: 'AI-powered product recommendations using Google Gemini for healthy shopping',
-      color: 'from-green-400 to-green-600'
-    },
-    {
-      icon: Dumbbell,
-      title: 'Workout Plans',
-      description: 'Customized fitness routines tailored to your goals and fitness level',
-      color: 'from-red-400 to-red-600'
-    },
-    {
-      icon: Sparkles,
-      title: 'Skincare Routines',
-      description: 'Personalized beauty advice for your skin type and concerns',
-      color: 'from-pink-400 to-pink-600'
-    },
-    {
-      icon: Apple,
-      title: 'Diet Plans',
-      description: 'Nutrition guidance and meal plans for optimal health and wellness',
-      color: 'from-yellow-400 to-yellow-600'
-    },
-    {
-      icon: Heart,
-      title: 'Health Management',
-      description: 'Comprehensive health condition tracking and management tools',
-      color: 'from-purple-400 to-purple-600'
-    }
-  ];
+
 
   const renderSignupStep = () => {
     switch (currentStep) {
