@@ -903,21 +903,99 @@ const Modal = ({ isOpen, onClose, item, type }) => {
 
           {type === 'skincare' && (
             <div className="space-y-4">
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Skin Type:</h4>
-                <span className="bg-pink-500/20 text-pink-200 px-3 py-1 rounded-full text-sm capitalize">
-                  {item.skin_type}
-                </span>
+              {/* Duration and Level */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-white">
+                    <div className="text-lg font-bold">{item.duration || '10-15 min'}</div>
+                    <div className="text-sm text-white/80">Duration</div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-white">
+                    <div className="text-lg font-bold">{item.level || (item.skin_type ? 'Skin Type' : 'Universal')}</div>
+                    <div className="text-sm text-white/80">{item.level ? 'Level' : 'Compatibility'}</div>
+                  </div>
+                </div>
               </div>
+
+              {/* Skin Type or Requirements */}
+              {(item.skin_type && !item.requirements) && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Skin Type:</h4>
+                  <span className="bg-pink-500/20 text-pink-200 px-3 py-1 rounded-full text-sm capitalize">
+                    {item.skin_type}
+                  </span>
+                </div>
+              )}
+
+              {/* Requirements Section (Enhanced for AI content) */}
+              {item.requirements && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Requirements:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {item.requirements.map((req, idx) => (
+                      <span key={idx} className="bg-pink-500/20 text-pink-200 px-3 py-1 rounded-full text-sm">
+                        {req}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               
-              <div className="bg-white/10 rounded-lg p-4">
-                <h4 className="font-semibold text-white mb-2">Steps:</h4>
-                <ol className="space-y-2">
-                  {item.steps?.map((step, idx) => (
-                    <li key={idx} className="text-white/80">{idx + 1}. {step}</li>
-                  ))}
-                </ol>
-              </div>
+              {/* Steps Section */}
+              {item.steps && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Skincare Steps:</h4>
+                  <ol className="space-y-2">
+                    {item.steps.map((step, idx) => (
+                      <li key={idx} className="text-white/80">{idx + 1}. {step}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {/* YouTube Video Section */}
+              {item.youtube_video && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <Play size={18} />
+                    <span>Skincare Tutorial</span>
+                  </h4>
+                  <a
+                    href={item.youtube_video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Play size={16} />
+                    <span>Watch Tutorial on YouTube</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Product Links Section */}
+              {item.product_links && item.product_links.length > 0 && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span>💄</span>
+                    <span>Skincare Products</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {item.product_links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block bg-pink-600 hover:bg-pink-700 text-white py-2 px-3 rounded text-sm transition-colors"
+                      >
+                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'Skincare Products'}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
