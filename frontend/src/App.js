@@ -357,14 +357,49 @@ const Header = () => {
                 );
               })}
               
-              {/* Get Started Button - Mobile */}
-              <Link
-                to="/get-started"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-center mx-2 mt-4 px-6 py-3 get-started-button text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
-              >
-                Get Started
-              </Link>
+              {/* Conditional rendering: Get Started Button or User Menu - Mobile */}
+              {!isLoggedIn ? (
+                <Link
+                  to="/get-started"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center mx-2 mt-4 px-6 py-3 get-started-button text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
+                >
+                  Get Started
+                </Link>
+              ) : (
+                <div className="mx-2 mt-4 space-y-2">
+                  <div className="flex items-center space-x-3 px-4 py-3 bg-white/10 rounded-lg">
+                    <div className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+                      <User size={16} className="text-white" />
+                    </div>
+                    <span className="text-white font-medium">{currentUser?.name || 'User'}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowProfilePopup(true);
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-all"
+                  >
+                    <User size={20} />
+                    <span>Profile</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-all"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                      <polyline points="16,17 21,12 16,7"/>
+                      <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
