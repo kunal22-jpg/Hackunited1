@@ -945,14 +945,14 @@ def test_personalized_wellness_recommendations():
     try:
         # Sample request data as specified in the review request
         request_data = {
-            "user_id": "test-user-123",
-            "weight": "70 kg", 
-            "allergies": "nuts, dairy",
-            "wellness_goals": ["muscle building", "better skin"],
-            "health_conditions": ["mild acne"],
-            "age": 28,
+            "user_id": "test-user-new",
+            "weight": "75 kg", 
+            "allergies": "peanuts",
+            "wellness_goals": ["weight loss", "muscle building"],
+            "health_conditions": ["back pain"],
+            "age": 30,
             "gender": "male",
-            "fitness_level": "intermediate"
+            "fitness_level": "beginner"
         }
         
         print(f"Sending request with data: {json.dumps(request_data, indent=2)}")
@@ -1000,15 +1000,16 @@ def test_personalized_wellness_recommendations():
                 
                 # Check for personalization based on user data
                 if category == "workout":
-                    assert "intermediate" in rec["description"].lower() or "intermediate" in rec["level"].lower(), \
-                        f"Workout recommendation doesn't mention user's fitness level (intermediate)"
+                    assert "beginner" in rec["description"].lower() or "beginner" in rec["level"].lower(), \
+                        f"Workout recommendation doesn't mention user's fitness level (beginner)"
                 elif category == "diet":
-                    assert "nuts" in rec["description"].lower() or "dairy" in rec["description"].lower() or \
+                    assert "peanuts" in rec["description"].lower() or \
                            "allergies" in rec["description"].lower(), \
-                        f"Diet recommendation doesn't address user's allergies (nuts, dairy)"
-                elif category == "skincare":
-                    assert "acne" in rec["description"].lower() or "skin" in rec["description"].lower(), \
-                        f"Skincare recommendation doesn't address user's skin concerns (acne)"
+                        f"Diet recommendation doesn't address user's allergies (peanuts)"
+                elif category == "health":
+                    assert "back pain" in rec["description"].lower() or \
+                           "back" in rec["description"].lower(), \
+                        f"Health recommendation doesn't address user's health condition (back pain)"
         
         # Check if health category has motivational quotes
         if recommendations["health"] and len(recommendations["health"]) > 0:
@@ -1016,6 +1017,18 @@ def test_personalized_wellness_recommendations():
                 assert "motivational_quote" in health_rec, "Health recommendation missing 'motivational_quote' field"
                 assert health_rec["motivational_quote"], "Health recommendation has empty motivational quote"
                 print(f"Health recommendation includes motivational quote: {health_rec['motivational_quote']}")
+        
+        # Check YouTube links and product links format
+        for category, recs in recommendations.items():
+            for rec in recs:
+                # Validate YouTube link format
+                assert rec["youtube_video"].startswith("https://www.youtube.com"), \
+                    f"YouTube link in {category} recommendation is not properly formatted: {rec['youtube_video']}"
+                
+                # Validate product links format
+                for link in rec["product_links"]:
+                    assert link.startswith("https://"), \
+                        f"Product link in {category} recommendation is not properly formatted: {link}"
         
         print("✅ Personalized wellness recommendations endpoint test passed")
         return True
