@@ -943,18 +943,19 @@ def test_personalized_wellness_recommendations():
     """Test the personalized wellness recommendations API endpoint"""
     print("\n=== Testing Personalized Wellness Recommendations Endpoint ===")
     try:
-        # Sample request data as specified in the requirements
+        # Sample request data as specified in the review request
         request_data = {
             "user_id": "test-user-123",
             "weight": "70 kg", 
-            "allergies": "none",
-            "wellness_goals": ["muscle building", "general fitness"],
-            "health_conditions": [],
-            "age": 25,
+            "allergies": "nuts, dairy",
+            "wellness_goals": ["muscle building", "better skin"],
+            "health_conditions": ["mild acne"],
+            "age": 28,
             "gender": "male",
-            "fitness_level": "beginner"
+            "fitness_level": "intermediate"
         }
         
+        print(f"Sending request with data: {json.dumps(request_data, indent=2)}")
         response = requests.post(f"{API_URL}/wellness/personalized-recommendations", json=request_data)
         print(f"Status Code: {response.status_code}")
         data = response.json()
@@ -997,13 +998,23 @@ def test_personalized_wellness_recommendations():
                 assert "product_links" in rec, f"{category} recommendation missing 'product_links' field"
                 assert isinstance(rec["product_links"], list), f"'product_links' in {category} recommendation is not a list"
                 
-                # We won't check for personalization as strictly, since the API might be using fallback recommendations
-                # when OpenAI is not available or doesn't generate personalized content
+                # Check for personalization based on user data
+                if category == "workout":
+                    assert "intermediate" in rec["description"].lower() or "intermediate" in rec["level"].lower(), \
+                        f"Workout recommendation doesn't mention user's fitness level (intermediate)"
+                elif category == "diet":
+                    assert "nuts" in rec["description"].lower() or "dairy" in rec["description"].lower() or \
+                           "allergies" in rec["description"].lower(), \
+                        f"Diet recommendation doesn't address user's allergies (nuts, dairy)"
+                elif category == "skincare":
+                    assert "acne" in rec["description"].lower() or "skin" in rec["description"].lower(), \
+                        f"Skincare recommendation doesn't address user's skin concerns (acne)"
         
         # Check if health category has motivational quotes
         if recommendations["health"] and len(recommendations["health"]) > 0:
-            health_rec = recommendations["health"][0]
-            if "motivational_quote" in health_rec:
+            for health_rec in recommendations["health"]:
+                assert "motivational_quote" in health_rec, "Health recommendation missing 'motivational_quote' field"
+                assert health_rec["motivational_quote"], "Health recommendation has empty motivational quote"
                 print(f"Health recommendation includes motivational quote: {health_rec['motivational_quote']}")
         
         print("✅ Personalized wellness recommendations endpoint test passed")
