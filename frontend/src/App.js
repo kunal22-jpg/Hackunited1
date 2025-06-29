@@ -1213,7 +1213,7 @@ const DietPage = () => {
           </div>
 
           {meals.length > 0 && (
-            <CircularGallery 
+            <CircularGalleryOGL 
               items={meals}
               onItemClick={handleMealClick}
               type="diet"
