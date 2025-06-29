@@ -2675,46 +2675,51 @@ const OrderUpQuotePage = () => (
 
 // Authentication-aware Route Component
 const AuthRoute = ({ children, quotePage }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null means loading
   
   useEffect(() => {
     const checkAuth = () => {
-      const user = localStorage.getItem('user');
-      const userId = localStorage.getItem('userId');
-      const isAuth = !!(user && userId);
-      setIsAuthenticated(isAuth);
-      setIsLoading(false);
+      try {
+        const user = localStorage.getItem('user');
+        const userId = localStorage.getItem('userId');
+        const isAuth = !!(user && userId);
+        console.log('AuthRoute check:', { user: !!user, userId: !!userId, isAuth }); // Debug log
+        setIsAuthenticated(isAuth);
+      } catch (error) {
+        console.error('Auth check error:', error);
+        setIsAuthenticated(false);
+      }
     };
     
     // Check immediately
     checkAuth();
     
-    // Also check after a small delay to ensure localStorage is properly loaded
-    const timer = setTimeout(checkAuth, 100);
-    
     // Listen for custom auth events
     const handleAuthChange = () => {
+      console.log('Auth change event received'); // Debug log
       checkAuth();
     };
     
     window.addEventListener('authChange', handleAuthChange);
     
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('authChange', handleAuthChange);
     };
   }, []);
   
-  // Show loading state briefly to prevent flashing
-  if (isLoading) {
+  // Show loading state while determining auth status
+  if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-400"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-white/70">Loading...</p>
+        </div>
       </div>
     );
   }
   
+  console.log('AuthRoute rendering:', { isAuthenticated, showingQuote: !isAuthenticated }); // Debug log
   return isAuthenticated ? children : quotePage;
 };
 
