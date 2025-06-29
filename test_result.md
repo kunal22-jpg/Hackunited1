@@ -104,6 +104,67 @@
 
 user_problem_statement: "AUTHENTICATION INTEGRATION: Connect the existing signup/login forms to backend authentication endpoints to save user data and enable proper user session management. Implement complete authentication system with password hashing, email uniqueness validation, user session management, and localStorage integration."
 
+ui_improvements:
+  - task: "Home Section - Dark Overlay Removed"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Removed dark overlay from home section video background. Changed overlay from 'bg-black/40' to empty string so video displays without darkening."
+
+  - task: "Quote Sections Removed"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Removed QuoteHeader components from all section pages (WorkoutPage, SkincarePage, DietPage, HealthPage) and simplified the layout to show only the main content without decorative quotes."
+
+  - task: "Small Round Logo Removed"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Removed decorative SVG icon from LoginCallToAction component. Simplified the login prompt design by removing the round gradient background with lock icon."
+
+  - task: "Section-Wide Hover Effects"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Implemented section-wide hover detection by adding onMouseEnter and onMouseLeave handlers to each main section container. Header icons now animate when hovering anywhere on their respective sections: Workout (Dumbbell - black color, rotation), Skincare (Sparkles - gold glow), Diet (Apple - green growth), Health (Heart - red beat), Order Up (Cart - orange shake)."
+
+  - task: "Order Up Section - Reverted to Image Background"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPLETED: Reverted Order Up section from video background back to image background (backgrounds.orderup). Both main GroceryAgent page and OrderUpQuotePage now use original image background instead of workout.mp4 video."
+
 backend:
   - task: "Authentication System Implementation"
     implemented: true
