@@ -1030,7 +1030,7 @@ const HomePage = () => (
   <div className="min-h-screen relative overflow-hidden">
     <VideoBackground 
       videoSrc="/video/home.mp4" 
-      overlay="bg-black/40"
+      overlay=""
     />
     
     <div className="relative z-10 min-h-screen flex items-center justify-center">
