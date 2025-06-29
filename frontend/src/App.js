@@ -932,7 +932,7 @@ const Modal = ({ isOpen, onClose, item, type }) => {
 };
 
 // New Circular Gallery Component using OGL
-const CircularGallery = ({ items, onItemClick, type }) => {
+const CircularGalleryOGL = ({ items, onItemClick, type }) => {
   if (!items || items.length === 0) {
     return (
       <div className="h-96 flex items-center justify-center">
