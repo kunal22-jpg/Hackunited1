@@ -946,6 +946,25 @@ def run_all_tests():
     # Test basic connectivity
     results["root_endpoint"] = test_root_endpoint()
     
+    # Test authentication system
+    auth_signup_result, user_id, email, password = test_auth_signup()
+    results["auth_signup"] = auth_signup_result
+    
+    if auth_signup_result and user_id:
+        login_result, login_user_id = test_auth_login(email, password)
+        results["auth_login"] = login_result
+        results["auth_get_user"] = test_auth_get_user(user_id)
+    else:
+        # Try with default credentials
+        login_result, login_user_id = test_auth_login()
+        results["auth_login"] = login_result
+        if login_result and login_user_id:
+            results["auth_get_user"] = test_auth_get_user(login_user_id)
+        else:
+            results["auth_get_user"] = False
+    
+    results["auth_validation"] = test_auth_validation()
+    
     # Test data fetching endpoints
     results["workouts_endpoint"] = test_workouts_endpoint()
     results["skincare_endpoint"] = test_skincare_endpoint()
@@ -953,11 +972,11 @@ def run_all_tests():
     results["health_conditions_endpoint"] = test_health_conditions_endpoint()
     
     # Test user management
-    user_creation_result, user_id = test_user_creation()
+    user_creation_result, created_user_id = test_user_creation()
     results["user_creation"] = user_creation_result
     
     # Test enhanced health chatbot
-    results["enhanced_health_chatbot"] = test_enhanced_health_chatbot(user_id)
+    results["enhanced_health_chatbot"] = test_enhanced_health_chatbot(created_user_id)
     
     # Test enhanced grocery agent
     grocery_recommendations_result, recommendations = test_grocery_recommendations()
@@ -968,11 +987,21 @@ def run_all_tests():
     # Print summary
     print("\n=== Test Summary ===")
     for test_name, result in results.items():
-        status = "✅ PASSED" if result else "❌ FAILED"
+        if isinstance(result, tuple):
+            status = "✅ PASSED" if result[0] else "❌ FAILED"
+        else:
+            status = "✅ PASSED" if result else "❌ FAILED"
         print(f"{test_name}: {status}")
     
     # Calculate overall success
-    success_count = sum(1 for result in results.values() if result)
+    success_count = 0
+    for result in results.values():
+        if isinstance(result, tuple):
+            if result[0]:
+                success_count += 1
+        elif result:
+            success_count += 1
+    
     total_count = len(results)
     success_rate = (success_count / total_count) * 100
     
