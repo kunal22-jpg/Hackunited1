@@ -1643,6 +1643,9 @@ const DietPage = () => {
   const [meals, setMeals] = useState([]);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [personalizedDiet, setPersonalizedDiet] = useState([]);
+  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
+  const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {
     fetchMeals();
@@ -1655,6 +1658,24 @@ const DietPage = () => {
     } catch (error) {
       console.error('Error fetching meals:', error);
     }
+  };
+
+  const generatePersonalizedRecommendations = async () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!userData.id) { alert('Please login to generate personalized recommendations'); return; }
+    setIsGeneratingPersonalized(true);
+    try {
+      const personalizedRequest = {
+        user_id: userData.id, weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
+        allergies: userData.allergies ? userData.allergies.join(', ') : 'none', wellness_goals: userData.goals || ['general wellness'],
+        health_conditions: userData.chronic_conditions || [], age: userData.age || 25, gender: userData.gender || 'female',
+        fitness_level: userData.fitness_level || 'beginner'
+      };
+      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
+      if (response.data.success) { setPersonalizedDiet(response.data.recommendations.diet || []); setShowPersonalized(true); }
+      else { alert('Failed to generate personalized recommendations. Please try again.'); }
+    } catch (error) { console.error('Error generating personalized recommendations:', error); alert('Error generating recommendations. Please try again.'); }
+    setIsGeneratingPersonalized(false);
   };
 
   const handleMealClick = (meal) => {
