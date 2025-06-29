@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new personalized wellness recommendations API endpoint at `/api/wellness/personalized-recommendations`."
+user_problem_statement: "CONTINUATION TASK: Remove AI personalized workout feature, fix popup content mismatch, expand to 8 unique workout cards, and create 12-card circular gallery structure."
 
 backend:
   - task: "Basic connectivity - Root endpoint"
