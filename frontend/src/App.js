@@ -1450,7 +1450,7 @@ const WorkoutPage = () => {
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden"
+      className="h-screen relative overflow-hidden"
       onMouseEnter={() => handleSectionHover(true)}
       onMouseLeave={() => handleSectionHover(false)}
     >
@@ -1459,78 +1459,94 @@ const WorkoutPage = () => {
         overlay="bg-black/50"
       />
       
-      <div className="relative z-10 pt-20 px-6">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-4">Workout Plans</h1>
-            <p className="text-lg text-white/80">Personalized fitness routines for every goal</p>
-            
-            {/* Personalized Recommendations Button */}
-            <div className="mt-6 mb-6">
-              <button
-                onClick={generatePersonalizedRecommendations}
-                disabled={isGeneratingPersonalized}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
-              >
-                {isGeneratingPersonalized ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>🤖 AI is creating your personalized workout...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🤖</span>
-                    <span>Generate My Personalized Workouts</span>
-                  </>
-                )}
-              </button>
-            </div>
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Header Section with Title and Top-Right Button */}
+        <div className="pt-20 px-6 flex-shrink-0">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="relative">
+              {/* Main Title - Left Side */}
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-white mb-2">Workout Plans</h1>
+                <p className="text-lg text-white/80 mb-4">Personalized fitness routines for every goal</p>
+              </div>
+              
+              {/* Personalized Recommendations Button - Top Right */}
+              <div className="absolute top-0 right-0">
+                <button
+                  onClick={generatePersonalizedRecommendations}
+                  disabled={isGeneratingPersonalized}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-6 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  {isGeneratingPersonalized ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span className="hidden lg:inline">🤖 AI is creating your personalized workout...</span>
+                      <span className="lg:hidden">🤖 Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🤖</span>
+                      <span className="hidden lg:inline">Get Personalized Suggestions</span>
+                      <span className="lg:hidden">Get Suggestions</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
-            {/* Toggle between Regular and Personalized */}
-            {personalizedWorkouts.length > 0 && (
-              <div className="flex justify-center space-x-4 mb-4">
-                <button
-                  onClick={() => setShowPersonalized(false)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    !showPersonalized 
-                      ? 'bg-white/20 text-white border border-white/40' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  General Workouts
-                </button>
-                <button
-                  onClick={() => setShowPersonalized(true)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    showPersonalized 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  My AI Workouts ({personalizedWorkouts.length})
-                </button>
+              {/* Toggle between Regular and Personalized */}
+              {personalizedWorkouts.length > 0 && (
+                <div className="flex justify-center space-x-4 mt-4">
+                  <button
+                    onClick={() => setShowPersonalized(false)}
+                    className={`px-4 py-2 rounded-lg transition-all text-sm ${
+                      !showPersonalized 
+                        ? 'bg-white/20 text-white border border-white/40' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/15'
+                    }`}
+                  >
+                    General Workouts
+                  </button>
+                  <button
+                    onClick={() => setShowPersonalized(true)}
+                    className={`px-4 py-2 rounded-lg transition-all text-sm ${
+                      showPersonalized 
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/15'
+                    }`}
+                  >
+                    My AI Workouts ({personalizedWorkouts.length})
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Gallery Section - Takes remaining space */}
+        <div className="flex-1 px-6 mt-4">
+          <div className="max-w-screen-2xl mx-auto h-full">
+            {/* Display Workouts */}
+            {showPersonalized && personalizedWorkouts.length > 0 ? (
+              <CircularGalleryOGL 
+                items={personalizedWorkouts}
+                onItemClick={handleWorkoutClick}
+                type="workout"
+              />
+            ) : workouts.length > 0 ? (
+              <CircularGalleryOGL 
+                items={workouts}
+                onItemClick={handleWorkoutClick}
+                type="workout"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center text-white/60">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                  <p>Loading workout plans...</p>
+                </div>
               </div>
             )}
           </div>
-
-          {/* Display Workouts */}
-          {showPersonalized && personalizedWorkouts.length > 0 ? (
-            <CircularGalleryOGL 
-              items={personalizedWorkouts}
-              onItemClick={handleWorkoutClick}
-              type="workout"
-            />
-          ) : workouts.length > 0 ? (
-            <CircularGalleryOGL 
-              items={workouts}
-              onItemClick={handleWorkoutClick}
-              type="workout"
-            />
-          ) : (
-            <div className="text-center text-white/60 py-8">
-              <p>Loading workout plans...</p>
-            </div>
-          )}
         </div>
       </div>
 
