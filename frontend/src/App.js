@@ -23,6 +23,23 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Video Background Component
+const VideoBackground = ({ videoSrc, overlay = 'bg-black/40', className = '' }) => (
+  <div className={`absolute inset-0 ${className}`}>
+    <video
+      autoPlay
+      loop
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover"
+      style={{ filter: 'brightness(0.7)' }}
+    >
+      <source src={videoSrc} type="video/mp4" />
+    </video>
+    <div className={`absolute inset-0 ${overlay}`} />
+  </div>
+);
+
 // Background images from vision expert
 const backgrounds = {
   home: 'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg',
