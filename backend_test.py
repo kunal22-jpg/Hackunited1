@@ -33,6 +33,329 @@ def test_root_endpoint():
         print(f"❌ Root endpoint test failed: {str(e)}")
         return False
 
+def test_auth_signup():
+    """Test user registration with complete 5-step profile data"""
+    print("\n=== Testing Authentication Signup Endpoint ===")
+    try:
+        # Complete 5-step profile data as specified in the requirements
+        signup_data = {
+            "name": "Sarah Chen",
+            "email": "sarah.chen@email.com",
+            "password": "SecurePass123!",
+            "confirmPassword": "SecurePass123!",
+            "agreeTerms": True,
+            "age": 28,
+            "gender": "Female",
+            "height": 165,
+            "heightUnit": "cm",
+            "weight": 58,
+            "weightUnit": "kg",
+            "allergies": ["Nuts", "Shellfish"],
+            "chronicConditions": [],
+            "wellnessGoals": ["Weight Loss", "Better Sleep", "Stress Management"],
+            "fitnessLevel": "Intermediate",
+            "dietPreference": "Vegetarian",
+            "skinType": "Combination",
+            "smartCartOptIn": True
+        }
+        
+        response = requests.post(f"{API_URL}/auth/signup", json=signup_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Signup response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        
+        if data["success"]:
+            assert "user" in data, "Response missing 'user' field"
+            assert "user_id" in data, "Response missing 'user_id' field"
+            
+            # Verify user data is stored correctly
+            user = data["user"]
+            assert user["name"] == signup_data["name"], "User name doesn't match"
+            assert user["email"] == signup_data["email"], "User email doesn't match"
+            assert "password" not in user, "Password should not be returned in response"
+            assert user["age"] == signup_data["age"], "User age doesn't match"
+            assert user["gender"] == signup_data["gender"], "User gender doesn't match"
+            assert user["height"] == signup_data["height"], "User height doesn't match"
+            assert user["allergies"] == signup_data["allergies"], "User allergies don't match"
+            assert user["goals"] == signup_data["wellnessGoals"], "User wellness goals don't match"
+            assert user["fitness_level"] == signup_data["fitnessLevel"], "User fitness level doesn't match"
+            assert user["diet_type"] == signup_data["dietPreference"], "User diet preference doesn't match"
+            assert user["skin_type"] == signup_data["skinType"], "User skin type doesn't match"
+            
+            user_id = data["user_id"]
+            print(f"✅ Authentication signup test passed - Created user with ID: {user_id}")
+            return True, user_id, signup_data["email"], signup_data["password"]
+        else:
+            # If the user already exists, this is still a valid test case
+            if "already registered" in data["message"]:
+                print("User already exists - this is expected if the test has been run before")
+                # Try to login with the credentials to get the user_id
+                login_result, user_id = test_auth_login(signup_data["email"], signup_data["password"])
+                if login_result:
+                    print(f"✅ Authentication signup test passed (user already exists) - Retrieved user ID: {user_id}")
+                    return True, user_id, signup_data["email"], signup_data["password"]
+                else:
+                    print("❌ Could not retrieve existing user")
+                    return False, None, None, None
+            else:
+                print(f"❌ Signup failed with message: {data['message']}")
+                return False, None, None, None
+    except Exception as e:
+        print(f"❌ Authentication signup test failed: {str(e)}")
+        return False, None, None, None
+
+def test_auth_login(email=None, password=None):
+    """Test user authentication with email/password"""
+    print("\n=== Testing Authentication Login Endpoint ===")
+    try:
+        # Use provided credentials or defaults
+        login_data = {
+            "email": email or "sarah.chen@email.com",
+            "password": password or "SecurePass123!"
+        }
+        
+        response = requests.post(f"{API_URL}/auth/login", json=login_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Login response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        
+        if data["success"]:
+            assert "user" in data, "Response missing 'user' field"
+            assert "user_id" in data, "Response missing 'user_id' field"
+            assert "password" not in data["user"], "Password should not be returned in response"
+            
+            user_id = data["user_id"]
+            print(f"✅ Authentication login test passed - User ID: {user_id}")
+            return True, user_id
+        else:
+            print(f"❌ Login failed with message: {data['message']}")
+            return False, None
+    except Exception as e:
+        print(f"❌ Authentication login test failed: {str(e)}")
+        return False, None
+
+def test_auth_get_user(user_id=None):
+    """Test user profile retrieval by ID"""
+    print("\n=== Testing Authentication Get User Endpoint ===")
+    if not user_id:
+        print("❌ Authentication get user test skipped: No user ID provided")
+        return False
+    
+    try:
+        response = requests.get(f"{API_URL}/auth/user/{user_id}")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Get user response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        
+        if data["success"]:
+            assert "user" in data, "Response missing 'user' field"
+            assert "user_id" in data, "Response missing 'user_id' field"
+            assert "password" not in data["user"], "Password should not be returned in response"
+            assert data["user_id"] == user_id, "User ID in response doesn't match requested ID"
+            
+            print(f"✅ Authentication get user test passed - User ID: {user_id}")
+            return True
+        else:
+            print(f"❌ Get user failed with message: {data['message']}")
+            return False
+    except Exception as e:
+        print(f"❌ Authentication get user test failed: {str(e)}")
+        return False
+
+def test_auth_validation():
+    """Test validation for authentication endpoints"""
+    print("\n=== Testing Authentication Validation ===")
+    all_passed = True
+    
+    # Test 1: Password confirmation validation
+    print("\n--- Test 1: Password confirmation validation ---")
+    try:
+        signup_data = {
+            "name": "Test User",
+            "email": "test.validation@email.com",
+            "password": "SecurePass123!",
+            "confirmPassword": "DifferentPassword123!",  # Mismatched password
+            "agreeTerms": True,
+            "age": 30,
+            "gender": "Male",
+            "height": 180,
+            "heightUnit": "cm",
+            "weight": 75,
+            "weightUnit": "kg",
+            "allergies": [],
+            "chronicConditions": [],
+            "wellnessGoals": ["Muscle Gain"],
+            "fitnessLevel": "Beginner",
+            "dietPreference": "Omnivore",
+            "skinType": "Normal",
+            "smartCartOptIn": False
+        }
+        
+        response = requests.post(f"{API_URL}/auth/signup", json=signup_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert data["success"] == False, "Signup with mismatched passwords should fail"
+        assert "message" in data, "Response missing 'message' field"
+        assert "password" in data["message"].lower(), "Error message should mention password mismatch"
+        
+        print("✅ Password confirmation validation test passed")
+    except Exception as e:
+        print(f"❌ Password confirmation validation test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 2: Email uniqueness validation
+    print("\n--- Test 2: Email uniqueness validation ---")
+    try:
+        # Use the same email as in the main signup test
+        signup_data = {
+            "name": "Duplicate Email User",
+            "email": "sarah.chen@email.com",  # This email should already exist
+            "password": "AnotherPassword123!",
+            "confirmPassword": "AnotherPassword123!",
+            "agreeTerms": True,
+            "age": 35,
+            "gender": "Female",
+            "height": 160,
+            "heightUnit": "cm",
+            "weight": 55,
+            "weightUnit": "kg",
+            "allergies": [],
+            "chronicConditions": [],
+            "wellnessGoals": ["Weight Loss"],
+            "fitnessLevel": "Advanced",
+            "dietPreference": "Vegan",
+            "skinType": "Dry",
+            "smartCartOptIn": True
+        }
+        
+        response = requests.post(f"{API_URL}/auth/signup", json=signup_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert data["success"] == False, "Signup with duplicate email should fail"
+        assert "message" in data, "Response missing 'message' field"
+        assert "already registered" in data["message"] or "email" in data["message"].lower(), "Error message should mention email already exists"
+        
+        print("✅ Email uniqueness validation test passed")
+    except Exception as e:
+        print(f"❌ Email uniqueness validation test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 3: Required fields validation
+    print("\n--- Test 3: Required fields validation ---")
+    try:
+        # Missing required fields
+        signup_data = {
+            "name": "Missing Fields User",
+            # Missing email
+            "password": "SecurePass123!",
+            "confirmPassword": "SecurePass123!",
+            "agreeTerms": True,
+            # Missing age
+            "gender": "Male",
+            # Missing height
+            "heightUnit": "cm",
+            # Missing weight
+            "weightUnit": "kg",
+            "allergies": [],
+            "chronicConditions": [],
+            # Missing wellnessGoals
+            # Missing fitnessLevel
+            # Missing dietPreference
+            # Missing skinType
+            "smartCartOptIn": False
+        }
+        
+        response = requests.post(f"{API_URL}/auth/signup", json=signup_data)
+        print(f"Status Code: {response.status_code}")
+        
+        # Either it should return a validation error (422) or a custom error message (200)
+        assert response.status_code in [200, 422], f"Expected status code 200 or 422, got {response.status_code}"
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            assert "success" in data, "Response missing 'success' field"
+            assert data["success"] == False, "Signup with missing fields should fail"
+            assert "message" in data, "Response missing 'message' field"
+        else:
+            print(f"Validation error returned: {response.status_code}")
+        
+        print("✅ Required fields validation test passed")
+    except Exception as e:
+        print(f"❌ Required fields validation test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 4: Invalid credentials for login
+    print("\n--- Test 4: Invalid credentials for login ---")
+    try:
+        login_data = {
+            "email": "nonexistent@email.com",
+            "password": "WrongPassword123!"
+        }
+        
+        response = requests.post(f"{API_URL}/auth/login", json=login_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert data["success"] == False, "Login with invalid credentials should fail"
+        assert "message" in data, "Response missing 'message' field"
+        assert "invalid" in data["message"].lower(), "Error message should mention invalid credentials"
+        
+        print("✅ Invalid credentials test passed")
+    except Exception as e:
+        print(f"❌ Invalid credentials test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 5: Non-existent user profile retrieval
+    print("\n--- Test 5: Non-existent user profile retrieval ---")
+    try:
+        fake_user_id = "nonexistent-user-id-12345"
+        response = requests.get(f"{API_URL}/auth/user/{fake_user_id}")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert data["success"] == False, "Retrieving non-existent user should fail"
+        assert "message" in data, "Response missing 'message' field"
+        assert "not found" in data["message"].lower(), "Error message should mention user not found"
+        
+        print("✅ Non-existent user retrieval test passed")
+    except Exception as e:
+        print(f"❌ Non-existent user retrieval test failed: {str(e)}")
+        all_passed = False
+    
+    if all_passed:
+        print("\n✅ All authentication validation tests passed")
+    else:
+        print("\n❌ Some authentication validation tests failed")
+    
+    return all_passed
+
 def test_workouts_endpoint():
     """Test the workouts endpoint"""
     print("\n=== Testing Workouts Endpoint ===")
