@@ -1219,6 +1219,14 @@ const Modal = ({ isOpen, onClose, item, type }) => {
 
 // New Circular Gallery Component using OGL
 const CircularGalleryOGL = ({ items, onItemClick, type }) => {
+  const [clickableItems, setClickableItems] = useState([]);
+  
+  useEffect(() => {
+    if (items && items.length > 0) {
+      setClickableItems(items);
+    }
+  }, [items]);
+
   if (!items || items.length === 0) {
     return (
       <div className="h-96 flex items-center justify-center">
@@ -1231,30 +1239,91 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
   }
 
   // Transform items to match the expected format for the new component
-  const transformedItems = items.map(item => ({
-    image: `https://picsum.photos/seed/${item.id || Math.random()}/800/600?grayscale`,
-    text: item.title || item.name || 'Item'
-  }));
+  const transformedItems = items.map((item, index) => {
+    // For AI-generated content, use provided image_url or generate appropriate placeholder
+    let imageUrl;
+    if (item.image_url) {
+      // Use AI-provided image or generate based on type
+      imageUrl = item.image_url.includes('http') ? item.image_url : 
+                 generateRelevantImage(type, item.title, index);
+    } else {
+      imageUrl = generateRelevantImage(type, item.title, index);
+    }
+    
+    return {
+      image: imageUrl,
+      text: item.title || item.name || 'Item',
+      originalItem: item  // Keep reference to original item data
+    };
+  });
+
+  // Generate relevant images based on content type and title
+  const generateRelevantImage = (type, title, index) => {
+    const seed = title ? title.toLowerCase().replace(/\s+/g, '-') : `${type}-${index}`;
+    switch (type) {
+      case 'workout':
+        return `https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'skincare':
+        return `https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'diet':
+        return `https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'health':
+        return `https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      default:
+        return `https://picsum.photos/seed/${seed}/800/600?grayscale`;
+    }
+  };
+
+  // Handle click on circular gallery items
+  const handleItemClick = (transformedItem) => {
+    const originalItem = transformedItem.originalItem || transformedItem;
+    if (onItemClick && originalItem) {
+      onItemClick(originalItem);
+    }
+  };
 
   // Try to use WebGL gallery, fallback to grid if needed
   try {
     return (
       <div style={{ height: '600px', position: 'relative' }}>
-        <CircularGallery 
-          items={transformedItems}
-          bend={3} 
-          textColor="#ffffff" 
-          borderRadius={0.05} 
-        />
+        <div 
+          id="circular-gallery-container"
+          style={{ height: '100%', cursor: 'pointer' }}
+          onClick={(e) => {
+            // Handle clicks on the circular gallery
+            const clickX = e.clientX;
+            const containerWidth = e.currentTarget.offsetWidth;
+            const centerX = containerWidth / 2;
+            const itemWidth = containerWidth / Math.min(transformedItems.length, 7);
+            const clickedIndex = Math.floor((clickX - centerX + (itemWidth * transformedItems.length / 2)) / itemWidth);
+            const safeIndex = Math.max(0, Math.min(clickedIndex, transformedItems.length - 1));
+            
+            if (transformedItems[safeIndex]) {
+              handleItemClick(transformedItems[safeIndex]);
+            }
+          }}
+        >
+          <CircularGallery 
+            items={transformedItems}
+            bend={3} 
+            textColor="#ffffff" 
+            borderRadius={0.05} 
+          />
+        </div>
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+          <p className="text-white/70 text-sm text-center bg-black/50 px-4 py-2 rounded-full">
+            Click any item to view details
+          </p>
+        </div>
       </div>
     );
   } catch (error) {
     console.error("Error rendering WebGL gallery, falling back to grid view:", error);
-    // Fallback to grid view if WebGL fails
+    // Enhanced fallback grid view
     return (
       <div className="h-96 overflow-y-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {items.map((item, index) => (
+          {clickableItems.map((item, index) => (
             <motion.div
               key={item.id || index}
               whileHover={{ scale: 1.05, rotateY: 5 }}
@@ -1264,10 +1333,18 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
             >
               <div 
                 className="h-24 bg-cover bg-center rounded-lg mb-3 border-2 border-white/20"
-                style={{ backgroundImage: `url(${backgrounds[type] || backgrounds.home})` }}
+                style={{ 
+                  backgroundImage: `url(${item.image_url || generateRelevantImage(type, item.title, index)})` 
+                }}
               />
               <h4 className="text-white font-semibold text-sm mb-2 line-clamp-2">{item.title}</h4>
               <p className="text-white/70 text-xs line-clamp-2">{item.description}</p>
+              {item.level && (
+                <p className="text-amber-300 text-xs mt-1">Level: {item.level}</p>
+              )}
+              {item.duration && (
+                <p className="text-blue-300 text-xs">Duration: {item.duration}</p>
+              )}
             </motion.div>
           ))}
         </div>
