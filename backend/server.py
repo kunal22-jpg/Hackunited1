@@ -163,6 +163,35 @@ class HealthConditionPlan(BaseModel):
     lifestyle_tips: List[str]
     video_url: str
 
+# Personalized Wellness Models
+class PersonalizedWellnessRequest(BaseModel):
+    user_id: str
+    weight: str
+    allergies: str
+    wellness_goals: List[str]
+    health_conditions: List[str]
+    age: int
+    gender: str
+    fitness_level: str
+
+class WellnessRecommendation(BaseModel):
+    category: str  # workout, diet, skincare, health
+    title: str
+    description: str
+    duration: str
+    level: str  # Beginner to Advanced
+    requirements: List[str]
+    steps: List[str]
+    youtube_video: str
+    product_links: List[str]
+    image_url: str
+    motivational_quote: Optional[str] = None  # for health category
+
+class PersonalizedWellnessResponse(BaseModel):
+    success: bool
+    message: str
+    recommendations: Dict[str, List[WellnessRecommendation]]
+
 # Sample data initialization
 @api_router.on_event("startup")
 async def init_sample_data():
