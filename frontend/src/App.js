@@ -1322,6 +1322,241 @@ const GroceryAgent = () => {
   );
 };
 
+// Get Started Page - Login/Signup with Feature Showcase
+const GetStartedPage = () => {
+  const [activeTab, setActiveTab] = useState('login');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    confirmPassword: ''
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Form submitted:', { tab: activeTab, data: formData });
+    alert(`${activeTab === 'login' ? 'Login' : 'Signup'} functionality will be implemented!`);
+  };
+
+  const features = [
+    {
+      icon: MessageCircle,
+      title: 'AI Health Chatbot',
+      description: 'Get personalized health advice from our OpenAI-powered wellness assistant',
+      color: 'from-blue-400 to-blue-600'
+    },
+    {
+      icon: ShoppingCart,
+      title: 'Smart Grocery Shopping',
+      description: 'AI-powered product recommendations using Google Gemini for healthy shopping',
+      color: 'from-green-400 to-green-600'
+    },
+    {
+      icon: Dumbbell,
+      title: 'Workout Plans',
+      description: 'Customized fitness routines tailored to your goals and fitness level',
+      color: 'from-red-400 to-red-600'
+    },
+    {
+      icon: Sparkles,
+      title: 'Skincare Routines',
+      description: 'Personalized beauty advice for your skin type and concerns',
+      color: 'from-pink-400 to-pink-600'
+    },
+    {
+      icon: Apple,
+      title: 'Diet Plans',
+      description: 'Nutrition guidance and meal plans for optimal health and wellness',
+      color: 'from-yellow-400 to-yellow-600'
+    },
+    {
+      icon: Heart,
+      title: 'Health Management',
+      description: 'Comprehensive health condition tracking and management tools',
+      color: 'from-purple-400 to-purple-600'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${backgrounds.home})` }}
+      />
+      <div className="absolute inset-0 bg-black/40" />
+      
+      <div className="relative min-h-screen flex items-center justify-center p-4 pt-24">
+        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-center">
+          {/* Features Showcase */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6"
+          >
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+                Welcome to <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Nutracía</span>
+              </h1>
+              <p className="text-xl text-white/80 mb-8">
+                Your AI-powered wellness platform with cutting-edge features
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+                  >
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-3`}>
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                    <p className="text-sm text-white/70">{feature.description}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Auth Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20"
+          >
+            {/* Tab Switcher */}
+            <div className="flex mb-6 bg-white/10 rounded-xl p-1">
+              <button
+                onClick={() => setActiveTab('login')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                  activeTab === 'login'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setActiveTab('signup')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                  activeTab === 'signup'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {activeTab === 'signup' && (
+                <div>
+                  <label className="block text-white/80 text-sm font-medium mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              {activeTab === 'signup' && (
+                <div>
+                  <label className="block text-white/80 text-sm font-medium mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-3 px-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                {activeTab === 'login' ? 'Login to Nutracía' : 'Join Nutracía'}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-white/60 text-sm">
+                {activeTab === 'login' ? "Don't have an account? " : "Already have an account? "}
+                <button
+                  onClick={() => setActiveTab(activeTab === 'login' ? 'signup' : 'login')}
+                  className="text-amber-400 hover:text-amber-300 font-medium"
+                >
+                  {activeTab === 'login' ? 'Sign up' : 'Login'}
+                </button>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      <EnhancedAIChatbot />
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   return (
@@ -1335,6 +1570,7 @@ function App() {
           <Route path="/diet" element={<DietPage />} />
           <Route path="/health" element={<HealthPage />} />
           <Route path="/order-up" element={<GroceryAgent />} />
+          <Route path="/get-started" element={<GetStartedPage />} />
         </Routes>
       </BrowserRouter>
     </div>
