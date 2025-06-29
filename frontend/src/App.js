@@ -1879,37 +1879,37 @@ const GetStartedPage = () => {
       />
       <div className="absolute inset-0 bg-black/40" />
       
-      <div className="relative min-h-screen flex items-center justify-center p-4 pt-24">
-        {/* Title Section */}
-        <div className="absolute top-32 left-1/2 transform -translate-x-1/2 text-center mb-8">
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+      <div className="relative min-h-screen flex items-center justify-center p-4 pt-16">
+        {/* Title Section - Moved Higher */}
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center z-10">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
             Welcome to <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Nutracía</span>
           </h1>
-          <p className="text-xl text-white/80">
-            Your AI-powered wellness platform with cutting-edge features
+          <p className="text-lg text-white/80">
+            Your AI-powered wellness platform
           </p>
         </div>
 
-        <div className="max-w-7xl w-full grid lg:grid-cols-3 gap-8 items-start mt-24">
-          {/* Left Bento Boxes */}
+        <div className="max-w-6xl w-full grid lg:grid-cols-5 gap-6 items-center mt-16">
+          {/* Left Bento Boxes - Smaller and Narrower */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-4"
+            className="lg:col-span-1 space-y-3"
           >
             {/* AI Chatbot */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center mb-3">
-                <MessageCircle size={24} className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center mb-2">
+                <MessageCircle size={16} className="text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">AI Health Chatbot</h3>
-              <p className="text-sm text-white/70">Get personalized health advice from our OpenAI-powered wellness assistant</p>
+              <h3 className="text-sm font-semibold text-white mb-1">AI Health Chatbot</h3>
+              <p className="text-xs text-white/70">OpenAI-powered wellness assistant</p>
             </motion.div>
 
             {/* Workout Plans */}
@@ -1917,13 +1917,13 @@ const GetStartedPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-red-400 to-red-600 flex items-center justify-center mb-3">
-                <Dumbbell size={24} className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-red-400 to-red-600 flex items-center justify-center mb-2">
+                <Dumbbell size={16} className="text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Workout Plans</h3>
-              <p className="text-sm text-white/70">Customized fitness routines tailored to your goals and fitness level</p>
+              <h3 className="text-sm font-semibold text-white mb-1">Workout Plans</h3>
+              <p className="text-xs text-white/70">Customized fitness routines</p>
             </motion.div>
 
             {/* Diet Plans */}
@@ -1931,22 +1931,22 @@ const GetStartedPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center mb-3">
-                <Apple size={24} className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center mb-2">
+                <Apple size={16} className="text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Diet Plans</h3>
-              <p className="text-sm text-white/70">Nutrition guidance and meal plans for optimal health and wellness</p>
+              <h3 className="text-sm font-semibold text-white mb-1">Diet Plans</h3>
+              <p className="text-xs text-white/70">Nutrition guidance & meal plans</p>
             </motion.div>
           </motion.div>
 
-          {/* Center - Auth Form */}
+          {/* Center - Auth Form (Hero Section) */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 max-h-[80vh] overflow-y-auto"
+            className="lg:col-span-3 bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 max-h-[75vh] overflow-y-auto shadow-2xl"
           >
             {/* Tab Switcher */}
             <div className="flex mb-6 bg-white/10 rounded-xl p-1">
