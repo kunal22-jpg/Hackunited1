@@ -209,6 +209,8 @@ const Header = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
     setShowUserMenu(false);
+    // Dispatch custom event for AuthRoute components
+    window.dispatchEvent(new Event('authChange'));
     // Optionally redirect to home page
     window.location.href = '/';
   };
