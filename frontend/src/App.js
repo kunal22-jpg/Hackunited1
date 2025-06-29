@@ -1725,6 +1725,26 @@ const GetStartedPage = () => {
     });
   };
 
+  const handleCustomAllergyAdd = () => {
+    if (formData.customAllergy.trim() && !formData.allergies.includes(formData.customAllergy.trim())) {
+      setFormData({
+        ...formData,
+        allergies: [...formData.allergies, formData.customAllergy.trim()],
+        customAllergy: ''
+      });
+    }
+  };
+
+  const handleCustomChronicConditionAdd = () => {
+    if (formData.customChronicCondition.trim() && !formData.chronicConditions.includes(formData.customChronicCondition.trim())) {
+      setFormData({
+        ...formData,
+        chronicConditions: [...formData.chronicConditions, formData.customChronicCondition.trim()],
+        customChronicCondition: ''
+      });
+    }
+  };
+
   const validateStep = (step) => {
     switch (step) {
       case 1:
