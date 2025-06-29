@@ -1560,65 +1560,6 @@ const WorkoutPage = () => {
     setWorkouts(workoutGalleryData);
   }, []);
 
-  const fetchWorkouts = async () => {
-    try {
-      const response = await axios.get(`${API}/workouts`);
-      // Merge backend data with enhanced exercise data
-      const backendWorkouts = response.data;
-      const enhancedWorkouts = backendWorkouts.map((workout, index) => {
-        const enhancedData = enhancedExerciseData[index % enhancedExerciseData.length];
-        return {
-          ...workout,
-          ...enhancedData,
-          // Keep original title if it exists, otherwise use enhanced title
-          title: workout.title || enhancedData.title,
-          // Keep original description if it exists
-          description: workout.description || enhancedData.description
-        };
-      });
-      setWorkouts(enhancedWorkouts);
-    } catch (error) {
-      console.error('Error fetching workouts:', error);
-      // Fallback to enhanced exercise data if backend fails
-      setWorkouts(enhancedExerciseData);
-    }
-  };
-
-  const generatePersonalizedRecommendations = async () => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!userData.id) {
-      alert('Please login to generate personalized recommendations');
-      return;
-    }
-
-    setIsGeneratingPersonalized(true);
-    try {
-      const personalizedRequest = {
-        user_id: userData.id,
-        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
-        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
-        wellness_goals: userData.goals || ['general fitness'],
-        health_conditions: userData.chronic_conditions || [],
-        age: userData.age || 25,
-        gender: userData.gender || 'male',
-        fitness_level: userData.fitness_level || 'beginner'
-      };
-
-      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
-      
-      if (response.data.success) {
-        setPersonalizedWorkouts(response.data.recommendations.workout || []);
-        setShowPersonalized(true);
-      } else {
-        alert('Failed to generate personalized recommendations. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error generating personalized recommendations:', error);
-      alert('Error generating recommendations. Please try again.');
-    }
-    setIsGeneratingPersonalized(false);
-  };
-
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
     setIsModalOpen(true);
