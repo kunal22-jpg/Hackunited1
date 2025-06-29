@@ -1289,7 +1289,7 @@ const HealthPage = () => {
           </div>
 
           {conditions.length > 0 && (
-            <CircularGallery 
+            <CircularGalleryOGL 
               items={conditions}
               onItemClick={handleConditionClick}
               type="health"
