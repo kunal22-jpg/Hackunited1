@@ -2101,9 +2101,10 @@ const GetStartedPage = () => {
                       ) : (
                         <button
                           type="submit"
-                          className="px-6 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                          disabled={isLoading}
+                          className="px-6 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Join Nutracía
+                          {isLoading ? 'Creating Account...' : 'Join Nutracía'}
                         </button>
                       )}
                     </div>
