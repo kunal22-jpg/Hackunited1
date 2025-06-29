@@ -1066,11 +1066,10 @@ const WorkoutPage = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
-        style={{ backgroundImage: `url(${backgrounds.workout})` }}
+      <VideoBackground 
+        videoSrc="/video/workout.mp4" 
+        overlay="bg-black/50"
       />
-      <div className="absolute inset-0 bg-black/50" />
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
