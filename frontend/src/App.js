@@ -1064,8 +1064,27 @@ const WorkoutPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleSectionHover = (isHovering) => {
+    const workoutIcon = document.querySelector('.header-workout-icon');
+    if (workoutIcon) {
+      if (isHovering) {
+        workoutIcon.style.animation = 'dumbbellLift 0.8s ease-in-out';
+        workoutIcon.style.color = '#000000';
+        workoutIcon.style.transform = 'rotate(15deg)';
+      } else {
+        workoutIcon.style.animation = '';
+        workoutIcon.style.color = '';
+        workoutIcon.style.transform = '';
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      onMouseEnter={() => handleSectionHover(true)}
+      onMouseLeave={() => handleSectionHover(false)}
+    >
       <VideoBackground 
         videoSrc="/video/workout.mp4" 
         overlay="bg-black/50"
@@ -1073,11 +1092,6 @@ const WorkoutPage = () => {
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <QuoteHeader 
-            quote="Push beyond yesterday." 
-            background={backgrounds.workout}
-          />
-          
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Workout Plans</h1>
             <p className="text-xl text-white/80">Personalized fitness routines for every goal</p>
