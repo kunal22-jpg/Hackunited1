@@ -1957,10 +1957,11 @@ const GetStartedPage = () => {
 
       case 2:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <h3 className="text-xl font-semibold text-white mb-4">Vital Stats</h3>
             
-            <div className="grid grid-cols-2 gap-4">
+            {/* Age and Gender Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white/80 text-sm font-medium mb-2">Age</label>
                 <input
@@ -1994,7 +1995,8 @@ const GetStartedPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Height and Weight Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white/80 text-sm font-medium mb-2">Height</label>
                 <div className="flex space-x-2">
