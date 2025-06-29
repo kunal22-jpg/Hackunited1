@@ -776,9 +776,15 @@ const QuoteHeader = ({ quote, background }) => (
   </div>
 );
 
-// Modal Component
+// Enhanced Modal Component with YouTube Embeds
 const Modal = ({ isOpen, onClose, item, type }) => {
   if (!isOpen || !item) return null;
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -787,53 +793,83 @@ const Modal = ({ isOpen, onClose, item, type }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleBackdropClick}
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white/10 backdrop-blur-md rounded-3xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/20"
+          className="bg-white/10 backdrop-blur-md rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/20 relative"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-2xl font-bold text-white">{item.title}</h3>
-            <button 
-              onClick={onClose}
-              className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-            >
-              <X size={20} />
-            </button>
+          {/* Close Button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10"
+          >
+            <X size={20} />
+          </button>
+
+          {/* Header Section */}
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-white mb-2">{item.title}</h2>
+            <p className="text-white/80 text-lg">{item.description}</p>
           </div>
 
-          <p className="text-white/80 mb-6">{item.description}</p>
-
           {type === 'workout' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Clock size={18} />
-                    <span>{item.duration || `${item.duration} minutes`}</span>
+            <div className="space-y-6">
+              {/* YouTube Video Embed */}
+              {item.videoUrl && (
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+                    <Play size={20} />
+                    <span>Tutorial Video</span>
+                  </h3>
+                  <div className="relative w-full pb-[56.25%] h-0 rounded-lg overflow-hidden">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={item.videoUrl}
+                      title={`${item.title} Tutorial`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Star size={18} />
-                    <span className="capitalize">{item.level || item.difficulty}</span>
+              )}
+
+              {/* Duration and Level */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Clock size={20} className="text-blue-400" />
+                    <div>
+                      <div className="text-lg font-bold">{item.duration}</div>
+                      <div className="text-sm text-white/70">Duration</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Star size={20} className="text-amber-400" />
+                    <div>
+                      <div className="text-lg font-bold capitalize">{item.level}</div>
+                      <div className="text-sm text-white/70">Level</div>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              {/* Requirements Section (Enhanced for AI content) */}
-              {(item.requirements || item.muscle_groups) && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">
-                    {item.requirements ? 'Requirements:' : 'Muscle Groups:'}
+              {/* Requirements Section */}
+              {item.requirements && item.requirements.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-orange-400">🎯</span>
+                    <span>Requirements</span>
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {(item.requirements || item.muscle_groups)?.map((req, idx) => (
-                      <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm capitalize">
+                    {item.requirements.map((req, idx) => (
+                      <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm">
                         {req}
                       </span>
                     ))}
@@ -841,66 +877,57 @@ const Modal = ({ isOpen, onClose, item, type }) => {
                 </div>
               )}
 
-              {/* Steps/Instructions Section (Enhanced for AI content) */}
-              {(item.steps || item.instructions) && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">
-                    {item.steps ? 'Steps:' : 'Instructions:'}
+              {/* Muscle Groups */}
+              {item.muscle_groups && item.muscle_groups.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-red-400">💪</span>
+                    <span>Target Muscles</span>
                   </h4>
-                  <ol className="space-y-2">
-                    {(item.steps || item.instructions)?.map((step, idx) => (
-                      <li key={idx} className="text-white/80">
-                        {item.steps ? `${idx + 1}. ${step}` : `• ${step}`}
+                  <div className="flex flex-wrap gap-2">
+                    {item.muscle_groups.map((muscle, idx) => (
+                      <span key={idx} className="bg-red-500/20 text-red-200 px-3 py-1 rounded-full text-sm">
+                        {muscle}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step-by-Step Instructions */}
+              {item.steps && item.steps.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-4 flex items-center space-x-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Step-by-Step Instructions</span>
+                  </h4>
+                  <ol className="space-y-3">
+                    {item.steps.map((step, idx) => (
+                      <li key={idx} className="flex items-start space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full text-sm flex items-center justify-center font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-white/90 leading-relaxed">{step}</span>
                       </li>
                     ))}
                   </ol>
                 </div>
               )}
 
-              {/* YouTube Video Section (New for AI content) */}
-              {item.youtube_video && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <Play size={18} />
-                    <span>Tutorial Video</span>
-                  </h4>
-                  <a
-                    href={item.youtube_video}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-                  >
-                    <Play size={16} />
-                    <span>Watch on YouTube</span>
-                  </a>
-                </div>
-              )}
-
-              {/* Product Links Section (New for AI content) */}
-              {item.product_links && item.product_links.length > 0 && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <span>🛒</span>
-                    <span>Recommended Products</span>
-                  </h4>
-                  <div className="space-y-2">
-                    {item.product_links.map((link, idx) => (
-                      <a
-                        key={idx}
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
-                      >
-                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'View Products'}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Action Button */}
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={onClose}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+                >
+                  <span>✨</span>
+                  <span>Start This Workout</span>
+                </button>
+              </div>
             </div>
           )}
 
+          {/* Keep original modal content for other types (skincare, diet, health) */}
           {type === 'skincare' && (
             <div className="space-y-4">
               {/* Duration and Level */}
@@ -1204,13 +1231,6 @@ const Modal = ({ isOpen, onClose, item, type }) => {
               )}
             </div>
           )}
-
-          <div className="mt-6 flex justify-center">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 flex items-center space-x-2">
-              <Play size={18} />
-              <span>Watch Demo</span>
-            </button>
-          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
