@@ -1917,49 +1917,71 @@ const GetStartedPage = () => {
       <div className="absolute inset-0 bg-black/40" />
       
       <div className="relative min-h-screen flex items-center justify-center p-4 pt-24">
-        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-start">
-          {/* Features Showcase */}
+        {/* Title Section */}
+        <div className="absolute top-32 left-1/2 transform -translate-x-1/2 text-center mb-8">
+          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+            Welcome to <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Nutracía</span>
+          </h1>
+          <p className="text-xl text-white/80">
+            Your AI-powered wellness platform with cutting-edge features
+          </p>
+        </div>
+
+        <div className="max-w-7xl w-full grid lg:grid-cols-3 gap-8 items-start mt-24">
+          {/* Left Bento Boxes */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-6"
+            className="space-y-4"
           >
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-                Welcome to <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Nutracía</span>
-              </h1>
-              <p className="text-xl text-white/80 mb-8">
-                Your AI-powered wellness platform with cutting-edge features
-              </p>
-            </div>
+            {/* AI Chatbot */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center mb-3">
+                <MessageCircle size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">AI Health Chatbot</h3>
+              <p className="text-sm text-white/70">Get personalized health advice from our OpenAI-powered wellness assistant</p>
+            </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              {features.map((feature, index) => {
-                const Icon = feature.icon;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
-                  >
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-3`}>
-                      <Icon size={24} className="text-white" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                    <p className="text-sm text-white/70">{feature.description}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
+            {/* Workout Plans */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-red-400 to-red-600 flex items-center justify-center mb-3">
+                <Dumbbell size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Workout Plans</h3>
+              <p className="text-sm text-white/70">Customized fitness routines tailored to your goals and fitness level</p>
+            </motion.div>
+
+            {/* Diet Plans */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center mb-3">
+                <Apple size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Diet Plans</h3>
+              <p className="text-sm text-white/70">Nutrition guidance and meal plans for optimal health and wellness</p>
+            </motion.div>
           </motion.div>
 
-          {/* Auth Form */}
+          {/* Center - Auth Form */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 max-h-[80vh] overflow-y-auto"
           >
