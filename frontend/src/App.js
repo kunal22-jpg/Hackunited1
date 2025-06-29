@@ -2121,6 +2121,56 @@ const GetStartedPage = () => {
               </p>
             </div>
           </motion.div>
+
+          {/* Right Bento Boxes */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-4"
+          >
+            {/* Smart Grocery Shopping */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center mb-3">
+                <ShoppingCart size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Smart Grocery Shopping</h3>
+              <p className="text-sm text-white/70">AI-powered product recommendations using Google Gemini for healthy shopping</p>
+            </motion.div>
+
+            {/* Skincare Routines */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-pink-400 to-pink-600 flex items-center justify-center mb-3">
+                <Sparkles size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Skincare Routines</h3>
+              <p className="text-sm text-white/70">Personalized beauty advice for your skin type and concerns</p>
+            </motion.div>
+
+            {/* Health Management */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center mb-3">
+                <Heart size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Health Management</h3>
+              <p className="text-sm text-white/70">Comprehensive health condition tracking and management tools</p>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
       <EnhancedAIChatbot />
