@@ -1417,7 +1417,7 @@ const GroceryAgent = () => {
       <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10 pt-32 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold text-white mb-4">Order Up</h1>
             <p className="text-xl text-white/80">AI-Powered Smart Shopping with NUTRACITY AI</p>
