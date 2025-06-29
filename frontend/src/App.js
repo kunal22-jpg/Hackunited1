@@ -1450,11 +1450,6 @@ const GroceryAgent = () => {
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <QuoteHeader 
-            quote="Your smart shopper understands you." 
-            background={backgrounds.orderup}
-          />
-
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold text-white mb-4">Order Up</h1>
             <p className="text-xl text-white/80">AI-Powered Smart Shopping with NUTRACITY AI</p>
