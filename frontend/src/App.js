@@ -1875,6 +1875,9 @@ const HealthPage = () => {
   const [conditions, setConditions] = useState([]);
   const [selectedCondition, setSelectedCondition] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [personalizedHealth, setPersonalizedHealth] = useState([]);
+  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
+  const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {
     fetchConditions();
@@ -1887,6 +1890,41 @@ const HealthPage = () => {
     } catch (error) {
       console.error('Error fetching health conditions:', error);
     }
+  };
+
+  const generatePersonalizedRecommendations = async () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!userData.id) {
+      alert('Please login to generate personalized recommendations');
+      return;
+    }
+
+    setIsGeneratingPersonalized(true);
+    try {
+      const personalizedRequest = {
+        user_id: userData.id,
+        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
+        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
+        wellness_goals: userData.goals || ['general wellness'],
+        health_conditions: userData.chronic_conditions || [],
+        age: userData.age || 25,
+        gender: userData.gender || 'female',
+        fitness_level: userData.fitness_level || 'beginner'
+      };
+
+      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
+      
+      if (response.data.success) {
+        setPersonalizedHealth(response.data.recommendations.health || []);
+        setShowPersonalized(true);
+      } else {
+        alert('Failed to generate personalized recommendations. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error generating personalized recommendations:', error);
+      alert('Error generating recommendations. Please try again.');
+    }
+    setIsGeneratingPersonalized(false);
   };
 
   const handleConditionClick = (condition) => {
@@ -1922,17 +1960,75 @@ const HealthPage = () => {
       
       <div className="relative z-10 pt-20 px-6">
         <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-3">
+          <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-white mb-4">Health Conditions</h1>
             <p className="text-lg text-white/80">Personalized support for your health journey</p>
+
+            {/* Personalized Recommendations Button */}
+            <div className="mt-6 mb-6">
+              <button
+                onClick={generatePersonalizedRecommendations}
+                disabled={isGeneratingPersonalized}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
+              >
+                {isGeneratingPersonalized ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>🤖 AI is creating your personalized health plan...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🤖</span>
+                    <span>Generate My Personalized Health Plan</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Toggle between Regular and Personalized */}
+            {personalizedHealth.length > 0 && (
+              <div className="flex justify-center space-x-4 mb-4">
+                <button
+                  onClick={() => setShowPersonalized(false)}
+                  className={`px-6 py-2 rounded-lg transition-all ${
+                    !showPersonalized 
+                      ? 'bg-white/20 text-white border border-white/40' 
+                      : 'bg-white/10 text-white/70 hover:bg-white/15'
+                  }`}
+                >
+                  General Conditions
+                </button>
+                <button
+                  onClick={() => setShowPersonalized(true)}
+                  className={`px-6 py-2 rounded-lg transition-all ${
+                    showPersonalized 
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                      : 'bg-white/10 text-white/70 hover:bg-white/15'
+                  }`}
+                >
+                  My AI Health Plan ({personalizedHealth.length})
+                </button>
+              </div>
+            )}
           </div>
 
-          {conditions.length > 0 && (
+          {/* Display Health Conditions */}
+          {showPersonalized && personalizedHealth.length > 0 ? (
+            <CircularGalleryOGL 
+              items={personalizedHealth}
+              onItemClick={handleConditionClick}
+              type="health"
+            />
+          ) : conditions.length > 0 ? (
             <CircularGalleryOGL 
               items={conditions}
               onItemClick={handleConditionClick}
               type="health"
             />
+          ) : (
+            <div className="text-center text-white/60 py-8">
+              <p>Loading health conditions...</p>
+            </div>
           )}
         </div>
       </div>
