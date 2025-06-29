@@ -404,6 +404,13 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Profile Popup */}
+      <ProfilePopup 
+        user={currentUser} 
+        isOpen={showProfilePopup} 
+        onClose={() => setShowProfilePopup(false)} 
+      />
     </motion.header>
   );
 };
