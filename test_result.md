@@ -383,15 +383,18 @@ test_plan:
 
   - task: "Quote-Only Pages for Non-Authenticated Users"
     implemented: true
-    working: "needs_testing"
+    working: "partial"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "needs_testing"
         agent: "main"
         comment: "MAJOR FEATURE IMPLEMENTATION: Created quote-only pages for non-authenticated users when clicking header navigation buttons (workout, skincare, diet, health, order up). Added beautiful quote-only page components with enhanced motivational quotes, glassmorphism design, and animated call-to-action buttons. Implemented AuthRoute component for conditional rendering based on localStorage authentication status. Each quote page features: enhanced quotes with Great Vibes font, gradient dividers, backdrop blur effects, and prominent 'Login to Access More Features' buttons with hover animations, scale effects, and arrow animations. Maintains existing design consistency while providing smooth user experience for non-authenticated users."
+      - working: "partial"
+        agent: "testing"
+        comment: "PARTIAL IMPLEMENTATION: The quote-only pages functionality is partially working. The AuthRoute component is correctly implemented and responds to authentication state changes (showing user menu when authenticated). However, the quote-only pages are not consistently displaying the expected content. The Order Up and Diet pages show the quote-only content with motivational quotes and 'Login to Access More Features' buttons, but other pages (Workout, Skincare, Health) are not showing the expected quote-only content. The authentication state management works correctly - when a user is logged in (localStorage has user data), the user menu is displayed, and when logged out, it's hidden. The login form on the get-started page could not be tested as it wasn't rendering properly in the testing environment."
 
 frontend:
 
