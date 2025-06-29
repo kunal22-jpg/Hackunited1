@@ -2558,12 +2558,6 @@ const LoginCallToAction = ({ sectionName }) => (
         transition={{ duration: 0.5, delay: 0.5 }}
         className="mb-6"
       >
-        <div className="w-16 h-16 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0h3m-3 0h-3m8-8V7a3 3 0 00-3-3H9a3 3 0 00-3 3v2"/>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
-          </svg>
-        </div>
         <h3 className="text-2xl font-bold text-white mb-3">Unlock Your {sectionName} Journey</h3>
         <p className="text-white/80 mb-6">
           Get personalized {sectionName.toLowerCase()} plans, expert guidance, and exclusive content.
