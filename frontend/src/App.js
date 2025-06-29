@@ -2066,9 +2066,10 @@ const GetStartedPage = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-3 px-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    disabled={isLoading}
+                    className="w-full py-3 px-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Login to Nutracía
+                    {isLoading ? 'Logging in...' : 'Login to Nutracía'}
                   </button>
                 </>
               ) : (
