@@ -1238,6 +1238,23 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
     );
   }
 
+  // Generate relevant images based on content type and title - MOVED BEFORE USAGE
+  const generateRelevantImage = (type, title, index) => {
+    const seed = title ? title.toLowerCase().replace(/\s+/g, '-') : `${type}-${index}`;
+    switch (type) {
+      case 'workout':
+        return `https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'skincare':
+        return `https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'diet':
+        return `https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      case 'health':
+        return `https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
+      default:
+        return `https://picsum.photos/seed/${seed}/800/600?grayscale`;
+    }
+  };
+
   // Transform items to match the expected format for the new component
   const transformedItems = items.map((item, index) => {
     // For AI-generated content, use provided image_url or generate appropriate placeholder
@@ -1256,23 +1273,6 @@ const CircularGalleryOGL = ({ items, onItemClick, type }) => {
       originalItem: item  // Keep reference to original item data
     };
   });
-
-  // Generate relevant images based on content type and title
-  const generateRelevantImage = (type, title, index) => {
-    const seed = title ? title.toLowerCase().replace(/\s+/g, '-') : `${type}-${index}`;
-    switch (type) {
-      case 'workout':
-        return `https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
-      case 'skincare':
-        return `https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
-      case 'diet':
-        return `https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
-      case 'health':
-        return `https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop&crop=center&auto=format&q=80`;
-      default:
-        return `https://picsum.photos/seed/${seed}/800/600?grayscale`;
-    }
-  };
 
   // Handle click on circular gallery items
   const handleItemClick = (transformedItem) => {
