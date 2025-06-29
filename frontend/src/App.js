@@ -1663,7 +1663,9 @@ const GetStartedPage = () => {
     weightUnit: 'kg',
     // Allergies & Medical
     allergies: [],
+    customAllergy: '',
     chronicConditions: [],
+    customChronicCondition: '',
     // Wellness Goals
     wellnessGoals: [],
     // Lifestyle & Preferences
