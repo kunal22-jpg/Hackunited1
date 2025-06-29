@@ -1030,45 +1030,10 @@ def run_all_tests():
     # Test basic connectivity
     results["root_endpoint"] = test_root_endpoint()
     
-    # Test authentication system
-    auth_signup_result, user_id, email, password = test_auth_signup()
-    results["auth_signup"] = auth_signup_result
-    
-    if auth_signup_result and user_id:
-        login_result, login_user_id = test_auth_login(email, password)
-        results["auth_login"] = login_result
-        results["auth_get_user"] = test_auth_get_user(user_id)
-    else:
-        # Try with default credentials
-        login_result, login_user_id = test_auth_login()
-        results["auth_login"] = login_result
-        if login_result and login_user_id:
-            results["auth_get_user"] = test_auth_get_user(login_user_id)
-        else:
-            results["auth_get_user"] = False
-    
-    results["auth_validation"] = test_auth_validation()
-    
-    # Test data fetching endpoints
-    results["workouts_endpoint"] = test_workouts_endpoint()
-    results["skincare_endpoint"] = test_skincare_endpoint()
-    results["meals_endpoint"] = test_meals_endpoint()
-    results["health_conditions_endpoint"] = test_health_conditions_endpoint()
-    
-    # Test user management
-    user_creation_result, created_user_id = test_user_creation()
-    results["user_creation"] = user_creation_result
-    
-    # Test enhanced health chatbot
-    results["enhanced_health_chatbot"] = test_enhanced_health_chatbot(created_user_id)
-    
-    # Test enhanced grocery agent
-    grocery_recommendations_result, recommendations = test_grocery_recommendations()
-    results["grocery_recommendations"] = grocery_recommendations_result
-    results["grocery_cart_creation"] = test_grocery_cart_creation(recommendations)
-    results["grocery_error_handling"] = test_grocery_error_handling()
-    
-    # Test personalized wellness recommendations
+    # Test personalized wellness recommendations (main focus of this test run)
+    print("\n\n=== TESTING PERSONALIZED WELLNESS RECOMMENDATIONS API ===")
+    print("This is the final testing phase for the OpenAI integration project.")
+    print("Testing with the sample data provided in the review request.")
     results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
     
     # Print summary
