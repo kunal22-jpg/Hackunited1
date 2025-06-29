@@ -139,7 +139,7 @@ const Header = () => {
               <Link
                 to="/get-started"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-center mx-2 mt-4 px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-full hover:from-amber-500 hover:to-orange-600 transition-all duration-300 shadow-lg"
+                className="flex items-center justify-center mx-2 mt-4 px-6 py-3 get-started-button text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
               >
                 Get Started
               </Link>
