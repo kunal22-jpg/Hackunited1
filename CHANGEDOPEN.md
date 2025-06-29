@@ -3,65 +3,203 @@
 ## PROJECT OVERVIEW
 Integration of OpenAI API to create a personalized wellness system that generates structured recommendations for diet, workout, skincare, and health based on user input (weight, allergies, wellness goals, health conditions).
 
-## REQUIRED FEATURES
-- [x] User input collection (weight, allergies, wellness goals, health conditions)
-- [ ] OpenAI API integration for personalized recommendations
-- [ ] Structured output distribution to sections (diet, workout, skincare, health)
-- [ ] Card-based display with generated images
-- [ ] YouTube video integration for tutorials/recipes
-- [ ] Product recommendations with Amazon/Flipkart links
-- [ ] Popup modals with detailed content (like fitness app image provided)
-- [ ] Motivational quotes in health section
-- [ ] Image generation for cards to match content
+## USER REQUIREMENTS CONFIRMED
+✅ **IMPLEMENTATION APPROACH**: Add content in circular gallery when user clicks on specific card
+✅ **PRODUCT LINKS**: Search links that OpenAI provides (no API integration needed)  
+✅ **YOUTUBE VIDEOS**: Links that OpenAI provides (no YouTube API needed)
+✅ **IMAGES**: AI decides approach (combination of generated + stock images)
+✅ **TESTING**: Test with 1-2 user logins to preserve API credits
+✅ **DOCUMENTATION**: Update this file after every single change for account continuity
 
-## CURRENT STATUS
-- ✅ Existing OpenAI integration found in backend for health chatbot
-- ✅ User authentication and profile system exists
-- ✅ Current app has circular gallery and modal systems
-- ⏳ Need to enhance with personalized recommendations system
+## OPENAI API KEY PROVIDED
+```
+sk-proj-1A46uEt8ETRb-LePaw3UdLv1zKiJYHnk--cS2y1vP7P0os4Ojnl_ue87exI3lV2r2ctL-uCYyrT3BlbkFJhHZWti05k98vXkohRLEljyft1R_97jJvDIX-mUPv2Eqjprk9jNu-KKvZ1_xMqoN9UculUVcA
+```
+
+## DETAILED TECHNICAL IMPLEMENTATION PLAN
+
+### PHASE 1: BACKEND DEVELOPMENT
+**File**: `/app/backend/server.py`
+
+#### 1.1 Update OpenAI API Key
+- Update OPENAI_API_KEY in `/app/backend/.env` with provided key
+- Install required packages: `openai`, `requests`
+
+#### 1.2 Create Personalized Wellness Endpoint
+**NEW ENDPOINT**: `POST /api/wellness/personalized-recommendations`
+
+**Input Model**: 
+```python
+class PersonalizedWellnessRequest(BaseModel):
+    user_id: str
+    weight: str
+    allergies: str
+    wellness_goals: List[str]
+    health_conditions: List[str]
+    age: int
+    gender: str
+    fitness_level: str
+```
+
+**Output Model**:
+```python
+class WellnessRecommendation(BaseModel):
+    category: str  # workout, diet, skincare, health
+    title: str
+    description: str
+    duration: str
+    level: str  # Beginner to Advanced
+    requirements: List[str]
+    steps: List[str]
+    youtube_video: str
+    product_links: List[str]
+    image_url: str
+    motivational_quote: str  # for health category
+```
+
+#### 1.3 OpenAI Prompt Engineering
+**STRUCTURED PROMPTS** for each category:
+
+**WORKOUT PROMPT**:
+```
+Based on user profile: Weight={weight}, Goals={goals}, Fitness Level={fitness_level}, Health Conditions={conditions}
+
+Generate 3 personalized workout recommendations in this EXACT JSON format:
+{
+  "title": "Progressive Strength Building",
+  "description": "Build lean muscle mass and increase strength with progressive overload training designed for all fitness levels.",
+  "duration": "45-60 min",
+  "level": "Beginner to Advanced",
+  "requirements": ["Dumbbells or resistance bands", "Bench or sturdy chair", "Proper form guidance"],
+  "steps": ["5 min dynamic warm-up", "Compound movements: 3 sets x 8-12 reps", "Progressive overload each week", "Cool down stretches: 5 min"],
+  "youtube_video": "https://www.youtube.com/watch?v=specific-workout-for-{goals}",
+  "product_links": ["Amazon: Adjustable Dumbbells - https://amazon.com/search?q=adjustable+dumbbells", "Flipkart: Resistance Bands - https://flipkart.com/search?q=resistance+bands"],
+  "image_url": "workout_strength_building.jpg"
+}
+```
+
+**DIET PROMPT**:
+```
+Based on user profile: Weight={weight}, Allergies={allergies}, Goals={goals}, Health Conditions={conditions}
+
+Generate 3 personalized diet recommendations avoiding {allergies} in this EXACT JSON format:
+{
+  "title": "High Protein Power Bowl",
+  "description": "Muscle-building meal with complete nutrition designed for your specific weight and goals.",
+  "duration": "25 min prep",  
+  "level": "Easy to Prepare",
+  "requirements": ["Fresh ingredients", "Cooking utensils", "15-20 minutes prep time"],
+  "steps": ["Prep vegetables: 5 min", "Cook protein source: 10 min", "Assemble bowl with healthy fats", "Add seasonings and serve"],
+  "youtube_video": "https://www.youtube.com/watch?v=healthy-bowl-recipe-{goals}",
+  "product_links": ["Amazon Fresh: Organic Vegetables - https://amazon.com/search?q=organic+vegetables", "Flipkart: Protein Sources - https://flipkart.com/search?q=lean+protein"],
+  "image_url": "diet_power_bowl.jpg"
+}
+```
+
+**SKINCARE PROMPT**:
+```
+Based on user profile: Age={age}, Gender={gender}, Goals={goals}, Health Conditions={skin_related_conditions}
+
+Generate 3 personalized skincare recommendations in this EXACT JSON format:
+{
+  "title": "Morning Glow Routine",
+  "description": "Start your day with radiant skin using this science-backed routine tailored for your age and skin needs.",
+  "duration": "10-15 min",
+  "level": "Suitable for All Skin Types", 
+  "requirements": ["Gentle cleanser", "Vitamin C serum", "Moisturizer with SPF", "Clean hands"],
+  "steps": ["Cleanse with lukewarm water: 2 min", "Apply vitamin C serum: 1 min", "Moisturize evenly: 2 min", "Apply SPF 30+ sunscreen: 2 min"],
+  "youtube_video": "https://www.youtube.com/watch?v=morning-skincare-routine-{age}",
+  "product_links": ["Amazon: Skincare Essentials - https://amazon.com/search?q=morning+skincare+routine", "Flipkart: Sunscreen SPF 50 - https://flipkart.com/search?q=sunscreen+spf+50"],
+  "image_url": "skincare_morning_routine.jpg"
+}
+```
+
+**HEALTH PROMPT**:
+```
+Based on user profile: Health Conditions={conditions}, Age={age}, Goals={goals}, Weight={weight}
+
+Generate 3 personalized health management recommendations with motivational quotes in this EXACT JSON format:
+{
+  "title": "Daily Wellness Management",
+  "description": "Holistic approach to managing your health conditions while achieving your wellness goals.",
+  "duration": "Ongoing Daily Routine",
+  "level": "Personalized for Your Conditions",
+  "requirements": ["Daily commitment", "Health monitoring tools", "Professional guidance when needed"],
+  "steps": ["Morning health check: 5 min", "Medication/supplement routine", "Physical activity as recommended", "Evening reflection and planning"],
+  "youtube_video": "https://www.youtube.com/watch?v=health-management-{conditions}",
+  "product_links": ["Amazon: Health Monitoring - https://amazon.com/search?q=health+monitoring+devices", "Flipkart: Wellness Supplements - https://flipkart.com/search?q=health+supplements"],
+  "image_url": "health_wellness_management.jpg",
+  "motivational_quote": "Every step you take towards better health is a victory. BELIEVE NUTRACIAA YOU WILL HEAL SOON!"
+}
+```
+
+### PHASE 2: FRONTEND DEVELOPMENT
+**File**: `/app/frontend/src/App.js`
+
+#### 2.1 Enhanced Card Component
+- Add "Generate Personalized Recommendations" button in each section
+- Display AI-generated cards alongside existing content
+- Include loading states during AI processing
+
+#### 2.2 Enhanced Modal Component  
+- Match fitness app design with duration, level, requirements
+- Add YouTube video iframe
+- Add product links section
+- Add motivational quotes for health section
+- Include step-by-step instructions
+
+#### 2.3 Image Integration
+- Use combination of:
+  - Unsplash API for high-quality stock images
+  - Placeholder images with relevant keywords
+  - Custom generated images using stable patterns
+
+### PHASE 3: INTEGRATION & TESTING
+
+#### 3.1 API Integration
+- Connect frontend buttons to backend endpoints
+- Handle loading and error states
+- Implement fallback content if AI fails
+
+#### 3.2 Limited Testing Protocol
+- Create test users: `testuser1@test.com` and `testuser2@test.com`
+- Limit to 2 API calls per test session
+- Monitor OpenAI API usage in real-time
+
+## CURRENT STATUS: STARTING IMPLEMENTATION
 
 ## CHANGES MADE
 
-### [TIMESTAMP: Initial Setup]
-- Created CHANGEDOPEN.md file to track all changes
-- Analyzed existing codebase and confirmed OpenAI integration exists
-- User provided OpenAI API key: sk-proj-1A46uEt8ETRb-LePaw3UdLv1zKiJYHnk--cS2y1vP7P0os4Ojnl_ue87exI3lV2r2ctL-uCYyrT3BlbkFJhHZWti05k98vXkohRLEljyft1R_97jJvDIX-mUPv2Eqjprk9jNu-KKvZ1_xMqoN9UculUVcA
+### [CHANGE 1] - File Documentation Setup
+- ✅ Created comprehensive CHANGEDOPEN.md with complete technical details
+- ✅ Documented all user requirements and technical approach
+- ✅ Created structured prompts for all 4 categories (workout, diet, skincare, health)
+- ✅ Defined exact JSON output formats for consistent parsing
+- ✅ Planned image integration and testing approach
 
-## CHANGES TO BE MADE
+**NEXT IMMEDIATE STEPS**:
+1. Update OpenAI API key in backend .env
+2. Implement personalized wellness endpoint
+3. Update frontend components for AI integration
+4. Test with limited users
 
-### Phase 1: Backend Enhancement
-- [ ] Update OpenAI API key in backend .env file
-- [ ] Create new endpoint for personalized wellness recommendations
-- [ ] Implement structured output parsing for diet, workout, skincare, health
-- [ ] Add YouTube video search integration
-- [ ] Add product recommendation system with Amazon/Flipkart links
-- [ ] Create motivational quotes system for health section
+## REMAINING CHANGES TO IMPLEMENT
+- [ ] Backend: Update OpenAI API key
+- [ ] Backend: Create PersonalizedWellnessRequest/Response models  
+- [ ] Backend: Implement /api/wellness/personalized-recommendations endpoint
+- [ ] Backend: Add OpenAI structured prompt system
+- [ ] Frontend: Add "Generate Recommendations" buttons
+- [ ] Frontend: Enhanced modal popups with fitness app design
+- [ ] Frontend: YouTube video integration
+- [ ] Frontend: Product links sections
+- [ ] Frontend: Image integration system
+- [ ] Testing: Create 2 test users and verify functionality
+- [ ] Documentation: Update this file after each change
 
-### Phase 2: Frontend Enhancement
-- [ ] Update card components to display OpenAI generated content
-- [ ] Implement popup modals with detailed content structure
-- [ ] Add image generation/selection for cards
-- [ ] Integrate YouTube video display in cards
-- [ ] Add product recommendation sections in each category
-- [ ] Implement user input collection for personalized recommendations
-
-### Phase 3: Integration & Testing
-- [ ] Connect frontend to new backend endpoints
-- [ ] Test personalized recommendation flow
-- [ ] Verify card displays and popups work correctly
-- [ ] Test with 1-2 users to avoid API exhaustion
-- [ ] Implement error handling and fallbacks
-
-## REMAINING TASKS
-1. Confirm implementation approach with user
-2. Phase 1: Backend development
-3. Phase 2: Frontend development
-4. Phase 3: Integration and testing
-5. Final testing and deployment
-
-## NOTES
-- User wants popup similar to fitness app image provided
-- Test with only 1-2 users initially to preserve OpenAI API credits
-- Focus on structured output: diet, workout, skincare, health sections
-- Each section needs: images, YouTube videos, product links, detailed instructions
-- Special motivational quotes section for health
+## BACKUP CONTINUATION INSTRUCTIONS
+If OpenAI credits are exhausted, the next developer should:
+1. Use a fresh OpenAI API key in `/app/backend/.env`
+2. Continue from the last completed change in this file
+3. Follow the exact technical specifications documented above
+4. Test with maximum 2 user logins to preserve credits
+5. Update this file after every single change made
