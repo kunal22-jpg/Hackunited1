@@ -1883,7 +1883,7 @@ const GetStartedPage = () => {
     { id: 'acne-control', label: 'Acne Control', icon: '🎯' },
     { id: 'anti-aging', label: 'Anti-Aging', icon: '🧴' },
     { id: 'boost-immunity', label: 'Boost Immunity', icon: '🛡️' },
-    { id: 'manage-diabetes', label: 'Manage Diabetes', icon: '📊' },
+    { id: 'manage-diabetes', label: 'Manage Health', icon: '📊' },
     { id: 'improve-flexibility', label: 'Improve Flexibility', icon: '🤸' },
     { id: 'healthy-aging', label: 'Healthy Aging', icon: '🌱' },
     { id: 'general-fitness', label: 'General Fitness', icon: '🏃' }
