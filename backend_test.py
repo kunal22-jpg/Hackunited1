@@ -1036,6 +1036,11 @@ def run_all_tests():
     print("Testing with the sample data provided in the review request.")
     results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
     
+    # Test with alternative data to verify personalization
+    print("\n\n=== TESTING WITH ALTERNATIVE USER DATA ===")
+    print("Testing with different user data to verify personalization.")
+    results["personalized_wellness_recommendations_alt"] = test_personalized_wellness_recommendations_alt()
+    
     # Print summary
     print("\n=== Test Summary ===")
     for test_name, result in results.items():
