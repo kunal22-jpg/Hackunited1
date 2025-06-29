@@ -1557,7 +1557,7 @@ const WorkoutPage = () => {
   ];
 
   useEffect(() => {
-    fetchWorkouts();
+    setWorkouts(workoutGalleryData);
   }, []);
 
   const fetchWorkouts = async () => {
