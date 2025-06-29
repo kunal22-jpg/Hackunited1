@@ -1058,11 +1058,11 @@ const WorkoutPage = () => {
         overlay="bg-black/50"
       />
       
-      <div className="relative z-10 pt-32 px-6">
+      <div className="relative z-10 pt-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-white mb-4">Workout Plans</h1>
-            <p className="text-xl text-white/80">Personalized fitness routines for every goal</p>
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-white mb-4">Workout Plans</h1>
+            <p className="text-lg text-white/80">Personalized fitness routines for every goal</p>
           </div>
 
           {workouts.length > 0 && (
