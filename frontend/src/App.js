@@ -2461,6 +2461,234 @@ const GetStartedPage = () => {
   );
 };
 
+// Quote-Only Page Components for Non-Authenticated Users
+
+// Login Call-to-Action Component
+const LoginCallToAction = ({ sectionName }) => (
+  <motion.div 
+    initial={{ y: 30, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ duration: 0.8, delay: 0.3 }}
+    className="text-center mt-12"
+  >
+    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 max-w-md mx-auto">
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="mb-6"
+      >
+        <div className="w-16 h-16 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0h3m-3 0h-3m8-8V7a3 3 0 00-3-3H9a3 3 0 00-3 3v2"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-3">Unlock Your {sectionName} Journey</h3>
+        <p className="text-white/80 mb-6">
+          Get personalized {sectionName.toLowerCase()} plans, expert guidance, and exclusive content.
+        </p>
+      </motion.div>
+      
+      <Link to="/get-started">
+        <motion.button
+          whileHover={{ 
+            scale: 1.05,
+            boxShadow: '0 0 30px rgba(251, 191, 36, 0.6)',
+            backgroundColor: 'rgba(251, 191, 36, 0.9)'
+          }}
+          whileTap={{ scale: 0.95 }}
+          className="w-full py-4 px-8 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold rounded-full text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+        >
+          <span className="flex items-center justify-center space-x-2">
+            <span>Login to Access More Features</span>
+            <motion.svg 
+              className="w-5 h-5" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              whileHover={{ x: 3 }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </motion.svg>
+          </span>
+        </motion.button>
+      </Link>
+    </div>
+  </motion.div>
+);
+
+// Quote-Only Pages
+const WorkoutQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgrounds.workout})` }}
+    />
+    <div className="absolute inset-0 bg-black/60" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Push beyond yesterday, embrace tomorrow's strength."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Workout" />
+      </div>
+    </div>
+  </div>
+);
+
+const SkincareQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgrounds.skincare})` }}
+    />
+    <div className="absolute inset-0 bg-black/50" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Radiance is your right, glow is your gift."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-pink-400 to-purple-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Skincare" />
+      </div>
+    </div>
+  </div>
+);
+
+const DietQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgrounds.diet})` }}
+    />
+    <div className="absolute inset-0 bg-black/55" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Eat vibrant, live radiant, nourish your soul."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-blue-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Nutrition" />
+      </div>
+    </div>
+  </div>
+);
+
+const HealthQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgrounds.health})` }}
+    />
+    <div className="absolute inset-0 bg-black/60" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Wellness is wealth, health is your treasure."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-red-400 to-pink-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Health" />
+      </div>
+    </div>
+  </div>
+);
+
+const OrderUpQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgrounds.orderup})` }}
+    />
+    <div className="absolute inset-0 bg-black/65" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Smart shopping starts with understanding you."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-cyan-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Smart Shopping" />
+      </div>
+    </div>
+  </div>
+);
+
+// Authentication-aware Route Component
+const AuthRoute = ({ children, quotePage }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    const checkAuth = () => {
+      const user = localStorage.getItem('user');
+      const userId = localStorage.getItem('userId');
+      setIsAuthenticated(user && userId);
+    };
+    
+    checkAuth();
+    
+    // Listen for localStorage changes (when user logs in/out)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  return isAuthenticated ? children : quotePage;
+};
+
 // Main App Component
 function App() {
   return (
@@ -2469,11 +2697,46 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/workout" element={<WorkoutPage />} />
-          <Route path="/skincare" element={<SkincarePage />} />
-          <Route path="/diet" element={<DietPage />} />
-          <Route path="/health" element={<HealthPage />} />
-          <Route path="/order-up" element={<GroceryAgent />} />
+          <Route 
+            path="/workout" 
+            element={
+              <AuthRoute quotePage={<WorkoutQuotePage />}>
+                <WorkoutPage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
+            path="/skincare" 
+            element={
+              <AuthRoute quotePage={<SkincareQuotePage />}>
+                <SkincarePage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
+            path="/diet" 
+            element={
+              <AuthRoute quotePage={<DietQuotePage />}>
+                <DietPage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
+            path="/health" 
+            element={
+              <AuthRoute quotePage={<HealthQuotePage />}>
+                <HealthPage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
+            path="/order-up" 
+            element={
+              <AuthRoute quotePage={<OrderUpQuotePage />}>
+                <GroceryAgent />
+              </AuthRoute>
+            } 
+          />
           <Route path="/get-started" element={<GetStartedPage />} />
         </Routes>
       </BrowserRouter>
