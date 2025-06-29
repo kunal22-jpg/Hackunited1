@@ -2667,24 +2667,44 @@ const OrderUpQuotePage = () => (
 // Authentication-aware Route Component
 const AuthRoute = ({ children, quotePage }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     const checkAuth = () => {
       const user = localStorage.getItem('user');
       const userId = localStorage.getItem('userId');
-      setIsAuthenticated(user && userId);
+      const isAuth = !!(user && userId);
+      setIsAuthenticated(isAuth);
+      setIsLoading(false);
     };
     
+    // Check immediately
     checkAuth();
     
-    // Listen for localStorage changes (when user logs in/out)
-    const handleStorageChange = () => {
+    // Also check after a small delay to ensure localStorage is properly loaded
+    const timer = setTimeout(checkAuth, 100);
+    
+    // Listen for custom auth events
+    const handleAuthChange = () => {
       checkAuth();
     };
     
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('authChange', handleAuthChange);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
+  
+  // Show loading state briefly to prevent flashing
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-400"></div>
+      </div>
+    );
+  }
   
   return isAuthenticated ? children : quotePage;
 };
