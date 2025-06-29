@@ -1396,114 +1396,164 @@ const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [personalizedWorkouts, setPersonalizedWorkouts] = useState([]);
-  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
-  const [showPersonalized, setShowPersonalized] = useState(false);
 
-  // Enhanced Exercise Dataset
+  // Enhanced Exercise Dataset - 8 Unique Workouts
   const enhancedExerciseData = [
     {
       id: 1,
-      title: "Crunches",
-      description: "Classic abdominal exercise for core strength",
-      videoUrl: "https://www.youtube.com/embed/Xyd_fa5zoEU",
-      duration: "15–20 minutes",
-      level: "Beginner",
+      title: "HIIT Cardio",
+      description: "Fast-paced high-intensity exercises",
+      videoUrl: "https://www.youtube.com/embed/ml6cT4AZdqI",
+      duration: "20 minutes",
+      level: "Intermediate",
       steps: [
-        "Lie on your back with knees bent and feet flat",
-        "Place your hands behind your head",
-        "Engage your core and lift your shoulders",
-        "Exhale while crunching up, inhale returning",
-        "Repeat for 3 sets of 15 reps"
+        "Warm-up jog in place for 2 minutes",
+        "Jump squats - 30 seconds on, 15 seconds rest",
+        "Burpees - 30 seconds on, 15 seconds rest",
+        "Plank jacks - 30 seconds on, 15 seconds rest",
+        "High knees - 30 seconds on, 15 seconds rest",
+        "Mountain climbers - 30 seconds on, 15 seconds rest",
+        "Cool down with light stretching"
       ],
-      requirements: ["Exercise mat", "Comfortable clothing"],
-      muscle_groups: ["Core", "Abs", "Hip flexors"]
+      requirements: ["Exercise mat", "Water bottle", "Comfortable clothing"],
+      muscle_groups: ["Full body", "Cardiovascular system"]
     },
     {
       id: 2,
-      title: "Dumbbell Bench Press",
-      description: "Upper body strength training for chest and arms",
-      videoUrl: "https://www.youtube.com/embed/vthMCtgVtFw",
-      duration: "30–45 minutes",
-      level: "Intermediate",
+      title: "Core Strength",
+      description: "Focused on abs and obliques",
+      videoUrl: "https://www.youtube.com/embed/Xyd_fa5zoEU",
+      duration: "15 minutes",
+      level: "Beginner",
       steps: [
-        "Lie on a flat bench with a dumbbell in each hand",
-        "Hold weights at shoulder level, palms forward",
-        "Press upward until arms are fully extended",
-        "Lower dumbbells slowly back to start",
-        "Repeat for 3 sets of 10 reps"
+        "Basic crunches - 3 sets of 15 reps",
+        "Leg raises - 3 sets of 12 reps",
+        "Plank hold - 3 sets of 30-45 seconds",
+        "Russian twists - 3 sets of 20 reps",
+        "Dead bug - 3 sets of 10 each side",
+        "Cool down with gentle stretching"
       ],
-      requirements: ["Dumbbells", "Flat bench", "Spotter recommended"],
-      muscle_groups: ["Chest", "Shoulders", "Triceps"]
+      requirements: ["Exercise mat", "Comfortable clothing"],
+      muscle_groups: ["Core", "Abs", "Obliques"]
     },
     {
       id: 3,
-      title: "Squats",
-      description: "Fundamental lower body exercise for overall strength",
-      videoUrl: "https://www.youtube.com/embed/aclHkVaku9U",
-      duration: "20–30 minutes",
-      level: "All Levels",
+      title: "Glutes & Legs",
+      description: "Lower body shaping workout",
+      videoUrl: "https://www.youtube.com/embed/1oed-UmAxFs",
+      duration: "25 minutes",
+      level: "Intermediate",
       steps: [
-        "Stand with feet shoulder-width apart",
-        "Push hips back and lower down",
-        "Keep knees behind toes and chest up",
-        "Push through heels to stand up",
-        "Repeat for 3 sets of 12–15 reps"
+        "Glute bridges - 3 sets of 15 reps",
+        "Walking lunges - 3 sets of 12 each leg",
+        "Step-ups on bench - 3 sets of 10 each leg",
+        "Wall sits - 3 sets of 30-45 seconds",
+        "Calf raises - 3 sets of 20 reps",
+        "Cool down with leg stretches"
       ],
-      requirements: ["None", "Optional: weights for added intensity"],
-      muscle_groups: ["Quadriceps", "Glutes", "Hamstrings", "Core"]
+      requirements: ["Bench or step", "Exercise mat"],
+      muscle_groups: ["Glutes", "Quadriceps", "Hamstrings", "Calves"]
     },
     {
       id: 4,
-      title: "Push-ups",
-      description: "Classic upper body bodyweight exercise",
-      videoUrl: "https://www.youtube.com/embed/IODxDxX7oi4",
-      duration: "10–15 minutes",
-      level: "All Levels",
+      title: "Upper Body Strength",
+      description: "Dumbbell arm & chest routine",
+      videoUrl: "https://www.youtube.com/embed/vthMCtgVtFw",
+      duration: "30 minutes",
+      level: "Intermediate",
       steps: [
-        "Start in plank position with hands shoulder-width apart",
-        "Lower body until chest nearly touches floor",
-        "Keep core tight and body in straight line",
-        "Push back up to starting position",
-        "Repeat for 3 sets of 8-12 reps"
+        "Dumbbell chest press - 3 sets of 12 reps",
+        "Bicep curls - 3 sets of 15 reps",
+        "Shoulder press - 3 sets of 10 reps",
+        "Tricep dips - 3 sets of 12 reps",
+        "Bent-over rows - 3 sets of 12 reps",
+        "Cool down with arm stretches"
       ],
-      requirements: ["None", "Exercise mat optional"],
-      muscle_groups: ["Chest", "Shoulders", "Triceps", "Core"]
+      requirements: ["Dumbbells", "Flat bench", "Exercise mat"],
+      muscle_groups: ["Chest", "Arms", "Shoulders", "Back"]
     },
     {
       id: 5,
-      title: "Deadlifts",
-      description: "Compound movement for total body strength",
-      videoUrl: "https://www.youtube.com/embed/1ZXobu7JvvE",
-      duration: "35–50 minutes",
-      level: "Advanced",
+      title: "Stretch & Recovery",
+      description: "For cooldown and muscle release",
+      videoUrl: "https://www.youtube.com/embed/QXwz1u0vpy4",
+      duration: "15 minutes",
+      level: "All Levels",
       steps: [
-        "Stand with feet hip-width apart, bar over mid-foot",
-        "Bend at hips and knees to grip the bar",
-        "Keep chest up and back straight",
-        "Drive through heels to lift the bar",
-        "Stand tall, then lower with control"
+        "Hamstring stretch - Hold 30 seconds each leg",
+        "Cat-cow stretch - 10 slow repetitions",
+        "Child's pose - Hold for 45 seconds",
+        "Hip flexor stretch - 30 seconds each side",
+        "Shoulder rolls and neck stretches",
+        "Deep breathing relaxation"
       ],
-      requirements: ["Barbell", "Weight plates", "Proper form essential"],
-      muscle_groups: ["Hamstrings", "Glutes", "Back", "Core", "Traps"]
+      requirements: ["Exercise mat", "Comfortable clothing"],
+      muscle_groups: ["Full body flexibility", "Stress relief"]
     },
     {
       id: 6,
-      title: "Plank",
-      description: "Isometric core strengthening exercise",
-      videoUrl: "https://www.youtube.com/embed/ASdvN_XEl_c",
-      duration: "5–10 minutes",
-      level: "All Levels",
+      title: "Resistance Band Full Body",
+      description: "Resistance-based strength training",
+      videoUrl: "https://www.youtube.com/embed/Hlj6lgV5wUQ",
+      duration: "30 minutes",
+      level: "Intermediate",
       steps: [
-        "Start in push-up position on forearms",
-        "Keep body in straight line from head to heels",
-        "Engage core and breathe normally",
-        "Hold position for 30-60 seconds",
-        "Rest and repeat 3-5 times"
+        "Band chest press - 3 sets of 15 reps",
+        "Banded squats - 3 sets of 12 reps",
+        "Overhead press with band - 3 sets of 12 reps",
+        "Band rows - 3 sets of 15 reps",
+        "Lateral band walks - 3 sets of 10 each direction",
+        "Cool down with light stretching"
       ],
-      requirements: ["Exercise mat"],
-      muscle_groups: ["Core", "Shoulders", "Back"]
+      requirements: ["Resistance bands", "Anchor point", "Exercise mat"],
+      muscle_groups: ["Full body", "Functional strength"]
+    },
+    {
+      id: 7,
+      title: "Mobility Flow",
+      description: "Joint flexibility & motion",
+      videoUrl: "https://www.youtube.com/embed/8BcPHWGQO44",
+      duration: "10 minutes",
+      level: "Beginner",
+      steps: [
+        "Arm circles - 30 seconds forward and backward",
+        "Hip openers - 10 reps each side",
+        "Spinal roll from squat to stand - 5 slow reps",
+        "Shoulder shrugs and neck circles - 10 each direction",
+        "Deep lunge with twist - 30 seconds per side",
+        "Gentle breathing and relaxation"
+      ],
+      requirements: ["Exercise mat", "Comfortable space"],
+      muscle_groups: ["Joints", "Mobility", "Flexibility"]
+    },
+    {
+      id: 8,
+      title: "Pilates Core Burn",
+      description: "Focused mat Pilates sequence",
+      videoUrl: "https://www.youtube.com/embed/lCg_gh_fppI",
+      duration: "20 minutes",
+      level: "Beginner",
+      steps: [
+        "The Hundred - 100 pulses with breathing",
+        "Leg circles - 8 reps each direction, each leg",
+        "Roll-up to Teaser - 5 slow controlled reps",
+        "Crisscross abs - 10 reps each side",
+        "Spine stretch forward - 5 reps with deep breathing",
+        "Final relaxation in child's pose"
+      ],
+      requirements: ["Exercise mat", "Comfortable clothing"],
+      muscle_groups: ["Core", "Pilates fundamentals", "Body control"]
     }
+  ];
+
+  // Create 12-card gallery: 8 unique + first 4 repeated
+  const workoutGalleryData = [
+    ...enhancedExerciseData, // First 8 unique workouts (ids 1-8)
+    // Repeat first 4 workouts with unique identifiers to avoid key conflicts
+    { ...enhancedExerciseData[0], id: 9, originalId: 1 }, // HIIT Cardio repeat
+    { ...enhancedExerciseData[1], id: 10, originalId: 2 }, // Core Strength repeat  
+    { ...enhancedExerciseData[2], id: 11, originalId: 3 }, // Glutes & Legs repeat
+    { ...enhancedExerciseData[3], id: 12, originalId: 4 }  // Upper Body Strength repeat
   ];
 
   useEffect(() => {
