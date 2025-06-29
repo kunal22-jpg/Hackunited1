@@ -1292,8 +1292,27 @@ const HealthPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleSectionHover = (isHovering) => {
+    const healthIcon = document.querySelector('.header-health-icon');
+    if (healthIcon) {
+      if (isHovering) {
+        healthIcon.style.animation = 'heartBeat 0.8s ease-in-out infinite';
+        healthIcon.style.color = '#ef4444';
+        healthIcon.style.filter = 'drop-shadow(0 0 6px #ef4444)';
+      } else {
+        healthIcon.style.animation = '';
+        healthIcon.style.color = '';
+        healthIcon.style.filter = '';
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      onMouseEnter={() => handleSectionHover(true)}
+      onMouseLeave={() => handleSectionHover(false)}
+    >
       <VideoBackground 
         videoSrc="/video/health.mp4" 
         overlay="bg-black/50"
@@ -1301,11 +1320,6 @@ const HealthPage = () => {
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <QuoteHeader 
-            quote="Wellness is the new wealth." 
-            background={backgrounds.health}
-          />
-          
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Health Conditions</h1>
             <p className="text-xl text-white/80">Personalized support for your health journey</p>
