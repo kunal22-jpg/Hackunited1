@@ -2022,6 +2022,17 @@ const GetStartedPage = () => {
               </div>
             )}
 
+            {/* Message Display */}
+            {message && (
+              <div className={`p-3 rounded-lg mb-4 text-center ${
+                message.includes('successful') || message.includes('Redirecting')
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+                  : 'bg-red-500/20 text-red-300 border border-red-500/30'
+              }`}>
+                {message}
+              </div>
+            )}
+
             {/* Form Content */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {activeTab === 'login' ? (
