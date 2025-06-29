@@ -1140,8 +1140,27 @@ const SkincarePage = () => {
     setIsModalOpen(true);
   };
 
+  const handleSectionHover = (isHovering) => {
+    const skincareIcon = document.querySelector('.header-skincare-icon');
+    if (skincareIcon) {
+      if (isHovering) {
+        skincareIcon.style.animation = 'sparkleGlow 1s ease-in-out infinite';
+        skincareIcon.style.color = '#ffd700';
+        skincareIcon.style.filter = 'drop-shadow(0 0 8px #ffd700)';
+      } else {
+        skincareIcon.style.animation = '';
+        skincareIcon.style.color = '';
+        skincareIcon.style.filter = '';
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      onMouseEnter={() => handleSectionHover(true)}
+      onMouseLeave={() => handleSectionHover(false)}
+    >
       <VideoBackground 
         videoSrc="/video/skincare.mp4" 
         overlay="bg-black/40"
@@ -1149,11 +1168,6 @@ const SkincarePage = () => {
       
       <div className="relative z-10 pt-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <QuoteHeader 
-            quote="Radiance is your right." 
-            background={backgrounds.skincare}
-          />
-          
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Skincare Routines</h1>
             <p className="text-xl text-white/80">Glow with science-backed skincare</p>
