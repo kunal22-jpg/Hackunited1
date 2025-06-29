@@ -33,6 +33,137 @@ const backgrounds = {
   orderup: 'https://images.pexels.com/photos/668353/pexels-photo-668353.jpeg'
 };
 
+// Profile Popup Component
+const ProfilePopup = ({ user, isOpen, onClose }) => {
+  if (!isOpen || !user) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      
+      {/* Profile Modal */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all"
+        >
+          <X size={20} className="text-white" />
+        </button>
+
+        {/* Profile Header */}
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User size={32} className="text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-1">{user.name}</h2>
+          <p className="text-white/70">{user.email}</p>
+        </div>
+
+        {/* Profile Details */}
+        <div className="space-y-4">
+          {/* Basic Info */}
+          <div className="bg-white/5 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-3">Basic Information</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <span className="text-white/60">Age:</span>
+                <p className="text-white font-medium">{user.age}</p>
+              </div>
+              <div>
+                <span className="text-white/60">Gender:</span>
+                <p className="text-white font-medium">{user.gender}</p>
+              </div>
+              <div>
+                <span className="text-white/60">Height:</span>
+                <p className="text-white font-medium">{user.height} {user.height_unit || 'cm'}</p>
+              </div>
+              <div>
+                <span className="text-white/60">Weight:</span>
+                <p className="text-white font-medium">{user.weight} {user.weight_unit || 'kg'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Wellness Goals */}
+          {user.goals && user.goals.length > 0 && (
+            <div className="bg-white/5 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-3">Wellness Goals</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.goals.map((goal, index) => (
+                  <span key={index} className="px-3 py-1 bg-amber-400/20 text-amber-300 rounded-full text-sm">
+                    {goal}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Health Information */}
+          <div className="bg-white/5 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-3">Health & Preferences</h3>
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="text-white/60">Fitness Level:</span>
+                <p className="text-white font-medium">{user.fitness_level || 'Not specified'}</p>
+              </div>
+              <div>
+                <span className="text-white/60">Diet Type:</span>
+                <p className="text-white font-medium">{user.diet_type || 'Not specified'}</p>
+              </div>
+              <div>
+                <span className="text-white/60">Skin Type:</span>
+                <p className="text-white font-medium">{user.skin_type || 'Not specified'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Allergies */}
+          {user.allergies && user.allergies.length > 0 && (
+            <div className="bg-white/5 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-3">Allergies</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.allergies.map((allergy, index) => (
+                  <span key={index} className="px-3 py-1 bg-red-400/20 text-red-300 rounded-full text-sm">
+                    {allergy}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Chronic Conditions */}
+          {user.chronic_conditions && user.chronic_conditions.length > 0 && (
+            <div className="bg-white/5 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-3">Medical Conditions</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.chronic_conditions.map((condition, index) => (
+                  <span key={index} className="px-3 py-1 bg-blue-400/20 text-blue-300 rounded-full text-sm">
+                    {condition}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 // Header Component
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
