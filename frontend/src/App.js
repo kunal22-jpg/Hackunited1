@@ -1438,66 +1438,94 @@ const GetStartedPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
     
-    if (activeTab === 'login') {
-      // Handle login
-      console.log('Login attempt:', { email: formData.email, password: formData.password });
-      alert('Login functionality will be implemented!');
-      return;
-    }
-
-    // Handle signup
-    if (!validateStep(5)) {
-      alert('Please complete all required fields');
-      return;
-    }
-
     try {
-      const userProfile = {
-        // Basic info
-        name: formData.name,
-        email: formData.email,
-        password: formData.password, // In real app, this should be hashed
-        
-        // Vital stats
-        age: parseInt(formData.age),
-        gender: formData.gender,
-        height: {
-          value: parseFloat(formData.height),
-          unit: formData.heightUnit
-        },
-        weight: {
-          value: parseFloat(formData.weight),
-          unit: formData.weightUnit
-        },
-        
-        // Medical info
-        allergies: formData.allergies,
-        chronicConditions: formData.chronicConditions,
-        
-        // Goals and preferences
-        wellnessGoals: formData.wellnessGoals,
-        fitnessLevel: formData.fitnessLevel,
-        dietPreference: formData.dietPreference,
-        skinType: formData.skinType,
-        smartCartOptIn: formData.smartCartOptIn,
-        
-        // Metadata
-        createdAt: new Date().toISOString(),
-        profileComplete: true
-      };
+      if (activeTab === 'login') {
+        // Handle login
+        const loginData = {
+          email: formData.email,
+          password: formData.password
+        };
 
-      console.log('User profile to save:', userProfile);
-      
-      // In a real implementation, you would send this to your backend
-      // const response = await axios.post(`${API}/users/register`, userProfile);
-      
-      alert('Registration successful! (Backend integration pending)');
-      // Redirect to dashboard or home
-      
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(loginData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store user data in localStorage
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('userId', data.user_id);
+          
+          setMessage('Login successful! Redirecting...');
+          setTimeout(() => navigate('/'), 1500);
+        } else {
+          setMessage(data.message);
+        }
+      } else {
+        // Handle signup - validate all steps first
+        if (!validateStep(5)) {
+          setMessage('Please complete all required fields');
+          setIsLoading(false);
+          return;
+        }
+
+        // Prepare signup data matching backend model
+        const signupData = {
+          // Basic Credentials
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          agreeTerms: formData.agreeTerms,
+          // Vital Stats
+          age: parseInt(formData.age),
+          gender: formData.gender,
+          height: parseFloat(formData.height),
+          heightUnit: formData.heightUnit,
+          weight: parseFloat(formData.weight),
+          weightUnit: formData.weightUnit,
+          // Allergies & Medical
+          allergies: formData.allergies,
+          chronicConditions: formData.chronicConditions,
+          // Wellness Goals
+          wellnessGoals: formData.wellnessGoals,
+          // Lifestyle & Preferences
+          fitnessLevel: formData.fitnessLevel,
+          dietPreference: formData.dietPreference,
+          skinType: formData.skinType,
+          smartCartOptIn: formData.smartCartOptIn
+        };
+
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(signupData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store user data and redirect
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('userId', data.user_id);
+          setMessage('Registration successful! Redirecting...');
+          setTimeout(() => navigate('/'), 1500);
+        } else {
+          setMessage(data.message);
+          setCurrentStep(1); // Reset to first step on error
+        }
+      }
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('Registration failed. Please try again.');
+      console.error('Authentication error:', error);
+      setMessage(activeTab === 'login' ? 'Login failed. Please try again.' : 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
