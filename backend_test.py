@@ -939,6 +939,85 @@ def test_grocery_cart_creation(recommendations):
         print(f"❌ Enhanced grocery cart creation endpoint test failed: {str(e)}")
         return False
 
+def test_personalized_wellness_recommendations():
+    """Test the personalized wellness recommendations API endpoint"""
+    print("\n=== Testing Personalized Wellness Recommendations Endpoint ===")
+    try:
+        # Sample request data as specified in the requirements
+        request_data = {
+            "user_id": "test-user-123",
+            "weight": "70 kg", 
+            "allergies": "none",
+            "wellness_goals": ["muscle building", "general fitness"],
+            "health_conditions": [],
+            "age": 25,
+            "gender": "male",
+            "fitness_level": "beginner"
+        }
+        
+        response = requests.post(f"{API_URL}/wellness/personalized-recommendations", json=request_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        # Print a summary of the response
+        print(f"Response success: {data.get('success', False)}")
+        print(f"Response message: {data.get('message', 'No message')}")
+        
+        # Basic validation
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        assert "recommendations" in data, "Response missing 'recommendations' field"
+        
+        # Validate recommendations structure
+        recommendations = data["recommendations"]
+        assert isinstance(recommendations, dict), "'recommendations' is not a dictionary"
+        
+        # Check if all 4 required categories are present
+        required_categories = ["workout", "diet", "skincare", "health"]
+        for category in required_categories:
+            assert category in recommendations, f"Missing '{category}' category in recommendations"
+            assert isinstance(recommendations[category], list), f"'{category}' recommendations is not a list"
+            assert len(recommendations[category]) > 0, f"No recommendations found for '{category}' category"
+        
+        # Validate the structure of each recommendation
+        for category, recs in recommendations.items():
+            print(f"\nFound {len(recs)} recommendations for {category} category")
+            for i, rec in enumerate(recs):
+                # Print the first recommendation in each category for inspection
+                if i == 0:
+                    print(f"Sample {category} recommendation: {json.dumps(rec, indent=2)}")
+                
+                # Validate required fields
+                assert "title" in rec, f"{category} recommendation missing 'title' field"
+                assert "description" in rec, f"{category} recommendation missing 'description' field"
+                assert "steps" in rec, f"{category} recommendation missing 'steps' field"
+                assert isinstance(rec["steps"], list), f"'steps' in {category} recommendation is not a list"
+                assert "youtube_video" in rec, f"{category} recommendation missing 'youtube_video' field"
+                assert "product_links" in rec, f"{category} recommendation missing 'product_links' field"
+                assert isinstance(rec["product_links"], list), f"'product_links' in {category} recommendation is not a list"
+                
+                # Check if recommendations are personalized based on the request data
+                description_lower = rec["description"].lower()
+                assert any(goal.lower() in description_lower for goal in request_data["wellness_goals"]) or \
+                       request_data["fitness_level"].lower() in description_lower or \
+                       request_data["gender"].lower() in description_lower or \
+                       str(request_data["age"]) in description_lower or \
+                       request_data["weight"].lower() in description_lower, \
+                       f"{category} recommendation doesn't appear to be personalized"
+        
+        # Check if health category has motivational quotes
+        if recommendations["health"] and len(recommendations["health"]) > 0:
+            health_rec = recommendations["health"][0]
+            if "motivational_quote" in health_rec:
+                print(f"Health recommendation includes motivational quote: {health_rec['motivational_quote']}")
+        
+        print("✅ Personalized wellness recommendations endpoint test passed")
+        return True
+    except Exception as e:
+        print(f"❌ Personalized wellness recommendations endpoint test failed: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests and return results"""
     results = {}
@@ -983,6 +1062,9 @@ def run_all_tests():
     results["grocery_recommendations"] = grocery_recommendations_result
     results["grocery_cart_creation"] = test_grocery_cart_creation(recommendations)
     results["grocery_error_handling"] = test_grocery_error_handling()
+    
+    # Test personalized wellness recommendations
+    results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
     
     # Print summary
     print("\n=== Test Summary ===")
