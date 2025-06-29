@@ -1028,24 +1028,13 @@ const CircularGallery = ({ items, onItemClick, type }) => {
 // Page Components
 const HomePage = () => (
   <div className="min-h-screen relative overflow-hidden">
-    <div 
-      className="absolute inset-0 bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: `url(${backgrounds.home})` }}
+    <VideoBackground 
+      videoSrc="/video/home.mp4" 
+      overlay="bg-black/40"
     />
-    <div className="absolute inset-0 bg-black/40" />
     
     <div className="relative z-10 min-h-screen flex items-center justify-center">
-      <div className="text-center px-6 max-w-4xl mx-auto">
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent mb-6 font-['Cinzel_Decorative']">
-            Nutracía
-          </h1>
-        </motion.div>
-      </div>
+      {/* Content removed as requested - only header remains visible */}
     </div>
     
     <EnhancedAIChatbot />
