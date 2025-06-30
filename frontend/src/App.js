@@ -180,11 +180,14 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
 
           {/* Allergies */}
           {user.allergies && user.allergies.length > 0 && (
-            <div className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3">Allergies</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/8 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <div className="w-2 h-2 bg-red-400 rounded-full mr-3"></div>
+                Allergies
+              </h3>
+              <div className="flex flex-wrap gap-3">
                 {user.allergies.map((allergy, index) => (
-                  <span key={index} className="px-3 py-1 bg-red-400/20 text-red-300 rounded-full text-sm">
+                  <span key={index} className="px-4 py-2 bg-gradient-to-r from-red-400/20 to-pink-400/20 text-red-200 rounded-full text-sm font-medium border border-red-400/30 backdrop-blur-sm">
                     {allergy}
                   </span>
                 ))}
@@ -192,13 +195,16 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Chronic Conditions */}
+          {/* Medical Conditions */}
           {user.chronic_conditions && user.chronic_conditions.length > 0 && (
-            <div className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3">Medical Conditions</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/8 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+                Medical Conditions
+              </h3>
+              <div className="flex flex-wrap gap-3">
                 {user.chronic_conditions.map((condition, index) => (
-                  <span key={index} className="px-3 py-1 bg-blue-400/20 text-blue-300 rounded-full text-sm">
+                  <span key={index} className="px-4 py-2 bg-gradient-to-r from-purple-400/20 to-blue-400/20 text-purple-200 rounded-full text-sm font-medium border border-purple-400/30 backdrop-blur-sm">
                     {condition}
                   </span>
                 ))}
@@ -207,7 +213,7 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   );
 };
 
