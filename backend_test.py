@@ -1271,5 +1271,237 @@ def test_personalized_wellness_recommendations_alt():
     except Exception as e:
         print(f"❌ Personalized wellness recommendations endpoint test (alternative data) failed: {str(e)}")
         return False
+
+def test_enhanced_user_profile():
+    """Test the enhanced user profile functionality with comprehensive profile data"""
+    print("\n=== Testing Enhanced User Profile Functionality ===")
+    try:
+        # Create a user with comprehensive profile data
+        print("\n--- Test 1: Creating user with comprehensive profile data ---")
+        
+        # Complete user profile data including all fields for enhanced profile popup
+        enhanced_profile_data = {
+            "name": "Alex Johnson",
+            "email": f"alex.johnson.{uuid.uuid4()}@example.com",  # Ensure unique email
+            "password": "SecurePass123!",
+            "confirmPassword": "SecurePass123!",
+            "agreeTerms": True,
+            "age": 34,
+            "gender": "Non-binary",
+            "height": 175.5,
+            "heightUnit": "cm",
+            "weight": 68.2,
+            "weightUnit": "kg",
+            "allergies": ["Dairy", "Soy", "Tree nuts"],
+            "chronicConditions": ["Mild asthma", "Seasonal allergies"],
+            "wellnessGoals": ["Improve flexibility", "Reduce stress", "Better sleep quality"],
+            "fitnessLevel": "Intermediate",
+            "dietPreference": "Pescatarian",
+            "skinType": "Combination",
+            "smartCartOptIn": True
+        }
+        
+        print(f"Creating user with profile data: {json.dumps(enhanced_profile_data, indent=2)}")
+        response = requests.post(f"{API_URL}/auth/signup", json=enhanced_profile_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Signup response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "success" in data, "Response missing 'success' field"
+        assert data["success"] == True, f"Signup failed with message: {data.get('message', 'Unknown error')}"
+        assert "user" in data, "Response missing 'user' field"
+        assert "user_id" in data, "Response missing 'user_id' field"
+        
+        user_id = data["user_id"]
+        user_data = data["user"]
+        
+        # Verify all profile fields are present and correctly stored
+        print("\n--- Test 2: Verifying all profile fields are correctly stored ---")
+        
+        # Basic user information
+        assert user_data["name"] == enhanced_profile_data["name"], "User name doesn't match"
+        assert user_data["email"] == enhanced_profile_data["email"], "User email doesn't match"
+        assert "password" not in user_data, "Password should not be returned in response"
+        
+        # Vital statistics
+        assert user_data["age"] == enhanced_profile_data["age"], "User age doesn't match"
+        assert user_data["gender"] == enhanced_profile_data["gender"], "User gender doesn't match"
+        assert user_data["height"] == enhanced_profile_data["height"], "User height doesn't match"
+        assert user_data["height_unit"] == enhanced_profile_data["heightUnit"], "User height unit doesn't match"
+        assert user_data["weight"] == enhanced_profile_data["weight"], "User weight doesn't match"
+        assert user_data["weight_unit"] == enhanced_profile_data["weightUnit"], "User weight unit doesn't match"
+        
+        # Health information
+        assert user_data["allergies"] == enhanced_profile_data["allergies"], "User allergies don't match"
+        assert user_data["chronic_conditions"] == enhanced_profile_data["chronicConditions"], "User chronic conditions don't match"
+        assert user_data["goals"] == enhanced_profile_data["wellnessGoals"], "User wellness goals don't match"
+        
+        # Preferences
+        assert user_data["fitness_level"] == enhanced_profile_data["fitnessLevel"], "User fitness level doesn't match"
+        assert user_data["diet_type"] == enhanced_profile_data["dietPreference"], "User diet preference doesn't match"
+        assert user_data["skin_type"] == enhanced_profile_data["skinType"], "User skin type doesn't match"
+        assert user_data["smart_cart_enabled"] == enhanced_profile_data["smartCartOptIn"], "User smart cart option doesn't match"
+        
+        print("✅ All profile fields verified successfully")
+        
+        # Test login and verify profile data is returned correctly
+        print("\n--- Test 3: Verifying login returns complete profile data ---")
+        
+        login_data = {
+            "email": enhanced_profile_data["email"],
+            "password": enhanced_profile_data["password"]
+        }
+        
+        login_response = requests.post(f"{API_URL}/auth/login", json=login_data)
+        print(f"Login Status Code: {login_response.status_code}")
+        login_result = login_response.json()
+        print(f"Login response: {json.dumps(login_result, indent=2)}")
+        
+        assert login_response.status_code == 200, f"Expected status code 200, got {login_response.status_code}"
+        assert login_result["success"] == True, f"Login failed with message: {login_result.get('message', 'Unknown error')}"
+        assert "user" in login_result, "Login response missing 'user' field"
+        assert "user_id" in login_result, "Login response missing 'user_id' field"
+        
+        login_user_data = login_result["user"]
+        
+        # Verify login returns all the same profile data
+        assert login_user_data["name"] == enhanced_profile_data["name"], "Login: User name doesn't match"
+        assert login_user_data["email"] == enhanced_profile_data["email"], "Login: User email doesn't match"
+        assert login_user_data["age"] == enhanced_profile_data["age"], "Login: User age doesn't match"
+        assert login_user_data["gender"] == enhanced_profile_data["gender"], "Login: User gender doesn't match"
+        assert login_user_data["height"] == enhanced_profile_data["height"], "Login: User height doesn't match"
+        assert login_user_data["allergies"] == enhanced_profile_data["allergies"], "Login: User allergies don't match"
+        assert login_user_data["chronic_conditions"] == enhanced_profile_data["chronicConditions"], "Login: User chronic conditions don't match"
+        assert login_user_data["goals"] == enhanced_profile_data["wellnessGoals"], "Login: User wellness goals don't match"
+        assert login_user_data["fitness_level"] == enhanced_profile_data["fitnessLevel"], "Login: User fitness level doesn't match"
+        assert login_user_data["diet_type"] == enhanced_profile_data["dietPreference"], "Login: User diet preference doesn't match"
+        assert login_user_data["skin_type"] == enhanced_profile_data["skinType"], "Login: User skin type doesn't match"
+        
+        print("✅ Login returns complete profile data successfully")
+        
+        # Test retrieving user profile by ID
+        print("\n--- Test 4: Retrieving user profile by ID ---")
+        
+        profile_response = requests.get(f"{API_URL}/auth/user/{user_id}")
+        print(f"Profile Status Code: {profile_response.status_code}")
+        profile_result = profile_response.json()
+        print(f"Profile response: {json.dumps(profile_result, indent=2)}")
+        
+        assert profile_response.status_code == 200, f"Expected status code 200, got {profile_response.status_code}"
+        assert profile_result["success"] == True, f"Profile retrieval failed with message: {profile_result.get('message', 'Unknown error')}"
+        assert "user" in profile_result, "Profile response missing 'user' field"
+        assert "user_id" in profile_result, "Profile response missing 'user_id' field"
+        
+        profile_user_data = profile_result["user"]
+        
+        # Verify profile retrieval returns all the same profile data
+        assert profile_user_data["name"] == enhanced_profile_data["name"], "Profile: User name doesn't match"
+        assert profile_user_data["email"] == enhanced_profile_data["email"], "Profile: User email doesn't match"
+        assert profile_user_data["age"] == enhanced_profile_data["age"], "Profile: User age doesn't match"
+        assert profile_user_data["gender"] == enhanced_profile_data["gender"], "Profile: User gender doesn't match"
+        assert profile_user_data["height"] == enhanced_profile_data["height"], "Profile: User height doesn't match"
+        assert profile_user_data["allergies"] == enhanced_profile_data["allergies"], "Profile: User allergies don't match"
+        assert profile_user_data["chronic_conditions"] == enhanced_profile_data["chronicConditions"], "Profile: User chronic conditions don't match"
+        assert profile_user_data["goals"] == enhanced_profile_data["wellnessGoals"], "Profile: User wellness goals don't match"
+        assert profile_user_data["fitness_level"] == enhanced_profile_data["fitnessLevel"], "Profile: User fitness level doesn't match"
+        assert profile_user_data["diet_type"] == enhanced_profile_data["dietPreference"], "Profile: User diet preference doesn't match"
+        assert profile_user_data["skin_type"] == enhanced_profile_data["skinType"], "Profile: User skin type doesn't match"
+        
+        print("✅ Profile retrieval returns complete profile data successfully")
+        
+        # Test with different profile data variations
+        print("\n--- Test 5: Testing with different profile data variations ---")
+        
+        # Create a user with minimal required fields but still valid
+        minimal_profile_data = {
+            "name": "Min User",
+            "email": f"min.user.{uuid.uuid4()}@example.com",
+            "password": "MinPass123!",
+            "confirmPassword": "MinPass123!",
+            "agreeTerms": True,
+            "age": 25,
+            "gender": "Female",
+            "height": 160,
+            "heightUnit": "cm",
+            "weight": 55,
+            "weightUnit": "kg",
+            "allergies": [],
+            "chronicConditions": [],
+            "wellnessGoals": ["General health"],
+            "fitnessLevel": "Beginner",
+            "dietPreference": "No preference",
+            "skinType": "Normal",
+            "smartCartOptIn": False
+        }
+        
+        print(f"Creating user with minimal profile data")
+        min_response = requests.post(f"{API_URL}/auth/signup", json=minimal_profile_data)
+        print(f"Status Code: {min_response.status_code}")
+        min_data = min_response.json()
+        
+        assert min_response.status_code == 200, f"Expected status code 200, got {min_response.status_code}"
+        assert min_data["success"] == True, f"Minimal profile signup failed with message: {min_data.get('message', 'Unknown error')}"
+        assert "user" in min_data, "Response missing 'user' field"
+        
+        min_user_data = min_data["user"]
+        
+        # Verify minimal profile fields
+        assert min_user_data["name"] == minimal_profile_data["name"], "Minimal: User name doesn't match"
+        assert min_user_data["email"] == minimal_profile_data["email"], "Minimal: User email doesn't match"
+        assert min_user_data["allergies"] == minimal_profile_data["allergies"], "Minimal: User allergies don't match"
+        assert min_user_data["chronic_conditions"] == minimal_profile_data["chronicConditions"], "Minimal: User chronic conditions don't match"
+        assert min_user_data["goals"] == minimal_profile_data["wellnessGoals"], "Minimal: User wellness goals don't match"
+        
+        print("✅ Minimal profile data test passed")
+        
+        # Test with maximum field values
+        max_profile_data = {
+            "name": "Max " + "X" * 50,  # Very long name
+            "email": f"max.{'x' * 30}.{uuid.uuid4()}@example.com",
+            "password": "MaxPass123!" + "X" * 20,
+            "confirmPassword": "MaxPass123!" + "X" * 20,
+            "agreeTerms": True,
+            "age": 99,
+            "gender": "Other",
+            "height": 220,
+            "heightUnit": "cm",
+            "weight": 150,
+            "weightUnit": "kg",
+            "allergies": ["Allergy " + str(i) for i in range(1, 11)],  # 10 allergies
+            "chronicConditions": ["Condition " + str(i) for i in range(1, 6)],  # 5 conditions
+            "wellnessGoals": ["Goal " + str(i) for i in range(1, 8)],  # 7 goals
+            "fitnessLevel": "Expert",
+            "dietPreference": "Custom " + "X" * 30,
+            "skinType": "Very " + "X" * 20,
+            "smartCartOptIn": True
+        }
+        
+        print(f"Creating user with maximum profile data")
+        max_response = requests.post(f"{API_URL}/auth/signup", json=max_profile_data)
+        print(f"Status Code: {max_response.status_code}")
+        max_data = max_response.json()
+        
+        # This might fail if there are server-side validations, but we'll check if it works
+        if max_response.status_code == 200 and max_data.get("success", False):
+            max_user_data = max_data["user"]
+            
+            # Verify maximum profile fields
+            assert max_user_data["name"] == max_profile_data["name"], "Maximum: User name doesn't match"
+            assert max_user_data["email"] == max_profile_data["email"], "Maximum: User email doesn't match"
+            assert max_user_data["age"] == max_profile_data["age"], "Maximum: User age doesn't match"
+            assert len(max_user_data["allergies"]) == len(max_profile_data["allergies"]), "Maximum: User allergies count doesn't match"
+            assert len(max_user_data["chronic_conditions"]) == len(max_profile_data["chronicConditions"]), "Maximum: User chronic conditions count doesn't match"
+            assert len(max_user_data["goals"]) == len(max_profile_data["wellnessGoals"]), "Maximum: User wellness goals count doesn't match"
+            
+            print("✅ Maximum profile data test passed")
+        else:
+            print("⚠️ Maximum profile data test skipped - server rejected the data (this may be expected)")
+        
+        print("\n✅ Enhanced user profile functionality test passed")
+        return True
+    except Exception as e:
+        print(f"❌ Enhanced user profile functionality test failed: {str(e)}")
+        return False
 if __name__ == "__main__":
     run_all_tests()
