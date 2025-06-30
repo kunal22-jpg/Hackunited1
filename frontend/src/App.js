@@ -2014,8 +2014,8 @@ const DietPage = () => {
       </div>
 
       <Modal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={dietModalOpen}
+        onClose={() => setDietModalOpen(false)}
         item={selectedMeal}
         type="diet"
       />
