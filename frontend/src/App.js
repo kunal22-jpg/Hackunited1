@@ -141,11 +141,14 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
 
           {/* Wellness Goals */}
           {user.goals && user.goals.length > 0 && (
-            <div className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3">Wellness Goals</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/8 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+                Wellness Goals
+              </h3>
+              <div className="flex flex-wrap gap-3">
                 {user.goals.map((goal, index) => (
-                  <span key={index} className="px-3 py-1 bg-amber-400/20 text-amber-300 rounded-full text-sm">
+                  <span key={index} className="px-4 py-2 bg-gradient-to-r from-amber-400/20 to-orange-400/20 text-amber-200 rounded-full text-sm font-medium border border-amber-400/30 backdrop-blur-sm">
                     {goal}
                   </span>
                 ))}
@@ -154,20 +157,23 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
           )}
 
           {/* Health Information */}
-          <div className="bg-white/5 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-3">Health & Preferences</h3>
-            <div className="space-y-2 text-sm">
-              <div>
-                <span className="text-white/60">Fitness Level:</span>
-                <p className="text-white font-medium">{user.fitness_level || 'Not specified'}</p>
+          <div className="bg-white/8 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+              Health & Preferences
+            </h3>
+            <div className="grid grid-cols-1 gap-3 text-sm">
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Fitness Level</span>
+                <p className="text-white font-semibold text-lg">{user.fitness_level || 'Not specified'}</p>
               </div>
-              <div>
-                <span className="text-white/60">Diet Type:</span>
-                <p className="text-white font-medium">{user.diet_type || 'Not specified'}</p>
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Diet Type</span>
+                <p className="text-white font-semibold text-lg">{user.diet_type || 'Not specified'}</p>
               </div>
-              <div>
-                <span className="text-white/60">Skin Type:</span>
-                <p className="text-white font-medium">{user.skin_type || 'Not specified'}</p>
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Skin Type</span>
+                <p className="text-white font-semibold text-lg">{user.skin_type || 'Not specified'}</p>
               </div>
             </div>
           </div>
