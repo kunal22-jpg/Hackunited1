@@ -55,20 +55,17 @@ backend:
         agent: "testing"
         comment: "Tested the user profile retrieval endpoint after the motor/pymongo version fix. Successfully retrieved a user profile by ID with all required fields. The endpoint correctly queried MongoDB and returned the complete profile data with the password properly excluded. The MongoDB connection is working properly for user data retrieval operations."
 
-  - task: "Authentication Input Validation"
+  - task: "MongoDB Connection and Data Storage"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "The backend properly validates user input, including password confirmation, email uniqueness, and required fields."
-      - working: true
-        agent: "testing"
-        comment: "Retested the input validation with multiple test cases: 1) Password confirmation mismatch - correctly rejected with appropriate error message, 2) Missing required fields - properly rejected with 422 validation error, 3) Invalid login credentials - correctly rejected with appropriate error message. All validation tests passed successfully."
+        comment: "Verified that the backend can connect to MongoDB and store user data properly. Successfully created new users with complete profile data, authenticated users, and retrieved user profiles from the database. All MongoDB operations are working correctly after the motor/pymongo version fix. The database connection is stable and data persistence is functioning as expected."
         
   - task: "Grocery Recommendations API"
     implemented: true
