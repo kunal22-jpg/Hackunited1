@@ -15,6 +15,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Retested the signup endpoint with a new user with comprehensive profile data including name, email, password, age, gender, height, weight, allergies, chronic conditions, wellness goals, fitness level, diet preferences, and skin type. The endpoint successfully created the user and returned all profile data correctly formatted. The password was properly hashed and not returned in the response."
+      - working: true
+        agent: "testing"
+        comment: "Tested the signup endpoint after the motor/pymongo version fix. Successfully created a new user with complete profile data including all required fields. The endpoint correctly stored the user data in MongoDB and returned the proper response with all profile fields. The 'registration fail' issue has been resolved."
 
   - task: "Authentication Login with Profile Data Return"
     implemented: true
