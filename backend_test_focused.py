@@ -438,6 +438,137 @@ def test_wellness_recommendations_endpoint():
         print(f"❌ Wellness recommendations endpoint test failed: {str(e)}")
         return False
 
+def test_enhanced_health_chatbot():
+    """Test the enhanced health chatbot API functionality"""
+    print("\n=== Testing Enhanced Health Chatbot API ===")
+    
+    all_passed = True
+    
+    # Test case 1: Simple health question without user profile
+    print("\n--- Test Case 1: Simple health question without user profile ---")
+    try:
+        chat_data = {
+            "user_id": "test-user-id",
+            "message": "What are some general health tips?"
+        }
+        
+        response = requests.post(f"{API_URL}/chat", json=chat_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Chat response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "response" in data, "Response missing 'response' field"
+        assert "message_id" in data, "Response missing 'message_id' field"
+        assert "requires_profile" in data, "Response missing 'requires_profile' field"
+        
+        print("✅ Test Case 1 passed")
+    except Exception as e:
+        print(f"❌ Test Case 1 failed: {str(e)}")
+        all_passed = False
+    
+    # Test case 2: Question that requires personalization
+    print("\n--- Test Case 2: Question that requires personalization ---")
+    try:
+        chat_data = {
+            "user_id": "test-user-id",
+            "message": "Can you recommend a personalized workout plan for me?"
+        }
+        
+        response = requests.post(f"{API_URL}/chat", json=chat_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Chat response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "response" in data, "Response missing 'response' field"
+        assert "message_id" in data, "Response missing 'message_id' field"
+        assert "requires_profile" in data, "Response missing 'requires_profile' field"
+        
+        # This should ask for profile information
+        if data["requires_profile"]:
+            assert "profile_fields" in data, "Response missing 'profile_fields' field"
+            assert len(data["profile_fields"]) > 0, "Profile fields list is empty"
+            print(f"Profile fields requested: {data['profile_fields']}")
+        
+        print("✅ Test Case 2 passed")
+    except Exception as e:
+        print(f"❌ Test Case 2 failed: {str(e)}")
+        all_passed = False
+    
+    # Test case 3: Request with complete user profile
+    print("\n--- Test Case 3: Request with complete user profile ---")
+    try:
+        chat_data = {
+            "user_id": "test-user-id",
+            "message": "What workout routine would be best for me?",
+            "user_profile": {
+                "weight": "75kg",
+                "allergies": "peanuts, shellfish",
+                "skin_concern": "dryness"
+            }
+        }
+        
+        response = requests.post(f"{API_URL}/chat", json=chat_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Chat response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "response" in data, "Response missing 'response' field"
+        assert "message_id" in data, "Response missing 'message_id' field"
+        assert "requires_profile" in data, "Response missing 'requires_profile' field"
+        
+        # Should not ask for profile since it was provided
+        assert data["requires_profile"] == False, "Should not require profile when it's already provided"
+        
+        print("✅ Test Case 3 passed")
+    except Exception as e:
+        print(f"❌ Test Case 3 failed: {str(e)}")
+        all_passed = False
+    
+    # Test case 4: Various health topics
+    health_topics = [
+        {"topic": "workout", "message": "Can you suggest a HIIT workout routine?"},
+        {"topic": "skincare", "message": "What's a good skincare routine for combination skin?"},
+        {"topic": "nutrition", "message": "What should I eat to build muscle?"},
+        {"topic": "general health", "message": "How can I improve my sleep quality?"}
+    ]
+    
+    for topic in health_topics:
+        print(f"\n--- Test Case 4: Health topic - {topic['topic']} ---")
+        try:
+            chat_data = {
+                "user_id": "test-user-id",
+                "message": topic["message"],
+                "user_profile": {
+                    "weight": "70kg",
+                    "allergies": "none",
+                    "skin_concern": "acne"
+                }
+            }
+            
+            response = requests.post(f"{API_URL}/chat", json=chat_data)
+            print(f"Status Code: {response.status_code}")
+            data = response.json()
+            print(f"Chat response for {topic['topic']}: {data['response'][:100]}...")
+            
+            assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+            assert "response" in data, "Response missing 'response' field"
+            assert len(data["response"]) > 0, f"Empty response for {topic['topic']} topic"
+            
+            print(f"✅ Test Case 4 - {topic['topic']} passed")
+        except Exception as e:
+            print(f"❌ Test Case 4 - {topic['topic']} failed: {str(e)}")
+            all_passed = False
+    
+    if all_passed:
+        print("\n✅ All enhanced health chatbot test cases passed")
+    else:
+        print("\n❌ Some enhanced health chatbot test cases failed")
+    
+    return all_passed
+
 def test_backend_after_frontend_changes():
     """Test backend functionality after removing AI personalized workout feature from frontend"""
     print("\n=== TESTING BACKEND FUNCTIONALITY AFTER FRONTEND CHANGES ===")
