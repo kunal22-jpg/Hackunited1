@@ -914,6 +914,23 @@ const Modal = ({ isOpen, onClose, item, type }) => {
                 </div>
               )}
 
+              {/* Requirements Section */}
+              {item.requirements && item.requirements.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-orange-400">🎯</span>
+                    <span>Required Products</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {item.requirements.map((req, idx) => (
+                      <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm">
+                        {req}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Action Button */}
               <div className="flex justify-center pt-4">
                 <button 
