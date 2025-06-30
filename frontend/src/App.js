@@ -1625,7 +1625,7 @@ const WorkoutPage = () => {
 const SkincarePage = () => {
   const [routines, setRoutines] = useState([]);
   const [selectedRoutine, setSelectedRoutine] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSkincareModalOpen, setSkincareModalOpen] = useState(false);
 
   // Enhanced Skincare Dataset - 8 Unique Routines
   const enhancedSkincareData = [
