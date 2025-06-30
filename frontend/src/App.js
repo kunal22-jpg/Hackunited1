@@ -76,7 +76,7 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/60 backdrop-blur-md" 
+          className="absolute top-0 left-0 w-full h-full bg-black/60 backdrop-blur-md" 
           onClick={onClose}
         />
         
