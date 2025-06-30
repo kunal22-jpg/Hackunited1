@@ -2081,7 +2081,7 @@ const HealthPage = () => {
 
   const handleConditionClick = (condition) => {
     setSelectedCondition(condition);
-    setDietModalOpen(true);
+    setHealthModalOpen(true);
   };
 
   const handleSectionHover = (isHovering) => {
