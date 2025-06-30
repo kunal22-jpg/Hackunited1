@@ -118,7 +118,7 @@ test_plan:
     - "Authentication Signup with Enhanced Profile Data"
     - "Authentication Login with Profile Data Return"
     - "User Profile Retrieval by ID"
-    - "Grocery Recommendations API"
+    - "MongoDB Connection and Data Storage"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
