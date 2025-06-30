@@ -134,19 +134,58 @@ const SkincarePage = () => {
 };
 ```
 
-### STEP 5: Modal Behavior & Styling Verification ✅
-**File Modified:** `/app/frontend/src/App.js`
+### **2. Enhanced Skincare Data Structure**
 
-**Preserved Features:**
-- YouTube iframe embeds in modals
-- Glassmorphism styling and animations
-- Bullet-style step instructions
-- Duration and level display
-- Requirements and muscle groups sections
-- Responsive design across all screen sizes
-- Scrollable modal content without page scroll
+#### **8 Unique Skincare Routines Created:**
 
-**Result:** All existing modal functionality maintained while expanding content.
+1. **Hydrating Routine (Dry Skin)**
+   - Target: Dry skin types
+   - Time: Morning & Night
+   - Level: Beginner
+   - Focus: Ceramides, hyaluronic acid, rich moisturizers
+   - Video: Embedded YouTube tutorial
+
+2. **Oil-Control Routine (Oily Skin)**
+   - Target: Oily skin types
+   - Time: Morning & Night  
+   - Level: Intermediate
+   - Focus: Salicylic acid, niacinamide, oil-free products
+
+3. **Soothing Routine (Sensitive Skin)**
+   - Target: Sensitive skin types
+   - Time: Morning & Night
+   - Level: Beginner
+   - Focus: Fragrance-free, centella asiatica, mineral sunscreen
+
+4. **Anti-Aging Night Regimen (Mature Skin)**
+   - Target: Mature skin with aging concerns
+   - Time: Night Only
+   - Level: Intermediate
+   - Focus: Retinol, peptides, under-eye care
+
+5. **Brightening & Glow Routine (Dull Skin)**
+   - Target: Dull, lackluster skin
+   - Time: Morning & Night
+   - Level: Intermediate
+   - Focus: Vitamin C, AHA exfoliation, illuminating products
+
+6. **Acne Treatment Plan (Acne-Prone)**
+   - Target: Acne-prone skin
+   - Time: Morning & Night
+   - Level: Intermediate
+   - Focus: BHA, benzoyl peroxide, non-comedogenic products
+
+7. **Minimalist Skincare (All Types)**
+   - Target: All skin types, beginners
+   - Time: Morning & Night
+   - Level: Beginner
+   - Focus: Simple 3-4 step routine, essential products only
+
+8. **Post-Workout Skin Refresh (Active)**
+   - Target: Active individuals, post-exercise care
+   - Time: After Exercise
+   - Level: Beginner
+   - Focus: Quick refresh, sweat removal, hydration
 
 ## Technical Implementation Details
 
