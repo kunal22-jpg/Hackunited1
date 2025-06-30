@@ -102,36 +102,39 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
             <X size={20} className="text-white group-hover:text-white/80 transition-colors" />
           </button>
 
-        {/* Profile Header */}
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <User size={32} className="text-white" />
+        {/* Enhanced Profile Header */}
+        <div className="text-center mb-8 pt-4">
+          <div className="w-24 h-24 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg ring-4 ring-white/20">
+            <User size={36} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-1">{user.name}</h2>
-          <p className="text-white/70">{user.email}</p>
+          <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">{user.name}</h2>
+          <p className="text-white/80 text-lg">{user.email}</p>
         </div>
 
-        {/* Profile Details */}
-        <div className="space-y-4">
+        {/* Enhanced Profile Details */}
+        <div className="space-y-5">
           {/* Basic Info */}
-          <div className="bg-white/5 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-3">Basic Information</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <span className="text-white/60">Age:</span>
-                <p className="text-white font-medium">{user.age}</p>
+          <div className="bg-white/8 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <div className="w-2 h-2 bg-amber-400 rounded-full mr-3"></div>
+              Basic Information
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Age</span>
+                <p className="text-white font-semibold text-lg">{user.age}</p>
               </div>
-              <div>
-                <span className="text-white/60">Gender:</span>
-                <p className="text-white font-medium">{user.gender}</p>
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Gender</span>
+                <p className="text-white font-semibold text-lg">{user.gender}</p>
               </div>
-              <div>
-                <span className="text-white/60">Height:</span>
-                <p className="text-white font-medium">{user.height} {user.height_unit || 'cm'}</p>
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Height</span>
+                <p className="text-white font-semibold text-lg">{user.height} {user.height_unit || 'cm'}</p>
               </div>
-              <div>
-                <span className="text-white/60">Weight:</span>
-                <p className="text-white font-medium">{user.weight} {user.weight_unit || 'kg'}</p>
+              <div className="bg-white/5 rounded-lg p-3">
+                <span className="text-white/60 text-xs uppercase tracking-wide">Weight</span>
+                <p className="text-white font-semibold text-lg">{user.weight} {user.weight_unit || 'kg'}</p>
               </div>
             </div>
           </div>
