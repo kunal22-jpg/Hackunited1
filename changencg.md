@@ -14,22 +14,25 @@ The original skincare section had several critical issues:
 - **Modal Mismatches**: Incorrect card-to-modal content mapping
 - **Inconsistent UI**: Different layout structure from working workout section
 
-## Changes Made
+## 🔧 **SOLUTION APPROACH**
+**Strategy**: Copy the proven, stable WorkoutPage structure and adapt it for skincare
 
-### STEP 1: Remove AI Personalized Workout Feature ✅
-**File Modified:** `/app/frontend/src/App.js`
+### **Phase 1: Structure Replacement**
+- Remove all AI personalization features
+- Copy exact layout structure from WorkoutPage
+- Use static data approach instead of backend fetching
+- Implement same 12-card gallery pattern
 
-**Removed Components:**
-- Deleted "Get Personalized Suggestions" button (lines 1614-1635)
-- Removed toggle buttons between "General Workouts" and "My AI Workouts" (lines 1637-1661)
-- Eliminated `generatePersonalizedRecommendations` function (lines 1537-1570)
+### **Phase 2: Skincare Data Creation**
+- Design 8 unique, comprehensive skincare routines
+- Create proper data structure matching workout format
+- Include video tutorials and step-by-step instructions
 
-**State Variables Removed:**
-- `personalizedWorkouts` state
-- `isGeneratingPersonalized` state  
-- `showPersonalized` state
-
-**Result:** WorkoutPage now displays only static workout gallery without any AI personalization features.
+### **Phase 3: Modal Enhancement**
+- Fix card-to-modal mapping issues
+- Enhance modal UI for skincare-specific content
+- Implement embedded YouTube videos
+- Maintain glassmorphism design consistency
 
 ### STEP 2: Fix Modal Content Mismatch ✅
 **File Modified:** `/app/frontend/src/App.js`
