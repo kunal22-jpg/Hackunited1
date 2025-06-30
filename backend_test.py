@@ -1139,6 +1139,9 @@ def run_all_tests():
         results["auth_validation"] = False
         results["enhanced_health_chatbot"] = False
     
+    # Test enhanced user profile functionality
+    results["enhanced_user_profile"] = test_enhanced_user_profile()
+    
     # Test user creation
     results["user_creation"], user_id = test_user_creation()
     
