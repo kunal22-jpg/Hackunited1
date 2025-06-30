@@ -1869,46 +1869,190 @@ const SkincarePage = () => {
 };
 
 const DietPage = () => {
-  const [meals, setMeals] = useState([]);
-  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [diets, setDiets] = useState([]);
+  const [selectedDiet, setSelectedDiet] = useState(null);
   const [isDietModalOpen, setDietModalOpen] = useState(false);
-  const [personalizedDiet, setPersonalizedDiet] = useState([]);
-  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
-  const [showPersonalized, setShowPersonalized] = useState(false);
+
+  // Enhanced Diet Dataset - 8 Unique Diet Plans
+  const enhancedDietData = [
+    {
+      id: 1,
+      title: "Mediterranean Diet",
+      description: "Heart-healthy nutrition with olive oil, fish, and vegetables",
+      videoUrl: "https://www.youtube.com/embed/NP7nHOZPPpw",
+      duration: "Lifestyle Plan",
+      level: "Beginner",
+      steps: [
+        "Start your day with Greek yogurt and berries",
+        "Include fish 2-3 times per week (salmon, sardines, mackerel)",
+        "Use olive oil as your primary cooking fat",
+        "Eat plenty of vegetables, fruits, and whole grains",
+        "Include nuts, seeds, and legumes daily",
+        "Limit red meat to 1-2 times per week",
+        "Enjoy moderate amounts of red wine with meals (optional)"
+      ],
+      requirements: ["Olive oil", "Fresh fish", "Vegetables", "Whole grains", "Nuts"],
+      calories: "1,800-2,200 per day",
+      meal_types: ["Heart-healthy", "Anti-inflammatory", "Sustainable"]
+    },
+    {
+      id: 2,
+      title: "Keto Diet Plan",
+      description: "Low-carb, high-fat approach for rapid weight loss",
+      videoUrl: "https://www.youtube.com/embed/6qcoWUeqOJ8",
+      duration: "4-12 weeks",
+      level: "Intermediate",
+      steps: [
+        "Keep carbs under 20-25g per day",
+        "Increase healthy fats to 70-75% of calories",
+        "Moderate protein intake (20-25% of calories)",
+        "Include avocados, nuts, and MCT oil",
+        "Eat leafy greens and low-carb vegetables",
+        "Track ketones with test strips",
+        "Stay hydrated and supplement electrolytes"
+      ],
+      requirements: ["Avocados", "MCT oil", "Leafy greens", "Quality proteins", "Electrolytes"],
+      calories: "1,500-2,000 per day",
+      meal_types: ["Low-carb", "High-fat", "Ketogenic"]
+    },
+    {
+      id: 3,
+      title: "Plant-Based Nutrition",
+      description: "Complete vegan nutrition for optimal health",
+      videoUrl: "https://www.youtube.com/embed/d5wabeFG9pM",
+      duration: "Lifestyle Plan",
+      level: "Beginner",
+      steps: [
+        "Focus on whole, unprocessed plant foods",
+        "Include protein from beans, lentils, quinoa, and tofu",
+        "Eat a rainbow of fruits and vegetables daily",
+        "Include B12, vitamin D, and omega-3 supplements",
+        "Choose whole grains over refined options",
+        "Include nuts and seeds for healthy fats",
+        "Meal prep to ensure balanced nutrition"
+      ],
+      requirements: ["Legumes", "Quinoa", "Nutritional yeast", "B12 supplement", "Nuts"],
+      calories: "1,800-2,200 per day",
+      meal_types: ["Vegan", "Whole foods", "Nutrient-dense"]
+    },
+    {
+      id: 4,
+      title: "DASH Diet",
+      description: "Designed to lower blood pressure naturally",
+      videoUrl: "https://www.youtube.com/embed/kDwjF8D2OvI",
+      duration: "Lifestyle Plan",
+      level: "Beginner",
+      steps: [
+        "Reduce sodium intake to less than 2,300mg daily",
+        "Eat 4-5 servings of fruits and vegetables daily",
+        "Include low-fat dairy products",
+        "Choose lean proteins like poultry and fish",
+        "Limit saturated and trans fats",
+        "Include whole grains at each meal",
+        "Monitor portion sizes carefully"
+      ],
+      requirements: ["Low-sodium foods", "Fresh produce", "Lean proteins", "Whole grains"],
+      calories: "1,600-2,000 per day",
+      meal_types: ["Heart-healthy", "Low-sodium", "Balanced"]
+    },
+    {
+      id: 5,
+      title: "Intermittent Fasting 16:8",
+      description: "Time-restricted eating for metabolic health",
+      videoUrl: "https://www.youtube.com/embed/f67_w0lOr0M",
+      duration: "Ongoing Protocol",
+      level: "Intermediate",
+      steps: [
+        "Fast for 16 hours, eat within 8-hour window",
+        "Start with 12pm-8pm eating window",
+        "Break fast with nutrient-dense foods",
+        "Stay hydrated during fasting periods",
+        "Include protein with each meal",
+        "Focus on whole foods during eating window",
+        "Listen to your body and adjust as needed"
+      ],
+      requirements: ["Timer app", "Electrolyte supplements", "Quality whole foods"],
+      calories: "Maintain within eating window",
+      meal_types: ["Time-restricted", "Metabolic", "Flexible"]
+    },
+    {
+      id: 6,
+      title: "High-Protein Diet",
+      description: "Muscle building and weight management focus",
+      videoUrl: "https://www.youtube.com/embed/bfcxNRgq_54",
+      duration: "8-12 weeks",
+      level: "Intermediate",
+      steps: [
+        "Aim for 1.2-1.6g protein per kg body weight",
+        "Include protein source at every meal",
+        "Eat lean meats, fish, eggs, and dairy",
+        "Add protein powder if needed",
+        "Time protein intake around workouts",
+        "Include complex carbs for energy",
+        "Stay hydrated for protein metabolism"
+      ],
+      requirements: ["Lean meats", "Protein powder", "Eggs", "Greek yogurt"],
+      calories: "1,800-2,400 per day",
+      meal_types: ["High-protein", "Muscle-building", "Performance"]
+    },
+    {
+      id: 7,
+      title: "Anti-Inflammatory Diet",
+      description: "Reduce inflammation with healing foods",
+      videoUrl: "https://www.youtube.com/embed/ECr8SKS6LJU",
+      duration: "Lifestyle Plan",
+      level: "Beginner",
+      steps: [
+        "Include omega-3 rich foods daily",
+        "Eat colorful antioxidant-rich fruits and vegetables",
+        "Use turmeric, ginger, and other anti-inflammatory spices",
+        "Avoid processed foods and added sugars",
+        "Include green tea and herbal teas",
+        "Choose organic when possible",
+        "Limit inflammatory oils and fried foods"
+      ],
+      requirements: ["Turmeric", "Ginger", "Omega-3 sources", "Colorful produce"],
+      calories: "1,800-2,200 per day",
+      meal_types: ["Anti-inflammatory", "Healing", "Whole foods"]
+    },
+    {
+      id: 8,
+      title: "Balanced Macro Diet",
+      description: "Perfect macronutrient balance for sustained energy",
+      videoUrl: "https://www.youtube.com/embed/XbpvRbgQZbw",
+      duration: "Flexible Timeline",
+      level: "Beginner",
+      steps: [
+        "Follow 40% carbs, 30% protein, 30% fat ratio",
+        "Choose complex carbohydrates",
+        "Include lean protein sources",
+        "Add healthy fats from nuts, oils, and avocados",
+        "Eat every 3-4 hours to maintain energy",
+        "Track macros with a food app",
+        "Adjust portions based on activity level"
+      ],
+      requirements: ["Food scale", "Macro tracking app", "Variety of whole foods"],
+      calories: "Calculated based on goals",
+      meal_types: ["Balanced", "Sustainable", "Customizable"]
+    }
+  ];
+
+  // Create 12-card gallery: 8 unique + first 4 repeated
+  const dietGalleryData = [
+    ...enhancedDietData, // First 8 unique diets (ids 1-8)
+    // Repeat first 4 diets with unique identifiers to avoid key conflicts
+    { ...enhancedDietData[0], id: 9, originalId: 1 }, // Mediterranean Diet repeat
+    { ...enhancedDietData[1], id: 10, originalId: 2 }, // Keto Diet repeat  
+    { ...enhancedDietData[2], id: 11, originalId: 3 }, // Plant-Based repeat
+    { ...enhancedDietData[3], id: 12, originalId: 4 }  // DASH Diet repeat
+  ];
 
   useEffect(() => {
-    fetchMeals();
+    setDiets(dietGalleryData);
   }, []);
 
-  const fetchMeals = async () => {
-    try {
-      const response = await axios.get(`${API}/meals`);
-      setMeals(response.data);
-    } catch (error) {
-      console.error('Error fetching meals:', error);
-    }
-  };
-
-  const generatePersonalizedRecommendations = async () => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!userData.id) { alert('Please login to generate personalized recommendations'); return; }
-    setIsGeneratingPersonalized(true);
-    try {
-      const personalizedRequest = {
-        user_id: userData.id, weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
-        allergies: userData.allergies ? userData.allergies.join(', ') : 'none', wellness_goals: userData.goals || ['general wellness'],
-        health_conditions: userData.chronic_conditions || [], age: userData.age || 25, gender: userData.gender || 'female',
-        fitness_level: userData.fitness_level || 'beginner'
-      };
-      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
-      if (response.data.success) { setPersonalizedDiet(response.data.recommendations.diet || []); setShowPersonalized(true); }
-      else { alert('Failed to generate personalized recommendations. Please try again.'); }
-    } catch (error) { console.error('Error generating personalized recommendations:', error); alert('Error generating recommendations. Please try again.'); }
-    setIsGeneratingPersonalized(false);
-  };
-
-  const handleMealClick = (meal) => {
-    setSelectedMeal(meal);
+  const handleDietClick = (diet) => {
+    setSelectedDiet(diet);
     setDietModalOpen(true);
   };
 
@@ -1929,7 +2073,7 @@ const DietPage = () => {
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden"
+      className="h-screen relative overflow-hidden"
       onMouseEnter={() => handleSectionHover(true)}
       onMouseLeave={() => handleSectionHover(false)}
     >
@@ -1938,85 +2082,43 @@ const DietPage = () => {
         overlay="bg-black/50"
       />
       
-      <div className="relative z-10 pt-20 px-6">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-4">Diet Plans</h1>
-            <p className="text-lg text-white/80">Nutrition that fuels your potential</p>
-
-            {/* Personalized Recommendations Button */}
-            <div className="mt-6 mb-6">
-              <button
-                onClick={generatePersonalizedRecommendations}
-                disabled={isGeneratingPersonalized}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
-              >
-                {isGeneratingPersonalized ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>🤖 AI is creating your personalized diet...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🤖</span>
-                    <span>Generate My Personalized Diet</span>
-                  </>
-                )}
-              </button>
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Header Section with Title */}
+        <div className="pt-20 px-6 flex-shrink-0">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-white mb-2">Diet Plans</h1>
+              <p className="text-lg text-white/80 mb-4">Nutrition that fuels your potential</p>
             </div>
+          </div>
+        </div>
 
-            {/* Toggle between Regular and Personalized */}
-            {personalizedDiet.length > 0 && (
-              <div className="flex justify-center space-x-4 mb-4">
-                <button
-                  onClick={() => setShowPersonalized(false)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    !showPersonalized 
-                      ? 'bg-white/20 text-white border border-white/40' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  General Meals
-                </button>
-                <button
-                  onClick={() => setShowPersonalized(true)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    showPersonalized 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  My AI Diet ({personalizedDiet.length})
-                </button>
+        {/* Gallery Section - Takes remaining space */}
+        <div className="flex-1 px-6 mt-4">
+          <div className="max-w-screen-2xl mx-auto h-full">
+            {/* Display Diets */}
+            {diets.length > 0 ? (
+              <CircularGalleryOGL 
+                items={diets}
+                onItemClick={handleDietClick}
+                type="diet"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center text-white/60">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                  <p>Loading diet plans...</p>
+                </div>
               </div>
             )}
           </div>
-
-          {/* Display Diet Plans */}
-          {showPersonalized && personalizedDiet.length > 0 ? (
-            <CircularGalleryOGL 
-              items={personalizedDiet}
-              onItemClick={handleMealClick}
-              type="diet"
-            />
-          ) : meals.length > 0 ? (
-            <CircularGalleryOGL 
-              items={meals}
-              onItemClick={handleMealClick}
-              type="diet"
-            />
-          ) : (
-            <div className="text-center text-white/60 py-8">
-              <p>Loading diet plans...</p>
-            </div>
-          )}
         </div>
       </div>
 
       <Modal 
         isOpen={isDietModalOpen}
         onClose={() => setDietModalOpen(false)}
-        item={selectedMeal}
+        item={selectedDiet}
         type="diet"
       />
     </div>
