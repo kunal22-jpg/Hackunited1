@@ -1032,31 +1032,68 @@ const Modal = ({ isOpen, onClose, item, type }) => {
           )}
 
           {type === 'diet' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-white">
-                    <div className="text-2xl font-bold">{item.duration || (item.prep_time ? `${item.prep_time} min` : 'N/A')}</div>
-                    <div className="text-sm text-white/80">{item.duration ? 'Duration' : 'Prep Time'}</div>
+            <div className="space-y-6">
+              {/* YouTube Video Embed */}
+              {item.videoUrl && (
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+                    <Play size={20} />
+                    <span>Diet Tutorial</span>
+                  </h3>
+                  <div className="relative w-full pb-[56.25%] h-0 rounded-lg overflow-hidden">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={item.videoUrl}
+                      title={`${item.title} Tutorial`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-white">
-                    <div className="text-2xl font-bold">{item.level || (item.calories || 'N/A')}</div>
-                    <div className="text-sm text-white/80">{item.level ? 'Difficulty' : 'Calories'}</div>
+              )}
+
+              {/* Duration, Level and Calories */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Clock size={20} className="text-blue-400" />
+                    <div>
+                      <div className="text-lg font-bold">{item.duration}</div>
+                      <div className="text-sm text-white/70">Duration</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Star size={20} className="text-amber-400" />
+                    <div>
+                      <div className="text-lg font-bold capitalize">{item.level}</div>
+                      <div className="text-sm text-white/70">Level</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <span className="text-orange-400 text-lg">🔥</span>
+                    <div>
+                      <div className="text-lg font-bold">{item.calories}</div>
+                      <div className="text-sm text-white/70">Daily Calories</div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Requirements Section (Enhanced for AI content) */}
-              {(item.requirements || item.ingredients) && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">
-                    {item.requirements ? 'Requirements:' : 'Ingredients:'}
+              
+              {/* Requirements Section */}
+              {item.requirements && item.requirements.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-orange-400">🥗</span>
+                    <span>Key Foods & Requirements</span>
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {(item.requirements || item.ingredients)?.map((req, idx) => (
-                      <span key={idx} className="bg-green-500/20 text-green-200 px-3 py-1 rounded-full text-sm">
+                    {item.requirements.map((req, idx) => (
+                      <span key={idx} className="bg-orange-500/20 text-orange-200 px-3 py-1 rounded-full text-sm">
                         {req}
                       </span>
                     ))}
@@ -1064,59 +1101,53 @@ const Modal = ({ isOpen, onClose, item, type }) => {
                 </div>
               )}
 
-              {/* Steps Section (New for AI content) */}
-              {item.steps && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">Preparation Steps:</h4>
-                  <ol className="space-y-2">
+              {/* Meal Types */}
+              {item.meal_types && item.meal_types.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-green-400">🍽️</span>
+                    <span>Diet Categories</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {item.meal_types.map((type, idx) => (
+                      <span key={idx} className="bg-green-500/20 text-green-200 px-3 py-1 rounded-full text-sm">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step-by-Step Instructions */}
+              {item.steps && item.steps.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-4 flex items-center space-x-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Diet Plan Steps</span>
+                  </h4>
+                  <ol className="space-y-3">
                     {item.steps.map((step, idx) => (
-                      <li key={idx} className="text-white/80">{idx + 1}. {step}</li>
+                      <li key={idx} className="flex items-start space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full text-sm flex items-center justify-center font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-white/90 leading-relaxed">{step}</span>
+                      </li>
                     ))}
                   </ol>
                 </div>
               )}
 
-              {/* YouTube Video Section */}
-              {item.youtube_video && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <Play size={18} />
-                    <span>Recipe Tutorial</span>
-                  </h4>
-                  <a
-                    href={item.youtube_video}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-                  >
-                    <Play size={16} />
-                    <span>Watch Recipe on YouTube</span>
-                  </a>
-                </div>
-              )}
-
-              {/* Product Links Section */}
-              {item.product_links && item.product_links.length > 0 && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <span>🛒</span>
-                    <span>Get Ingredients</span>
-                  </h4>
-                  <div className="space-y-2">
-                    {item.product_links.map((link, idx) => (
-                      <a
-                        key={idx}
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
-                      >
-                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'Shop Ingredients'}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Action Button */}
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={onClose}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-blue-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+                >
+                  <span>🥗</span>
+                  <span>Start This Diet Plan</span>
+                </button>
+              </div>
             </div>
           )}
 
