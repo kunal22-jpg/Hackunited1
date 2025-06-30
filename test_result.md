@@ -143,6 +143,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Skincare endpoint (/api/skincare) is working correctly. Returns 2 skincare routines with all required fields."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE TESTING COMPLETED: The skincare endpoint (/api/skincare) is working correctly after the frontend implementation changes. The endpoint returns 2 skincare routines (Morning Glow Routine and Acne-Fighting Routine) with all required fields (id, title, description, skin_type, time_of_day, steps, products, video_url). Each routine has the correct data types and structure. The chat endpoint also properly handles skincare-related queries, providing appropriate responses for acne-prone skin. The personalized wellness recommendations endpoint includes skincare recommendations that match the user's profile data. All backend functionality related to skincare is working as expected, supporting the new static frontend implementation."
 
   - task: "Data fetching - Meals endpoint"
     implemented: true
