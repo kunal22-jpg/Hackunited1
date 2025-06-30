@@ -2199,66 +2199,6 @@ const DietPage = () => {
 };
 
 const HealthPage = () => {
-  const [conditions, setConditions] = useState([]);
-  const [selectedCondition, setSelectedCondition] = useState(null);
-  const [isHealthModalOpen, setHealthModalOpen] = useState(false);
-  const [personalizedHealth, setPersonalizedHealth] = useState([]);
-  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
-  const [showPersonalized, setShowPersonalized] = useState(false);
-
-  useEffect(() => {
-    fetchConditions();
-  }, []);
-
-  const fetchConditions = async () => {
-    try {
-      const response = await axios.get(`${API}/health-conditions`);
-      setConditions(response.data);
-    } catch (error) {
-      console.error('Error fetching health conditions:', error);
-    }
-  };
-
-  const generatePersonalizedRecommendations = async () => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!userData.id) {
-      alert('Please login to generate personalized recommendations');
-      return;
-    }
-
-    setIsGeneratingPersonalized(true);
-    try {
-      const personalizedRequest = {
-        user_id: userData.id,
-        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
-        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
-        wellness_goals: userData.goals || ['general wellness'],
-        health_conditions: userData.chronic_conditions || [],
-        age: userData.age || 25,
-        gender: userData.gender || 'female',
-        fitness_level: userData.fitness_level || 'beginner'
-      };
-
-      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
-      
-      if (response.data.success) {
-        setPersonalizedHealth(response.data.recommendations.health || []);
-        setShowPersonalized(true);
-      } else {
-        alert('Failed to generate personalized recommendations. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error generating personalized recommendations:', error);
-      alert('Error generating recommendations. Please try again.');
-    }
-    setIsGeneratingPersonalized(false);
-  };
-
-  const handleConditionClick = (condition) => {
-    setSelectedCondition(condition);
-    setHealthModalOpen(true);
-  };
-
   const handleSectionHover = (isHovering) => {
     const healthIcon = document.querySelector('.header-health-icon');
     if (healthIcon) {
@@ -2282,90 +2222,150 @@ const HealthPage = () => {
     >
       <VideoBackground 
         videoSrc="/video/health.mp4" 
-        overlay="bg-black/50"
+        overlay="bg-black/70"
       />
       
-      <div className="relative z-10 pt-20 px-6">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-4">Health Conditions</h1>
-            <p className="text-lg text-white/80">Personalized support for your health journey</p>
-
-            {/* Personalized Recommendations Button */}
-            <div className="mt-6 mb-6">
-              <button
-                onClick={generatePersonalizedRecommendations}
-                disabled={isGeneratingPersonalized}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
-              >
-                {isGeneratingPersonalized ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>🤖 AI is creating your personalized health plan...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🤖</span>
-                    <span>Generate My Personalized Health Plan</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Toggle between Regular and Personalized */}
-            {personalizedHealth.length > 0 && (
-              <div className="flex justify-center space-x-4 mb-4">
-                <button
-                  onClick={() => setShowPersonalized(false)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    !showPersonalized 
-                      ? 'bg-white/20 text-white border border-white/40' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  General Conditions
-                </button>
-                <button
-                  onClick={() => setShowPersonalized(true)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    showPersonalized 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  My AI Health Plan ({personalizedHealth.length})
-                </button>
+      <div className="relative z-10 pt-20 px-6 flex items-center justify-center min-h-screen">
+        <div className="max-w-4xl mx-auto">
+          {/* Hypertension Wellness Program Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            {/* Header with Icon */}
+            <div className="text-center mb-8">
+              <div className="w-24 h-24 bg-gradient-to-br from-red-400 via-pink-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg ring-4 ring-white/20">
+                <span className="text-4xl">🩺</span>
               </div>
-            )}
-          </div>
-
-          {/* Display Health Conditions */}
-          {showPersonalized && personalizedHealth.length > 0 ? (
-            <CircularGalleryOGL 
-              items={personalizedHealth}
-              onItemClick={handleConditionClick}
-              type="health"
-            />
-          ) : conditions.length > 0 ? (
-            <CircularGalleryOGL 
-              items={conditions}
-              onItemClick={handleConditionClick}
-              type="health"
-            />
-          ) : (
-            <div className="text-center text-white/60 py-8">
-              <p>Loading health conditions...</p>
+              <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
+                Hypertension Wellness Program
+              </h1>
+              <p className="text-xl text-amber-200 font-medium mb-4">
+                Category: Cardiovascular Health
+              </p>
+              <p className="text-white/90 text-lg leading-relaxed max-w-2xl mx-auto">
+                Manage high blood pressure through simple, structured exercises based on evidence-backed isometric and low-impact cardio routines. Designed for all fitness levels.
+              </p>
             </div>
-          )}
+
+            {/* Duration and Level */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+                <div className="flex items-center space-x-4 text-white">
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <Clock size={24} className="text-blue-400" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">10–30 min</div>
+                    <div className="text-white/70">Duration</div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+                <div className="flex items-center space-x-4 text-white">
+                  <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center">
+                    <Star size={24} className="text-amber-400" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">Beginner to Intermediate</div>
+                    <div className="text-white/70">Level</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Requirements Section */}
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20 mb-8">
+              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+                <span className="text-orange-400">🎯</span>
+                <span>Requirements</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                  <span className="text-white/90">Sturdy wall space or chair for isometric holds (e.g., wall sits, static lunges)</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                  <span className="text-white/90">Yoga mat or non-slip floor surface</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                  <span className="text-white/90">Comfortable footwear</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                  <span className="text-white/90">Optional stopwatch or timer</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tutorial Video Section */}
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20 mb-8">
+              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+                <Play size={24} className="text-red-400" />
+                <span>Tutorial Video</span>
+              </h3>
+              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
+                <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Play size={24} className="text-white ml-1" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">
+                  Workout To Lower Your Blood Pressure Permanently – 10 Minutes
+                </h4>
+                <p className="text-white/70 mb-4">
+                  A focused routine with cardio and isometric exercises
+                </p>
+                <a
+                  href="https://youtu.be/lenl104oiFU?si=68OqXGVUxu3nYmnq"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors font-medium"
+                >
+                  <Play size={16} />
+                  <span>Watch on YouTube</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Why It Works Section */}
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+                <span className="text-green-400">🧠</span>
+                <span>Why It Works</span>
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90 leading-relaxed">
+                    Isometric exercises like wall sits and plank holds can significantly reduce both systolic and diastolic blood pressure
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90 leading-relaxed">
+                    A focused 10-minute routine, 3–4 times per week, is effective and time-efficient
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90 leading-relaxed">
+                    Cardio complements isometrics, supporting better cardiovascular health overall
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
-
-      <Modal 
-        isOpen={isHealthModalOpen}
-        onClose={() => setHealthModalOpen(false)}
-        item={selectedCondition}
-        type="health"
-      />
     </div>
   );
 };
