@@ -215,49 +215,91 @@ const SkincarePage = () => {
 )}
 ```
 
-### Gallery Structure
-- **Cards 1-8:** Unique workout content
-- **Cards 9-12:** Repeat of cards 1-4 for visual continuity
-- **Unique IDs:** Prevents React key conflicts
-- **Circular Design:** Maintains seamless gallery rotation
+#### **AFTER (Enhanced Modal):**
+```javascript
+{type === 'skincare' && (
+  <div className="space-y-6">
+    {/* Embedded YouTube Video Player */}
+    {item.video && (
+      <div className="bg-white/5 rounded-2xl p-4">
+        <h3 className="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+          <Play size={20} />
+          <span>Skincare Tutorial</span>
+        </h3>
+        <div className="relative w-full pb-[56.25%] h-0 rounded-lg overflow-hidden">
+          <iframe
+            className="absolute top-0 left-0 w-full h-full"
+            src={item.video}
+            title={`${item.title} Tutorial`}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
+    )}
 
-### Code Quality Improvements
-- Removed unused functions and state variables
-- Simplified component logic
-- Eliminated backend dependency for workout display
-- Maintained existing WebGL circular gallery functionality
+    {/* Enhanced 3-Column Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white/10 rounded-xl p-4">
+        <div className="flex items-center space-x-3 text-white">
+          <span className="text-pink-400 text-lg">✨</span>
+          <div>
+            <div className="text-lg font-bold">{item.skinType}</div>
+            <div className="text-sm text-white/70">Skin Type</div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-white/10 rounded-xl p-4">
+        <div className="flex items-center space-x-3 text-white">
+          <Clock size={20} className="text-blue-400" />
+          <div>
+            <div className="text-lg font-bold">{item.time}</div>
+            <div className="text-sm text-white/70">Timing</div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-white/10 rounded-xl p-4">
+        <div className="flex items-center space-x-3 text-white">
+          <Star size={20} className="text-amber-400" />
+          <div>
+            <div className="text-lg font-bold capitalize">{item.level}</div>
+            <div className="text-sm text-white/70">Level</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-## Files Modified
-1. `/app/frontend/src/App.js` - Primary implementation file
-2. `/app/test_result.md` - Updated testing documentation
+    {/* Enhanced Step-by-Step Instructions */}
+    {item.steps && item.steps.length > 0 && (
+      <div className="bg-white/10 rounded-xl p-4">
+        <h4 className="font-semibold text-white mb-4 flex items-center space-x-2">
+          <span className="text-pink-400">🧴</span>
+          <span>Skincare Steps</span>
+        </h4>
+        <ul className="space-y-3">
+          {item.steps.map((step, idx) => (
+            <li key={idx} className="flex items-start space-x-3">
+              <span className="flex-shrink-0 w-6 h-6 bg-pink-500 text-white rounded-full text-sm flex items-center justify-center font-bold">
+                {idx + 1}
+              </span>
+              <span className="text-white/90 leading-relaxed">{step}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
 
-## Testing Status
-✅ **Backend Testing:** All API endpoints verified functional  
-✅ **Data Structure:** 12-card gallery structure implemented  
-✅ **Feature Removal:** AI personalization completely eliminated  
-✅ **Modal Functionality:** Content mapping verified correct  
-✅ **Responsive Design:** All screen sizes supported  
-
-## Expected User Experience
-1. **Workout Page Load:** Shows 12 workout cards in circular gallery
-2. **No AI Features:** No personalization buttons or AI-related UI
-3. **Card Interaction:** Click any card to open matching modal
-4. **Modal Content:** YouTube video, steps, duration, level details
-5. **Gallery Navigation:** Smooth circular rotation with visual continuity
-
-## Performance Impact
-- **Reduced API Calls:** Static data eliminates backend dependency
-- **Faster Load Times:** No dynamic data fetching required
-- **Consistent Experience:** Same content for all users
-- **Maintained Animations:** WebGL gallery performance unchanged
-
-## Backward Compatibility
-- All existing backend endpoints remain functional
-- Other app sections (Skincare, Diet, Health) unaffected
-- Authentication system preserved
-- AI chatbot functionality maintained
-
----
-**Implementation Date:** January 2025  
-**Status:** ✅ COMPLETED  
-**Next Steps:** Frontend testing optional, ready for production
+    {/* Enhanced Action Button */}
+    <div className="flex justify-center pt-4">
+      <button 
+        onClick={onClose}
+        className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:from-pink-600 hover:to-purple-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+      >
+        <span>✨</span>
+        <span>Start This Routine</span>
+      </button>
+    </div>
+  </div>
+)}
+```
