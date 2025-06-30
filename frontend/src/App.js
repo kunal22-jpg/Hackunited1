@@ -1668,7 +1668,7 @@ const SkincarePage = () => {
       skinType: "Oily / Acne-Prone",
       time: "Night Only",
       level: "Intermediate",
-      video: "https://www.youtube.com/embed/PoWqhACHcLo",
+      video: "https://www.youtube.com/embed/ml6cT4AZdqI",
       description: "Targeted acne treatment and prevention",
       steps: [
         "Use salicylic acid cleanser",
