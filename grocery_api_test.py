@@ -117,12 +117,15 @@ def test_grocery_recommendations_with_sample_data():
         else:
             print("\n❌ Responses are identical for different queries - API may not be personalized")
     
-    # Check if AI responses are different
-    if first_response.get("ai_response") != data2.get("ai_response"):
-        is_personalized = True
-        print("✅ AI responses are different for different queries - AI integration is working")
+    # Check if AI responses are different (if AI responses exist)
+    if "ai_response" in first_response and "ai_response" in data2:
+        if first_response.get("ai_response") != data2.get("ai_response"):
+            is_personalized = True
+            print("✅ AI responses are different for different queries - AI integration is working")
+        else:
+            print("❌ AI responses are identical for different queries - AI integration may not be working properly")
     else:
-        print("❌ AI responses are identical for different queries - AI integration may not be working properly")
+        print("Note: AI responses missing - checking fallback recommendations instead")
     
     # Make a third request with completely different query to further verify personalization
     print("\n=== Testing with Completely Different Query ===")
