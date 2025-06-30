@@ -1763,10 +1763,10 @@ const SkincarePage = () => {
   const skincareGalleryData = [
     ...enhancedSkincareData, // First 8 unique routines
     // Repeat first 4 routines with unique identifiers to avoid key conflicts
-    { ...enhancedSkincareData[0], id: "dry_skin_repeat", originalId: "dry_skin" }, // Hydrating Routine repeat
-    { ...enhancedSkincareData[1], id: "oily_skin_repeat", originalId: "oily_skin" }, // Oil-Control Routine repeat  
-    { ...enhancedSkincareData[2], id: "sensitive_skin_repeat", originalId: "sensitive_skin" }, // Soothing Routine repeat
-    { ...enhancedSkincareData[3], id: "anti_aging_repeat", originalId: "anti_aging" }  // Anti-Aging Regimen repeat
+    { ...enhancedSkincareData[0], id: "hydration_boost_repeat", originalId: "hydration_boost" }, // Hydration Boost repeat
+    { ...enhancedSkincareData[1], id: "acne_defense_repeat", originalId: "acne_defense" }, // Acne Defense repeat  
+    { ...enhancedSkincareData[2], id: "glow_up_repeat", originalId: "glow_up" }, // Glowing Skin repeat
+    { ...enhancedSkincareData[3], id: "anti_aging_repeat", originalId: "anti_aging" }  // Anti-Aging repeat
   ];
 
   useEffect(() => {
@@ -1774,8 +1774,12 @@ const SkincarePage = () => {
   }, []);
 
   const handleRoutineClick = (routine) => {
-    setSelectedRoutine(routine);
-    setIsModalOpen(true);
+    // Handle repeated items by finding original data
+    const actualRoutine = routine.originalId ? 
+      enhancedSkincareData.find(item => item.id === routine.originalId) : 
+      routine;
+    setSelectedRoutine(actualRoutine);
+    setSkincareModalOpen(true);
   };
 
   const handleSectionHover = (isHovering) => {
