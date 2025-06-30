@@ -51,6 +51,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Retested the user profile retrieval endpoint with the newly created user ID. The endpoint successfully retrieved the complete user profile with all required fields. The response format matches what the frontend would expect for displaying the enhanced profile popup."
+      - working: true
+        agent: "testing"
+        comment: "Tested the user profile retrieval endpoint after the motor/pymongo version fix. Successfully retrieved a user profile by ID with all required fields. The endpoint correctly queried MongoDB and returned the complete profile data with the password properly excluded. The MongoDB connection is working properly for user data retrieval operations."
 
   - task: "Authentication Input Validation"
     implemented: true
