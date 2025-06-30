@@ -227,8 +227,8 @@ def test_meals_endpoint():
         return False, None
 
 def test_health_conditions_endpoint():
-    """Test the health conditions endpoint"""
-    print("\n=== Testing Health Conditions Endpoint ===")
+    """Test the health conditions endpoint with enhanced validation"""
+    print("\n=== Testing Health Conditions Endpoint with Enhanced Validation ===")
     try:
         response = requests.get(f"{API_URL}/health-conditions")
         print(f"Status Code: {response.status_code}")
@@ -236,17 +236,55 @@ def test_health_conditions_endpoint():
         print(f"Found {len(data)} health condition plans")
         assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
         assert isinstance(data, list), "Response is not a list"
-        if len(data) > 0:
-            print(f"Sample health condition plan: {json.dumps(data[0], indent=2)}")
-            # Validate health condition structure
-            assert "id" in data[0], "Health condition plan missing 'id' field"
-            assert "condition" in data[0], "Health condition plan missing 'condition' field"
-            assert "title" in data[0], "Health condition plan missing 'title' field"
-        print("✅ Health conditions endpoint test passed")
-        return True
+        assert len(data) > 0, f"Expected at least 1 health condition plan, found {len(data)}"
+        
+        # Validate each health condition plan has the required fields and proper structure
+        required_fields = [
+            "id", "condition", "title", "description", 
+            "daily_routine", "lifestyle_tips", "video_url"
+        ]
+        
+        for i, plan in enumerate(data):
+            print(f"\nValidating health condition plan {i+1}: {plan.get('title', 'Unknown')}")
+            
+            # Check all required fields exist
+            for field in required_fields:
+                assert field in plan, f"Health condition plan missing '{field}' field"
+            
+            # Validate field types
+            assert isinstance(plan["id"], str), "Health condition plan 'id' is not a string"
+            assert isinstance(plan["condition"], str), "Health condition plan 'condition' is not a string"
+            assert isinstance(plan["title"], str), "Health condition plan 'title' is not a string"
+            assert isinstance(plan["description"], str), "Health condition plan 'description' is not a string"
+            assert isinstance(plan["daily_routine"], list), "Health condition plan 'daily_routine' is not a list"
+            assert isinstance(plan["lifestyle_tips"], list), "Health condition plan 'lifestyle_tips' is not a list"
+            assert isinstance(plan["video_url"], str), "Health condition plan 'video_url' is not a string"
+            
+            # Validate content
+            assert len(plan["condition"]) > 0, "Health condition plan condition is empty"
+            assert len(plan["title"]) > 0, "Health condition plan title is empty"
+            assert len(plan["description"]) > 0, "Health condition plan description is empty"
+            assert len(plan["daily_routine"]) > 0, "Health condition plan has no daily routine"
+            assert len(plan["lifestyle_tips"]) > 0, "Health condition plan has no lifestyle tips"
+            assert plan["video_url"].startswith("http"), "Video URL is not properly formatted"
+            
+            print(f"✓ Health condition plan {i+1} validated successfully")
+            
+            # Print detailed info for the first health condition plan
+            if i == 0:
+                print(f"Sample health condition plan details:")
+                print(f"  Condition: {plan['condition']}")
+                print(f"  Title: {plan['title']}")
+                print(f"  Description: {plan['description']}")
+                print(f"  Daily Routine: {len(plan['daily_routine'])} steps")
+                print(f"  Lifestyle Tips: {len(plan['lifestyle_tips'])} tips")
+                print(f"  Video URL: {plan['video_url']}")
+        
+        print("\n✅ Health conditions endpoint test passed with enhanced validation")
+        return True, data
     except Exception as e:
         print(f"❌ Health conditions endpoint test failed: {str(e)}")
-        return False
+        return False, None
 
 def test_auth_endpoints():
     """Test authentication endpoints"""
