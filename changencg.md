@@ -42,24 +42,36 @@ The original skincare section had several critical issues:
 ### **New Test Files Created:**
 - `/app/skincare_test.py` - Backend API testing for skincare endpoints
 
-### STEP 3: Expand to 8 Unique Workout Cards ✅
-**File Modified:** `/app/frontend/src/App.js`
+## 🔍 **DETAILED CHANGES**
 
-**Enhanced Existing Workouts (6 → 8):**
-1. **HIIT Cardio** (20 min, Intermediate) - YouTube: `ml6cT4AZdqI`
-2. **Core Strength** (15 min, Beginner) - YouTube: `Xyd_fa5zoEU`
-3. **Glutes & Legs** (25 min, Intermediate) - YouTube: `1oed-UmAxFs`
-4. **Upper Body Strength** (30 min, Intermediate) - YouTube: `vthMCtgVtFw`
-5. **Stretch & Recovery** (15 min, All Levels) - YouTube: `QXwz1u0vpy4`
-6. **Resistance Band Full Body** (30 min, Intermediate) - YouTube: `Hlj6lgV5wUQ`
+### **1. SkincarePage Component Complete Replacement**
 
-**Added New Workouts:**
-7. **Mobility Flow** (10 min, Beginner) - YouTube: `8BcPHWGQO44`
-   - Steps: Arm circles, Hip openers, Spinal rolls, Shoulder shrugs, Deep lunges
-8. **Pilates Core Burn** (20 min, Beginner) - YouTube: `lCg_gh_fppI`
-   - Steps: The Hundred, Leg circles, Roll-up to Teaser, Crisscross abs, Spine stretch
+#### **BEFORE (Broken Implementation):**
+```javascript
+const SkincarePage = () => {
+  const [routines, setRoutines] = useState([]);
+  const [personalizedSkincare, setPersonalizedSkincare] = useState([]);
+  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
+  const [showPersonalized, setShowPersonalized] = useState(false);
 
-**Result:** All 8 workouts include YouTube iframe embeds, step-by-step instructions, duration, level, requirements, and muscle groups.
+  // Complex AI personalization logic
+  const generatePersonalizedRecommendations = async () => { ... }
+  
+  // Backend fetching (only 2 items)
+  const fetchRoutines = async () => {
+    const response = await axios.get(`${API}/skincare`);
+    setRoutines(response.data);
+  };
+
+  // Inconsistent layout structure
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* AI buttons and toggle logic */}
+      {/* Conditional rendering based on AI state */}
+    </div>
+  );
+};
+```
 
 ### STEP 4: Create 12-Card Gallery Structure ✅
 **File Modified:** `/app/frontend/src/App.js`
