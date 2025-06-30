@@ -1117,15 +1117,43 @@ def run_all_tests():
     # Test basic connectivity
     results["root_endpoint"] = test_root_endpoint()
     
-    # Test personalized wellness recommendations (main focus of this test run)
-    print("\n\n=== TESTING PERSONALIZED WELLNESS RECOMMENDATIONS API ===")
-    print("This is the final testing phase for the OpenAI integration project.")
-    print("Testing with the sample data provided in the review request.")
-    results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
+    # Test core data endpoints
+    results["skincare_endpoint"] = test_skincare_endpoint()
+    results["workouts_endpoint"] = test_workouts_endpoint()
+    results["meals_endpoint"] = test_meals_endpoint()
+    results["health_conditions_endpoint"] = test_health_conditions_endpoint()
     
-    # Test with alternative data to verify personalization
-    print("\n\n=== TESTING WITH ALTERNATIVE USER DATA ===")
-    print("Testing with different user data to verify personalization.")
+    # Test authentication endpoints
+    success, user_id, email, password = test_auth_signup()
+    results["auth_signup"] = success
+    
+    if success and user_id:
+        results["auth_login"], user_id = test_auth_login(email, password)
+        results["auth_get_user"] = test_auth_get_user(user_id)
+        results["auth_validation"] = test_auth_validation()
+        results["enhanced_health_chatbot"] = test_enhanced_health_chatbot(user_id)
+    else:
+        print("❌ Skipping authentication-dependent tests due to signup failure")
+        results["auth_login"] = False
+        results["auth_get_user"] = False
+        results["auth_validation"] = False
+        results["enhanced_health_chatbot"] = False
+    
+    # Test user creation
+    results["user_creation"], user_id = test_user_creation()
+    
+    # Test grocery agent
+    results["grocery_recommendations"], recommendations = test_grocery_recommendations()
+    results["grocery_error_handling"] = test_grocery_error_handling()
+    
+    if recommendations:
+        results["grocery_cart_creation"] = test_grocery_cart_creation(recommendations)
+    else:
+        print("❌ Skipping grocery cart creation test due to recommendations failure")
+        results["grocery_cart_creation"] = False
+    
+    # Test personalized wellness recommendations
+    results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
     results["personalized_wellness_recommendations_alt"] = test_personalized_wellness_recommendations_alt()
     
     # Print summary
