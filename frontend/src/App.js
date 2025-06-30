@@ -1652,7 +1652,7 @@ const SkincarePage = () => {
       skinType: "Dry Skin",
       time: "Morning & Night",
       level: "Beginner",
-      video: "https://www.youtube.com/embed/bA9cHDxocU0",
+      video: "https://www.youtube.com/embed/rXxNGl7YQcA",
       description: "Deep hydration for dry, flaky skin",
       steps: [
         "Cleanse with a gentle hydrating face wash",
