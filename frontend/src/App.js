@@ -929,100 +929,88 @@ const Modal = ({ isOpen, onClose, item, type }) => {
 
           {/* Keep original modal content for other types (skincare, diet, health) */}
           {type === 'skincare' && (
-            <div className="space-y-4">
-              {/* Duration and Level */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-white">
-                    <div className="text-lg font-bold">{item.duration || '10-15 min'}</div>
-                    <div className="text-sm text-white/80">Duration</div>
+            <div className="space-y-6">
+              {/* YouTube Video Embed */}
+              {item.video && (
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+                    <Play size={20} />
+                    <span>Skincare Tutorial</span>
+                  </h3>
+                  <div className="relative w-full pb-[56.25%] h-0 rounded-lg overflow-hidden">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={item.video}
+                      title={`${item.title} Tutorial`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-white">
-                    <div className="text-lg font-bold">{item.level || (item.skin_type ? 'Skin Type' : 'Universal')}</div>
-                    <div className="text-sm text-white/80">{item.level ? 'Level' : 'Compatibility'}</div>
+              )}
+
+              {/* Skin Type, Time and Level */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <span className="text-pink-400 text-lg">✨</span>
+                    <div>
+                      <div className="text-lg font-bold">{item.skinType}</div>
+                      <div className="text-sm text-white/70">Skin Type</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Clock size={20} className="text-blue-400" />
+                    <div>
+                      <div className="text-lg font-bold">{item.time}</div>
+                      <div className="text-sm text-white/70">Timing</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Star size={20} className="text-amber-400" />
+                    <div>
+                      <div className="text-lg font-bold capitalize">{item.level}</div>
+                      <div className="text-sm text-white/70">Level</div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Skin Type or Requirements */}
-              {(item.skin_type && !item.requirements) && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">Skin Type:</h4>
-                  <span className="bg-pink-500/20 text-pink-200 px-3 py-1 rounded-full text-sm capitalize">
-                    {item.skin_type}
-                  </span>
-                </div>
-              )}
-
-              {/* Requirements Section (Enhanced for AI content) */}
-              {item.requirements && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">Requirements:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {item.requirements.map((req, idx) => (
-                      <span key={idx} className="bg-pink-500/20 text-pink-200 px-3 py-1 rounded-full text-sm">
-                        {req}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Steps Section */}
-              {item.steps && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">Skincare Steps:</h4>
-                  <ol className="space-y-2">
+              {/* Step-by-Step Instructions */}
+              {item.steps && item.steps.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-4 flex items-center space-x-2">
+                    <span className="text-pink-400">🧴</span>
+                    <span>Skincare Steps</span>
+                  </h4>
+                  <ul className="space-y-3">
                     {item.steps.map((step, idx) => (
-                      <li key={idx} className="text-white/80">{idx + 1}. {step}</li>
+                      <li key={idx} className="flex items-start space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-pink-500 text-white rounded-full text-sm flex items-center justify-center font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-white/90 leading-relaxed">{step}</span>
+                      </li>
                     ))}
-                  </ol>
+                  </ul>
                 </div>
               )}
 
-              {/* YouTube Video Section */}
-              {item.youtube_video && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <Play size={18} />
-                    <span>Skincare Tutorial</span>
-                  </h4>
-                  <a
-                    href={item.youtube_video}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-                  >
-                    <Play size={16} />
-                    <span>Watch Tutorial on YouTube</span>
-                  </a>
-                </div>
-              )}
-
-              {/* Product Links Section */}
-              {item.product_links && item.product_links.length > 0 && (
-                <div className="bg-white/10 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
-                    <span>💄</span>
-                    <span>Skincare Products</span>
-                  </h4>
-                  <div className="space-y-2">
-                    {item.product_links.map((link, idx) => (
-                      <a
-                        key={idx}
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block bg-pink-600 hover:bg-pink-700 text-white py-2 px-3 rounded text-sm transition-colors"
-                      >
-                        {link.includes('amazon') ? '🛍️ Amazon' : '🛒 Flipkart'} - {link.split('q=')[1]?.replace(/\+/g, ' ') || 'Skincare Products'}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Action Button */}
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={onClose}
+                  className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:from-pink-600 hover:to-purple-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+                >
+                  <span>✨</span>
+                  <span>Start This Routine</span>
+                </button>
+              </div>
             </div>
           )}
 
