@@ -161,8 +161,8 @@ def test_skincare_endpoint():
         return False, None
 
 def test_meals_endpoint():
-    """Test the meals endpoint"""
-    print("\n=== Testing Meals Endpoint ===")
+    """Test the meals endpoint with enhanced validation"""
+    print("\n=== Testing Meals Endpoint with Enhanced Validation ===")
     try:
         response = requests.get(f"{API_URL}/meals")
         print(f"Status Code: {response.status_code}")
@@ -170,17 +170,61 @@ def test_meals_endpoint():
         print(f"Found {len(data)} meal plans")
         assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
         assert isinstance(data, list), "Response is not a list"
-        if len(data) > 0:
-            print(f"Sample meal plan: {json.dumps(data[0], indent=2)}")
-            # Validate meal structure
-            assert "id" in data[0], "Meal plan missing 'id' field"
-            assert "title" in data[0], "Meal plan missing 'title' field"
-            assert "diet_type" in data[0], "Meal plan missing 'diet_type' field"
-        print("✅ Meals endpoint test passed")
-        return True
+        assert len(data) > 0, f"Expected at least 1 meal plan, found {len(data)}"
+        
+        # Validate each meal plan has the required fields and proper structure
+        required_fields = [
+            "id", "title", "description", "diet_type", "calories", 
+            "macros", "ingredients", "instructions", "prep_time"
+        ]
+        
+        for i, meal in enumerate(data):
+            print(f"\nValidating meal plan {i+1}: {meal.get('title', 'Unknown')}")
+            
+            # Check all required fields exist
+            for field in required_fields:
+                assert field in meal, f"Meal plan missing '{field}' field"
+            
+            # Validate field types
+            assert isinstance(meal["id"], str), "Meal plan 'id' is not a string"
+            assert isinstance(meal["title"], str), "Meal plan 'title' is not a string"
+            assert isinstance(meal["description"], str), "Meal plan 'description' is not a string"
+            assert isinstance(meal["diet_type"], str), "Meal plan 'diet_type' is not a string"
+            assert isinstance(meal["calories"], int), "Meal plan 'calories' is not an integer"
+            assert isinstance(meal["macros"], dict), "Meal plan 'macros' is not a dictionary"
+            assert isinstance(meal["ingredients"], list), "Meal plan 'ingredients' is not a list"
+            assert isinstance(meal["instructions"], list), "Meal plan 'instructions' is not a list"
+            assert isinstance(meal["prep_time"], int), "Meal plan 'prep_time' is not an integer"
+            
+            # Validate content
+            assert len(meal["title"]) > 0, "Meal plan title is empty"
+            assert len(meal["description"]) > 0, "Meal plan description is empty"
+            assert len(meal["diet_type"]) > 0, "Meal plan diet_type is empty"
+            assert meal["calories"] > 0, "Meal plan calories must be positive"
+            assert len(meal["macros"]) > 0, "Meal plan has no macros"
+            assert len(meal["ingredients"]) > 0, "Meal plan has no ingredients"
+            assert len(meal["instructions"]) > 0, "Meal plan has no instructions"
+            assert meal["prep_time"] > 0, "Meal plan prep_time must be positive"
+            
+            print(f"✓ Meal plan {i+1} validated successfully")
+            
+            # Print detailed info for the first meal plan
+            if i == 0:
+                print(f"Sample meal plan details:")
+                print(f"  Title: {meal['title']}")
+                print(f"  Description: {meal['description']}")
+                print(f"  Diet Type: {meal['diet_type']}")
+                print(f"  Calories: {meal['calories']}")
+                print(f"  Macros: {meal['macros']}")
+                print(f"  Ingredients: {len(meal['ingredients'])} ingredients")
+                print(f"  Instructions: {len(meal['instructions'])} steps")
+                print(f"  Prep Time: {meal['prep_time']} minutes")
+        
+        print("\n✅ Meals endpoint test passed with enhanced validation")
+        return True, data
     except Exception as e:
         print(f"❌ Meals endpoint test failed: {str(e)}")
-        return False
+        return False, None
 
 def test_health_conditions_endpoint():
     """Test the health conditions endpoint"""
