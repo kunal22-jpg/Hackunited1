@@ -1909,7 +1909,7 @@ const DietPage = () => {
 
   const handleMealClick = (meal) => {
     setSelectedMeal(meal);
-    setIsModalOpen(true);
+    setDietModalOpen(true);
   };
 
   const handleSectionHover = (isHovering) => {
