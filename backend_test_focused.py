@@ -287,8 +287,13 @@ def test_health_conditions_endpoint():
         return False, None
 
 def test_auth_endpoints():
-    """Test authentication endpoints"""
-    print("\n=== Testing Authentication Endpoints ===")
+    """Test authentication endpoints with enhanced validation"""
+    print("\n=== Testing Authentication Endpoints with Enhanced Validation ===")
+    
+    all_passed = True
+    
+    # Test 1: Login endpoint
+    print("\n--- Test 1: Login Endpoint ---")
     try:
         # Test login endpoint with sample credentials
         login_data = {
@@ -306,10 +311,95 @@ def test_auth_endpoints():
         assert "success" in data, "Response missing 'success' field"
         assert "message" in data, "Response missing 'message' field"
         
-        print("✅ Authentication endpoints test passed")
-        return True
+        print("✅ Login endpoint test passed")
     except Exception as e:
-        print(f"❌ Authentication endpoints test failed: {str(e)}")
+        print(f"❌ Login endpoint test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 2: Signup endpoint structure
+    print("\n--- Test 2: Signup Endpoint Structure ---")
+    try:
+        # We're not actually creating a user, just testing the endpoint structure
+        signup_data = {
+            "name": "Test User",
+            "email": "newuser@example.com",
+            "password": "SecurePass123!",
+            "confirmPassword": "SecurePass123!",
+            "agreeTerms": True,
+            "age": 30,
+            "gender": "Male",
+            "height": 180,
+            "heightUnit": "cm",
+            "weight": 75,
+            "weightUnit": "kg",
+            "allergies": ["Peanuts"],
+            "chronicConditions": [],
+            "wellnessGoals": ["Weight Loss"],
+            "fitnessLevel": "Beginner",
+            "dietPreference": "Omnivore",
+            "skinType": "Normal",
+            "smartCartOptIn": False
+        }
+        
+        response = requests.post(f"{API_URL}/auth/signup", json=signup_data)
+        print(f"Signup Status Code: {response.status_code}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        data = response.json()
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        
+        # If signup was successful, verify user data structure
+        if data["success"]:
+            assert "user" in data, "Response missing 'user' field"
+            assert "user_id" in data, "Response missing 'user_id' field"
+            
+            user = data["user"]
+            assert "name" in user, "User data missing 'name' field"
+            assert "email" in user, "User data missing 'email' field"
+            assert "password" not in user, "Password should not be returned in response"
+            assert "age" in user, "User data missing 'age' field"
+            assert "gender" in user, "User data missing 'gender' field"
+            assert "height" in user, "User data missing 'height' field"
+            assert "allergies" in user, "User data missing 'allergies' field"
+            assert "goals" in user, "User data missing 'goals' field"
+            assert "fitness_level" in user, "User data missing 'fitness_level' field"
+            assert "diet_type" in user, "User data missing 'diet_type' field"
+            assert "skin_type" in user, "User data missing 'skin_type' field"
+            
+            print("✅ Signup endpoint test passed (successful signup)")
+        else:
+            # If user already exists, that's fine too
+            print(f"Note: Signup failed with message: {data['message']}")
+            print("✅ Signup endpoint test passed (endpoint structure verified)")
+        
+    except Exception as e:
+        print(f"❌ Signup endpoint test failed: {str(e)}")
+        all_passed = False
+    
+    # Test 3: User profile retrieval endpoint
+    print("\n--- Test 3: User Profile Retrieval Endpoint ---")
+    try:
+        # Use a non-existent user ID to test the endpoint structure
+        fake_user_id = "nonexistent-user-id-12345"
+        response = requests.get(f"{API_URL}/auth/user/{fake_user_id}")
+        print(f"Get User Status Code: {response.status_code}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        data = response.json()
+        assert "success" in data, "Response missing 'success' field"
+        assert "message" in data, "Response missing 'message' field"
+        
+        print("✅ User profile retrieval endpoint test passed")
+    except Exception as e:
+        print(f"❌ User profile retrieval endpoint test failed: {str(e)}")
+        all_passed = False
+    
+    if all_passed:
+        print("\n✅ All authentication endpoints tests passed")
+        return True
+    else:
+        print("\n❌ Some authentication endpoints tests failed")
         return False
 
 def test_wellness_recommendations_endpoint():
