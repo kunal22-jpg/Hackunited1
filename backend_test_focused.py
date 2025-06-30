@@ -570,31 +570,47 @@ def test_enhanced_health_chatbot():
     return all_passed
 
 def test_backend_after_frontend_changes():
-    """Test backend functionality after removing AI personalized workout feature from frontend"""
+    """Test backend functionality after frontend changes for card-to-popup logic and YouTube video embedding"""
     print("\n=== TESTING BACKEND FUNCTIONALITY AFTER FRONTEND CHANGES ===")
-    print("This test verifies that removing the AI personalized workout feature from the frontend")
-    print("doesn't break any backend functionality.")
+    print("This test verifies that the backend APIs are working properly after card-to-popup logic fixes")
+    print("and YouTube video embedding updates.")
     
     results = {}
     
-    # Test basic connectivity
-    print("\n--- Testing Basic Connectivity ---")
+    # 1. Core API Health Check
+    print("\n=== 1. CORE API HEALTH CHECK ===")
     results["root_endpoint"] = test_root_endpoint()
     
-    # Test workout endpoint (main focus)
-    print("\n--- Testing Workout Endpoint ---")
-    results["workouts_endpoint"] = test_workouts_endpoint()
+    # 2. Workout Data Validation
+    print("\n=== 2. WORKOUT DATA VALIDATION ===")
+    results["workouts_endpoint"], workouts_data = test_workouts_endpoint()
     
-    # Test other core endpoints
-    print("\n--- Testing Other Core Endpoints ---")
-    results["skincare_endpoint"] = test_skincare_endpoint()
-    results["meals_endpoint"] = test_meals_endpoint()
-    results["health_conditions_endpoint"] = test_health_conditions_endpoint()
+    # 3. Skincare Data Validation
+    print("\n=== 3. SKINCARE DATA VALIDATION ===")
+    results["skincare_endpoint"], skincare_data = test_skincare_endpoint()
+    
+    # 4. Meals Data Validation
+    print("\n=== 4. MEALS DATA VALIDATION ===")
+    results["meals_endpoint"], meals_data = test_meals_endpoint()
+    
+    # 5. Health Conditions Data Validation
+    print("\n=== 5. HEALTH CONDITIONS DATA VALIDATION ===")
+    results["health_conditions_endpoint"], health_data = test_health_conditions_endpoint()
+    
+    # 6. Authentication System
+    print("\n=== 6. AUTHENTICATION SYSTEM ===")
     results["auth_endpoints"] = test_auth_endpoints()
+    
+    # 7. Chat Integration
+    print("\n=== 7. CHAT INTEGRATION ===")
+    results["enhanced_health_chatbot"] = test_enhanced_health_chatbot()
+    
+    # 8. Wellness Recommendations
+    print("\n=== 8. WELLNESS RECOMMENDATIONS ===")
     results["wellness_recommendations"] = test_wellness_recommendations_endpoint()
     
     # Print summary
-    print("\n=== Test Summary ===")
+    print("\n=== TEST SUMMARY ===")
     for test_name, result in results.items():
         if isinstance(result, tuple):
             status = "✅ PASSED" if result[0] else "❌ FAILED"
@@ -616,9 +632,42 @@ def test_backend_after_frontend_changes():
     
     print(f"\nOverall Success Rate: {success_rate:.2f}% ({success_count}/{total_count} tests passed)")
     
+    # Detailed summary for the review request
+    print("\n=== DETAILED SUMMARY FOR REVIEW REQUEST ===")
+    
+    # 1. Core API Health Check
+    if results["root_endpoint"] and results["workouts_endpoint"] and results["skincare_endpoint"] and results["meals_endpoint"] and results["health_conditions_endpoint"]:
+        print("✅ 1. Core API Health Check: All main endpoints are working correctly and returning proper data structures.")
+    else:
+        print("❌ 1. Core API Health Check: Some endpoints are not working correctly.")
+    
+    # 2. Workout Data Validation
+    if results["workouts_endpoint"]:
+        print("✅ 2. Workout Data Validation: The /api/workouts endpoint returns workout data with proper structure including id, title, description, video_url, duration, difficulty, equipment, muscle_groups, and instructions.")
+    else:
+        print("❌ 2. Workout Data Validation: The /api/workouts endpoint is not returning data with the proper structure.")
+    
+    # 3. Skincare Data Validation
+    if results["skincare_endpoint"]:
+        print("✅ 3. Skincare Data Validation: The /api/skincare endpoint returns skincare routines with proper structure including id, title, description, skin_type, time_of_day, steps, products, and video_url.")
+    else:
+        print("❌ 3. Skincare Data Validation: The /api/skincare endpoint is not returning data with the proper structure.")
+    
+    # 4. Authentication System
+    if results["auth_endpoints"]:
+        print("✅ 4. Authentication System: All auth endpoints are working correctly with the modal system.")
+    else:
+        print("❌ 4. Authentication System: Some auth endpoints are not working correctly.")
+    
+    # 5. Chat Integration
+    if results["enhanced_health_chatbot"]:
+        print("✅ 5. Chat Integration: The health chatbot API is working properly and can be used in conjunction with workout/skincare recommendations.")
+    else:
+        print("❌ 5. Chat Integration: The health chatbot API is not working properly.")
+    
     if success_rate == 100:
         print("\n✅ BACKEND FUNCTIONALITY VERIFIED: All backend endpoints are working correctly after frontend changes.")
-        print("The removal of the AI personalized workout feature from the frontend has not affected backend functionality.")
+        print("The card-to-popup logic fixes and YouTube video embedding updates have not affected backend functionality.")
     else:
         print("\n❌ BACKEND ISSUES DETECTED: Some backend endpoints are not working correctly.")
         print("The frontend changes may have affected backend functionality.")
