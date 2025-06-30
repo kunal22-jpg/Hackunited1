@@ -187,17 +187,32 @@ const SkincarePage = () => {
    - Level: Beginner
    - Focus: Quick refresh, sweat removal, hydration
 
-## Technical Implementation Details
+#### **Data Structure Schema:**
+```javascript
+{
+  id: "unique_identifier",
+  title: "Routine Name",
+  skinType: "Target Skin Type",
+  time: "When to Use",
+  level: "Difficulty Level", 
+  video: "YouTube Embed URL",
+  steps: ["Step 1", "Step 2", "Step 3", ...]
+}
+```
 
-### Data Flow Changes
-**Before:**
-```
-fetchWorkouts() → API call → backend data + enhanced data merge → setWorkouts()
-```
+### **3. Modal Component Enhancement**
 
-**After:**
-```
-useEffect() → workoutGalleryData (static) → setWorkouts()
+#### **BEFORE (Basic Modal):**
+```javascript
+{type === 'skincare' && (
+  <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
+      {/* Basic duration and level display */}
+    </div>
+    {/* Simple steps list */}
+    {/* External YouTube links */}
+  </div>
+)}
 ```
 
 ### Gallery Structure
