@@ -60,7 +60,7 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 min-h-screen"
+        className="fixed top-0 left-0 w-full h-full z-[9999] p-4"
         style={{ 
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
