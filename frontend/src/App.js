@@ -1842,8 +1842,8 @@ const SkincarePage = () => {
       </div>
 
       <Modal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isSkincareModalOpen}
+        onClose={() => setSkincareModalOpen(false)}
         item={selectedRoutine}
         type="skincare"
       />
