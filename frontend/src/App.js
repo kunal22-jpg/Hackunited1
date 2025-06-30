@@ -1627,126 +1627,135 @@ const SkincarePage = () => {
   const [selectedRoutine, setSelectedRoutine] = useState(null);
   const [isSkincareModalOpen, setSkincareModalOpen] = useState(false);
 
-  // Enhanced Skincare Dataset - 8 Unique Routines
+  // Enhanced Skincare Dataset - 8 Unique Routines with Requirements
   const enhancedSkincareData = [
     {
-      id: "dry_skin",
-      title: "Hydrating Routine",
-      skinType: "Dry",
+      id: "hydration_boost",
+      title: "Hydration Boost",
+      skinType: "Dry Skin",
       time: "Morning & Night",
       level: "Beginner",
-      video: "https://www.youtube.com/embed/4c7ghsAU3G8",
+      video: "https://www.youtube.com/embed/bA9cHDxocU0",
+      description: "Deep hydration for dry, flaky skin",
       steps: [
-        "Gentle cream cleanser with ceramides",
-        "Hydrating toner or essence",
-        "Hyaluronic acid serum",
-        "Rich moisturizer with peptides",
-        "SPF 30+ during morning routine"
-      ]
+        "Cleanse with a gentle hydrating face wash",
+        "Apply hyaluronic acid serum",
+        "Seal with thick moisturizer",
+        "Mist with facial spray"
+      ],
+      requirements: ["Hydrating Cleanser", "Hyaluronic Serum", "Moisturizer", "Facial Mist"]
     },
     {
-      id: "oily_skin",
-      title: "Oil-Control Routine",
-      skinType: "Oily",
-      time: "Morning & Night",
+      id: "acne_defense",
+      title: "Acne Defense Routine",
+      skinType: "Oily / Acne-Prone",
+      time: "Night Only",
       level: "Intermediate",
-      video: "https://www.youtube.com/embed/ml6cT4AZdqI",
+      video: "https://www.youtube.com/embed/lZaLeH0X3L8",
+      description: "Targeted acne treatment and prevention",
       steps: [
-        "Foaming cleanser with salicylic acid",
-        "Balancing toner with niacinamide",
-        "Oil-free serum with retinol (night)",
-        "Lightweight gel moisturizer",
-        "Mattifying sunscreen (morning)"
-      ]
+        "Use salicylic acid cleanser",
+        "Apply niacinamide serum",
+        "Spot treat with benzoyl peroxide",
+        "Finish with lightweight gel moisturizer"
+      ],
+      requirements: ["Salicylic Cleanser", "Niacinamide", "Spot Treatment", "Oil-Free Moisturizer"]
     },
     {
-      id: "sensitive_skin",
-      title: "Soothing Routine",
-      skinType: "Sensitive",
-      time: "Morning & Night",
+      id: "glow_up",
+      title: "Glowing Skin Ritual",
+      skinType: "All Types",
+      time: "Morning",
       level: "Beginner",
-      video: "https://www.youtube.com/embed/Xyd_fa5zoEU",
+      video: "https://www.youtube.com/embed/VVNNS2MDA00",
+      description: "Achieve that natural glow every morning",
       steps: [
-        "Gentle, fragrance-free cleanser",
-        "Calming toner with chamomile",
-        "Soothing serum with centella asiatica",
-        "Barrier repair moisturizer",
-        "Mineral sunscreen (morning)"
-      ]
+        "Vitamin C cleanse",
+        "Apply antioxidant serum",
+        "Follow up with SPF 50 sunscreen",
+        "Dab cream highlighter for glow"
+      ],
+      requirements: ["Vitamin C Cleanser", "Antioxidant Serum", "Sunscreen", "Highlighter"]
     },
     {
       id: "anti_aging",
-      title: "Anti-Aging Night Regimen",
-      skinType: "Mature",
+      title: "Anti-Aging Protocol",
+      skinType: "Mature Skin",
       time: "Night Only",
-      level: "Intermediate",
-      video: "https://www.youtube.com/embed/1oed-UmAxFs",
+      level: "Advanced",
+      video: "https://www.youtube.com/embed/Sq3lNHgzwzE",
+      description: "Advanced anti-aging night routine",
       steps: [
-        "Double cleanse to remove makeup and sunscreen",
+        "Double cleanse (oil then foam)",
         "Apply retinol serum",
-        "Moisturize with peptide-infused night cream",
-        "Use under-eye cream with caffeine",
-        "Weekly exfoliation with AHA/BHA"
-      ]
+        "Moisturize with peptide cream",
+        "Neck & under-eye massage"
+      ],
+      requirements: ["Oil Cleanser", "Retinol", "Peptide Cream", "Eye Serum"]
     },
     {
-      id: "brightening_glow",
-      title: "Brightening & Glow Routine",
-      skinType: "Dull",
-      time: "Morning & Night",
-      level: "Intermediate",
-      video: "https://www.youtube.com/embed/vthMCtgVtFw",
+      id: "sensitive_repair",
+      title: "Sensitive Skin Repair",
+      skinType: "Sensitive",
+      time: "Evening",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/hv1zvKZTFnA",
+      description: "Gentle care for sensitive, reactive skin",
       steps: [
-        "Brightening cleanser with vitamin C",
-        "Exfoliating toner (2-3x per week)",
-        "Vitamin C serum (morning) or AHA serum (night)",
-        "Illuminating moisturizer",
-        "Broad-spectrum SPF 50+ (morning)"
-      ]
+        "Use micellar water or no-rinse cleanser",
+        "Apply calming chamomile mist",
+        "Moisturize with ceramide cream",
+        "Optional: Overnight barrier balm"
+      ],
+      requirements: ["Micellar Cleanser", "Calming Mist", "Ceramide Cream", "Barrier Balm"]
     },
     {
-      id: "acne_treatment",
-      title: "Acne Treatment Plan",
-      skinType: "Acne-Prone",
-      time: "Morning & Night",
+      id: "pore_minimizer",
+      title: "Pore Minimizer Routine",
+      skinType: "Oily / Combo",
+      time: "Morning",
       level: "Intermediate",
-      video: "https://www.youtube.com/embed/QXwz1u0vpy4",
+      video: "https://www.youtube.com/embed/X81ZRHZLkB8",
+      description: "Minimize pores and control oil production",
       steps: [
-        "Salicylic acid cleanser",
-        "BHA toner for deep pore cleansing",
-        "Benzoyl peroxide spot treatment",
-        "Oil-free moisturizer with niacinamide",
-        "Non-comedogenic sunscreen (morning)"
-      ]
+        "Clay mask cleanse",
+        "Apply BHA toner",
+        "Follow with mattifying primer",
+        "Finish with mineral SPF"
+      ],
+      requirements: ["Clay Cleanser", "BHA Toner", "Mattifying Primer", "Mineral SPF"]
     },
     {
-      id: "minimalist_beginner",
-      title: "Minimalist Skincare",
+      id: "skin_detox",
+      title: "Weekend Skin Detox",
       skinType: "All Types",
-      time: "Morning & Night",
-      level: "Beginner",
-      video: "https://www.youtube.com/embed/Hlj6lgV5wUQ",
+      time: "Weekly",
+      level: "Intermediate",
+      video: "https://www.youtube.com/embed/AoFzAkLDvlM",
+      description: "Weekly detox routine for refreshed skin",
       steps: [
-        "Gentle daily cleanser",
-        "Simple moisturizer for your skin type",
-        "SPF 30+ broad-spectrum sunscreen (morning)",
-        "Optional: gentle exfoliant 1-2x per week"
-      ]
+        "Steam face for 5 minutes",
+        "Apply charcoal or green tea mask",
+        "Use jade roller with detox oil",
+        "Seal with hydrating sleeping pack"
+      ],
+      requirements: ["Steam Device", "Detox Mask", "Jade Roller", "Sleeping Pack"]
     },
     {
-      id: "post_workout",
-      title: "Post-Workout Skin Refresh",
-      skinType: "Active",
-      time: "After Exercise",
-      level: "Beginner",
-      video: "https://www.youtube.com/embed/8BcPHWGQO44",
+      id: "brighten_tone",
+      title: "Brighten & Tone",
+      skinType: "Dull Skin",
+      time: "Morning",
+      level: "Advanced",
+      video: "https://www.youtube.com/embed/UKwmsAhWwN0",
+      description: "Brighten complexion and even skin tone",
       steps: [
-        "Rinse face with cool water immediately",
-        "Gentle cleansing wipe or micellar water",
-        "Refreshing toner spray",
-        "Lightweight hydrating serum",
-        "Quick-absorbing moisturizer"
-      ]
+        "Exfoliate gently with lactic acid toner",
+        "Apply brightening niacinamide serum",
+        "Layer lightweight moisturizer",
+        "Finish with glow SPF cream"
+      ],
+      requirements: ["Lactic Acid Toner", "Niacinamide", "Light Moisturizer", "Glow SPF"]
     }
   ];
 
