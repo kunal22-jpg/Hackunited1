@@ -1567,7 +1567,7 @@ const WorkoutPage = () => {
 
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    setIsModalOpen(true);
+    setWorkoutModalOpen(true);
   };
 
   const handleSectionHover = (isHovering) => {
