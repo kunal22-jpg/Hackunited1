@@ -2186,8 +2186,8 @@ const HealthPage = () => {
       </div>
 
       <Modal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={dietModalOpen}
+        onClose={() => setDietModalOpen(false)}
         item={selectedCondition}
         type="health"
       />
