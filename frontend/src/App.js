@@ -1400,7 +1400,7 @@ const HomePage = () => (
 const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWorkoutModalOpen, setWorkoutModalOpen] = useState(false);
 
   // Enhanced Exercise Dataset - 8 Unique Workouts
   const enhancedExerciseData = [
