@@ -67,17 +67,20 @@ backend:
         agent: "testing"
         comment: "Verified that the backend can connect to MongoDB and store user data properly. Successfully created new users with complete profile data, authenticated users, and retrieved user profiles from the database. All MongoDB operations are working correctly after the motor/pymongo version fix. The database connection is stable and data persistence is functioning as expected."
         
-  - task: "Grocery Recommendations API"
+  - task: "Authentication Input Validation"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "The /api/grocery/recommendations endpoint is working correctly with fallback functionality. While the Gemini AI integration is not working (error: 'ChatGoogleGenerativeAI' is not defined), the API properly falls back to relevant recommendations based on the query. The fallback recommendations are appropriate for the query 'protein powder for muscle building' and include protein-related products with proper structure (name, price, description, protein content, rating, platform). The API returns consistent responses with the expected structure and fields."
+        comment: "The backend properly validates user input, including password confirmation, email uniqueness, and required fields."
+      - working: true
+        agent: "testing"
+        comment: "Retested the input validation with multiple test cases: 1) Password confirmation mismatch - correctly rejected with appropriate error message, 2) Missing required fields - properly rejected with 422 validation error, 3) Invalid login credentials - correctly rejected with appropriate error message. All validation tests passed successfully."
 
 frontend:
   - task: "Enhanced Profile UI Modal"
