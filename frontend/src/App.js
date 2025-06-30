@@ -1630,7 +1630,7 @@ const WorkoutPage = () => {
       </div>
 
       <Modal 
-        isOpen={workoutModalOpen}
+        isOpen={isWorkoutModalOpen}
         onClose={() => setWorkoutModalOpen(false)}
         item={selectedWorkout}
         type="workout"
