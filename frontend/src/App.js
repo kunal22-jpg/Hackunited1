@@ -1871,7 +1871,7 @@ const SkincarePage = () => {
 const DietPage = () => {
   const [meals, setMeals] = useState([]);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDietModalOpen, setDietModalOpen] = useState(false);
   const [personalizedDiet, setPersonalizedDiet] = useState([]);
   const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
   const [showPersonalized, setShowPersonalized] = useState(false);
