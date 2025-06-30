@@ -213,6 +213,7 @@ const ProfilePopup = ({ user, isOpen, onClose }) => {
           )}
         </div>
       </motion.div>
+    </motion.div>
     </AnimatePresence>
   );
 };
