@@ -73,29 +73,66 @@ const SkincarePage = () => {
 };
 ```
 
-### STEP 4: Create 12-Card Gallery Structure ✅
-**File Modified:** `/app/frontend/src/App.js`
-
-**New Data Structure:**
+#### **AFTER (Fixed Implementation):**
 ```javascript
-const workoutGalleryData = [
-  ...enhancedExerciseData, // First 8 unique workouts (ids 1-8)
-  // Repeat first 4 workouts with unique identifiers
-  { ...enhancedExerciseData[0], id: 9, originalId: 1 }, // HIIT Cardio repeat
-  { ...enhancedExerciseData[1], id: 10, originalId: 2 }, // Core Strength repeat  
-  { ...enhancedExerciseData[2], id: 11, originalId: 3 }, // Glutes & Legs repeat
-  { ...enhancedExerciseData[3], id: 12, originalId: 4 }  // Upper Body Strength repeat
-];
-```
+const SkincarePage = () => {
+  const [routines, setRoutines] = useState([]);
+  const [selectedRoutine, setSelectedRoutine] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-**Updated useEffect:**
-```javascript
-useEffect(() => {
-  setWorkouts(workoutGalleryData);
-}, []);
-```
+  // 8 Unique Skincare Routines with complete data structure
+  const enhancedSkincareData = [
+    {
+      id: "dry_skin",
+      title: "Hydrating Routine",
+      skinType: "Dry",
+      time: "Morning & Night",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/4c7ghsAU3G8",
+      steps: [
+        "Gentle cream cleanser with ceramides",
+        "Hydrating toner or essence",
+        "Hyaluronic acid serum",
+        "Rich moisturizer with peptides",
+        "SPF 30+ during morning routine"
+      ]
+    },
+    // ... 7 more unique routines
+  ];
 
-**Result:** 12 total cards maintain circular gallery continuity with no duplicate key warnings.
+  // 12-card gallery structure (8 unique + 4 repeats)
+  const skincareGalleryData = [
+    ...enhancedSkincareData,
+    { ...enhancedSkincareData[0], id: "dry_skin_repeat", originalId: "dry_skin" },
+    { ...enhancedSkincareData[1], id: "oily_skin_repeat", originalId: "oily_skin" },
+    { ...enhancedSkincareData[2], id: "sensitive_skin_repeat", originalId: "sensitive_skin" },
+    { ...enhancedSkincareData[3], id: "anti_aging_repeat", originalId: "anti_aging" }
+  ];
+
+  // Static data loading (same as WorkoutPage)
+  useEffect(() => {
+    setRoutines(skincareGalleryData);
+  }, []);
+
+  // Consistent layout structure matching WorkoutPage
+  return (
+    <div className="h-screen relative overflow-hidden">
+      <div className="relative z-10 h-full flex flex-col">
+        <div className="pt-20 px-6 flex-shrink-0">
+          {/* Header Section */}
+        </div>
+        <div className="flex-1 px-6 mt-4">
+          <CircularGalleryOGL 
+            items={routines}
+            onItemClick={handleRoutineClick}
+            type="skincare"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+```
 
 ### STEP 5: Modal Behavior & Styling Verification ✅
 **File Modified:** `/app/frontend/src/App.js`
