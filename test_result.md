@@ -33,6 +33,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Retested the login endpoint with the newly created user. The endpoint successfully authenticated the user and returned the complete profile data including all required fields (name, email, age, gender, height, weight, allergies, chronic conditions, goals, fitness level, diet type, skin type). The password was properly excluded from the response."
+      - working: true
+        agent: "testing"
+        comment: "Tested the login endpoint after the motor/pymongo version fix. Successfully authenticated a newly created user and retrieved the complete profile data. The endpoint returned all required profile fields correctly formatted, with the password properly excluded from the response. The MongoDB connection is working properly for authentication operations."
 
   - task: "User Profile Retrieval by ID"
     implemented: true
