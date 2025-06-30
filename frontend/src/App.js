@@ -1638,57 +1638,143 @@ const SkincarePage = () => {
   const [routines, setRoutines] = useState([]);
   const [selectedRoutine, setSelectedRoutine] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [personalizedSkincare, setPersonalizedSkincare] = useState([]);
-  const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
-  const [showPersonalized, setShowPersonalized] = useState(false);
+
+  // Enhanced Skincare Dataset - 8 Unique Routines
+  const enhancedSkincareData = [
+    {
+      id: "dry_skin",
+      title: "Hydrating Routine",
+      skinType: "Dry",
+      time: "Morning & Night",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/4c7ghsAU3G8",
+      steps: [
+        "Gentle cream cleanser with ceramides",
+        "Hydrating toner or essence",
+        "Hyaluronic acid serum",
+        "Rich moisturizer with peptides",
+        "SPF 30+ during morning routine"
+      ]
+    },
+    {
+      id: "oily_skin",
+      title: "Oil-Control Routine",
+      skinType: "Oily",
+      time: "Morning & Night",
+      level: "Intermediate",
+      video: "https://www.youtube.com/embed/ml6cT4AZdqI",
+      steps: [
+        "Foaming cleanser with salicylic acid",
+        "Balancing toner with niacinamide",
+        "Oil-free serum with retinol (night)",
+        "Lightweight gel moisturizer",
+        "Mattifying sunscreen (morning)"
+      ]
+    },
+    {
+      id: "sensitive_skin",
+      title: "Soothing Routine",
+      skinType: "Sensitive",
+      time: "Morning & Night",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/Xyd_fa5zoEU",
+      steps: [
+        "Gentle, fragrance-free cleanser",
+        "Calming toner with chamomile",
+        "Soothing serum with centella asiatica",
+        "Barrier repair moisturizer",
+        "Mineral sunscreen (morning)"
+      ]
+    },
+    {
+      id: "anti_aging",
+      title: "Anti-Aging Night Regimen",
+      skinType: "Mature",
+      time: "Night Only",
+      level: "Intermediate",
+      video: "https://www.youtube.com/embed/1oed-UmAxFs",
+      steps: [
+        "Double cleanse to remove makeup and sunscreen",
+        "Apply retinol serum",
+        "Moisturize with peptide-infused night cream",
+        "Use under-eye cream with caffeine",
+        "Weekly exfoliation with AHA/BHA"
+      ]
+    },
+    {
+      id: "brightening_glow",
+      title: "Brightening & Glow Routine",
+      skinType: "Dull",
+      time: "Morning & Night",
+      level: "Intermediate",
+      video: "https://www.youtube.com/embed/vthMCtgVtFw",
+      steps: [
+        "Brightening cleanser with vitamin C",
+        "Exfoliating toner (2-3x per week)",
+        "Vitamin C serum (morning) or AHA serum (night)",
+        "Illuminating moisturizer",
+        "Broad-spectrum SPF 50+ (morning)"
+      ]
+    },
+    {
+      id: "acne_treatment",
+      title: "Acne Treatment Plan",
+      skinType: "Acne-Prone",
+      time: "Morning & Night",
+      level: "Intermediate",
+      video: "https://www.youtube.com/embed/QXwz1u0vpy4",
+      steps: [
+        "Salicylic acid cleanser",
+        "BHA toner for deep pore cleansing",
+        "Benzoyl peroxide spot treatment",
+        "Oil-free moisturizer with niacinamide",
+        "Non-comedogenic sunscreen (morning)"
+      ]
+    },
+    {
+      id: "minimalist_beginner",
+      title: "Minimalist Skincare",
+      skinType: "All Types",
+      time: "Morning & Night",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/Hlj6lgV5wUQ",
+      steps: [
+        "Gentle daily cleanser",
+        "Simple moisturizer for your skin type",
+        "SPF 30+ broad-spectrum sunscreen (morning)",
+        "Optional: gentle exfoliant 1-2x per week"
+      ]
+    },
+    {
+      id: "post_workout",
+      title: "Post-Workout Skin Refresh",
+      skinType: "Active",
+      time: "After Exercise",
+      level: "Beginner",
+      video: "https://www.youtube.com/embed/8BcPHWGQO44",
+      steps: [
+        "Rinse face with cool water immediately",
+        "Gentle cleansing wipe or micellar water",
+        "Refreshing toner spray",
+        "Lightweight hydrating serum",
+        "Quick-absorbing moisturizer"
+      ]
+    }
+  ];
+
+  // Create 12-card gallery: 8 unique + first 4 repeated
+  const skincareGalleryData = [
+    ...enhancedSkincareData, // First 8 unique routines
+    // Repeat first 4 routines with unique identifiers to avoid key conflicts
+    { ...enhancedSkincareData[0], id: "dry_skin_repeat", originalId: "dry_skin" }, // Hydrating Routine repeat
+    { ...enhancedSkincareData[1], id: "oily_skin_repeat", originalId: "oily_skin" }, // Oil-Control Routine repeat  
+    { ...enhancedSkincareData[2], id: "sensitive_skin_repeat", originalId: "sensitive_skin" }, // Soothing Routine repeat
+    { ...enhancedSkincareData[3], id: "anti_aging_repeat", originalId: "anti_aging" }  // Anti-Aging Regimen repeat
+  ];
 
   useEffect(() => {
-    fetchRoutines();
+    setRoutines(skincareGalleryData);
   }, []);
-
-  const fetchRoutines = async () => {
-    try {
-      const response = await axios.get(`${API}/skincare`);
-      setRoutines(response.data);
-    } catch (error) {
-      console.error('Error fetching skincare routines:', error);
-    }
-  };
-
-  const generatePersonalizedRecommendations = async () => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!userData.id) {
-      alert('Please login to generate personalized recommendations');
-      return;
-    }
-
-    setIsGeneratingPersonalized(true);
-    try {
-      const personalizedRequest = {
-        user_id: userData.id,
-        weight: userData.weight ? `${userData.weight} ${userData.weight_unit || 'kg'}` : '70 kg',
-        allergies: userData.allergies ? userData.allergies.join(', ') : 'none',
-        wellness_goals: userData.goals || ['general wellness'],
-        health_conditions: userData.chronic_conditions || [],
-        age: userData.age || 25,
-        gender: userData.gender || 'female',
-        fitness_level: userData.fitness_level || 'beginner'
-      };
-
-      const response = await axios.post(`${API}/wellness/personalized-recommendations`, personalizedRequest);
-      
-      if (response.data.success) {
-        setPersonalizedSkincare(response.data.recommendations.skincare || []);
-        setShowPersonalized(true);
-      } else {
-        alert('Failed to generate personalized recommendations. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error generating personalized recommendations:', error);
-      alert('Error generating recommendations. Please try again.');
-    }
-    setIsGeneratingPersonalized(false);
-  };
 
   const handleRoutineClick = (routine) => {
     setSelectedRoutine(routine);
@@ -1712,87 +1798,45 @@ const SkincarePage = () => {
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden"
+      className="h-screen relative overflow-hidden"
       onMouseEnter={() => handleSectionHover(true)}
       onMouseLeave={() => handleSectionHover(false)}
     >
       <VideoBackground 
         videoSrc="/video/skincare.mp4" 
-        overlay="bg-black/40"
+        overlay="bg-black/50"
       />
       
-      <div className="relative z-10 pt-20 px-6">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-4">Skincare Routines</h1>
-            <p className="text-lg text-white/80">Glow with science-backed skincare</p>
-            
-            {/* Personalized Recommendations Button */}
-            <div className="mt-6 mb-6">
-              <button
-                onClick={generatePersonalizedRecommendations}
-                disabled={isGeneratingPersonalized}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-8 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 mx-auto"
-              >
-                {isGeneratingPersonalized ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>🤖 AI is creating your personalized skincare...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🤖</span>
-                    <span>Generate My Personalized Skincare</span>
-                  </>
-                )}
-              </button>
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Header Section with Title */}
+        <div className="pt-20 px-6 flex-shrink-0">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-white mb-2">Skincare Routines</h1>
+              <p className="text-lg text-white/80 mb-4">Glow with science-backed skincare</p>
             </div>
+          </div>
+        </div>
 
-            {/* Toggle between Regular and Personalized */}
-            {personalizedSkincare.length > 0 && (
-              <div className="flex justify-center space-x-4 mb-4">
-                <button
-                  onClick={() => setShowPersonalized(false)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    !showPersonalized 
-                      ? 'bg-white/20 text-white border border-white/40' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  General Routines
-                </button>
-                <button
-                  onClick={() => setShowPersonalized(true)}
-                  className={`px-6 py-2 rounded-lg transition-all ${
-                    showPersonalized 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/15'
-                  }`}
-                >
-                  My AI Skincare ({personalizedSkincare.length})
-                </button>
+        {/* Gallery Section - Takes remaining space */}
+        <div className="flex-1 px-6 mt-4">
+          <div className="max-w-screen-2xl mx-auto h-full">
+            {/* Display Skincare Routines */}
+            {routines.length > 0 ? (
+              <CircularGalleryOGL 
+                items={routines}
+                onItemClick={handleRoutineClick}
+                type="skincare"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center text-white/60">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                  <p>Loading skincare routines...</p>
+                </div>
               </div>
             )}
           </div>
-
-          {/* Display Skincare Routines */}
-          {showPersonalized && personalizedSkincare.length > 0 ? (
-            <CircularGalleryOGL 
-              items={personalizedSkincare}
-              onItemClick={handleRoutineClick}
-              type="skincare"
-            />
-          ) : routines.length > 0 ? (
-            <CircularGalleryOGL 
-              items={routines}
-              onItemClick={handleRoutineClick}
-              type="skincare"
-            />
-          ) : (
-            <div className="text-center text-white/60 py-8">
-              <p>Loading skincare routines...</p>
-            </div>
-          )}
         </div>
       </div>
 
