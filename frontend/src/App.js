@@ -2026,7 +2026,7 @@ const DietPage = () => {
 const HealthPage = () => {
   const [conditions, setConditions] = useState([]);
   const [selectedCondition, setSelectedCondition] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dietModalOpen, setDietModalOpen] = useState(false);
   const [personalizedHealth, setPersonalizedHealth] = useState([]);
   const [isGeneratingPersonalized, setIsGeneratingPersonalized] = useState(false);
   const [showPersonalized, setShowPersonalized] = useState(false);
