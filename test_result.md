@@ -12,6 +12,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "The /api/auth/signup endpoint correctly handles complete user profile data including all required fields. All profile fields are properly stored in the database and returned in the response."
+      - working: true
+        agent: "testing"
+        comment: "Retested the signup endpoint with a new user with comprehensive profile data including name, email, password, age, gender, height, weight, allergies, chronic conditions, wellness goals, fitness level, diet preferences, and skin type. The endpoint successfully created the user and returned all profile data correctly formatted. The password was properly hashed and not returned in the response."
 
   - task: "Authentication Login with Profile Data Return"
     implemented: true
@@ -24,6 +27,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "The /api/auth/login endpoint successfully authenticates users and returns the complete profile data including all fields needed for the enhanced profile popup."
+      - working: true
+        agent: "testing"
+        comment: "Retested the login endpoint with the newly created user. The endpoint successfully authenticated the user and returned the complete profile data including all required fields (name, email, age, gender, height, weight, allergies, chronic conditions, goals, fitness level, diet type, skin type). The password was properly excluded from the response."
 
   - task: "User Profile Retrieval by ID"
     implemented: true
@@ -36,6 +42,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "The /api/auth/user/{user_id} endpoint correctly retrieves user profiles with all fields needed for the enhanced profile popup."
+      - working: true
+        agent: "testing"
+        comment: "Retested the user profile retrieval endpoint with the newly created user ID. The endpoint successfully retrieved the complete user profile with all required fields. The response format matches what the frontend would expect for displaying the enhanced profile popup."
 
   - task: "Authentication Input Validation"
     implemented: true
@@ -48,6 +57,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "The backend properly validates user input, including password confirmation, email uniqueness, and required fields."
+      - working: true
+        agent: "testing"
+        comment: "Retested the input validation with multiple test cases: 1) Password confirmation mismatch - correctly rejected with appropriate error message, 2) Missing required fields - properly rejected with 422 validation error, 3) Invalid login credentials - correctly rejected with appropriate error message. All validation tests passed successfully."
         
   - task: "Grocery Recommendations API"
     implemented: true
