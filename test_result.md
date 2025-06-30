@@ -610,15 +610,27 @@ frontend:
         agent: "testing"
         comment: "COMPREHENSIVE BACKEND TESTING COMPLETED: Verified that all backend APIs related to skincare functionality are working correctly after the frontend changes. The /api/skincare endpoint returns 2 skincare routines (Morning Glow Routine and Acne-Fighting Routine) with all required fields (id, title, description, skin_type, time_of_day, steps, products, video_url). All other core backend endpoints (/api/workouts, /api/auth/*, /api/wellness/personalized-recommendations) are also functioning correctly. The frontend changes to the SkincarePage modal logic and data structures have not affected any backend functionality. All API endpoints return the expected data structures and content. The backend is fully functional and ready to support the updated frontend implementation."
 
+  - task: "CONTINUATION TASK: Card-to-Popup Logic Fixes & YouTube Video Embedding"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "COMPREHENSIVE IMPLEMENTATION: Fixed broken card-to-modal logic by implementing unique modal states for each section (WorkoutPage: isWorkoutModalOpen, DietPage: isDietModalOpen, HealthPage: isHealthModalOpen, SkincarePage: isSkincareModalOpen). Updated YouTube video URLs to working embed format and replaced broken video IDs with verified working tutorials. Ensured proper card-to-modal mapping with isolated state management for all 12 workout cards and 12 skincare cards. All modal content structure maintained with complete information display including Title, Duration, Level, Video Embed, Requirements, and Steps."
+
 metadata:
-  created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 3
+  created_by: "main_agent"
+  version: "1.1"
+  test_sequence: 4
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Backend API Health Check"
+    - "CONTINUATION TASK: Card-to-Popup Logic Fixes & YouTube Video Embedding"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
