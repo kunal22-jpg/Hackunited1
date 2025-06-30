@@ -1,0 +1,51 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" rx="2" fill="#D4A574"/>
+  
+  <!-- Lotus flower design based on the provided image -->
+  <!-- Outer layer petals -->
+  <g transform="translate(16,16)">
+    <!-- Top petal -->
+    <path d="M0,-12 C-2,-10 -2,-6 0,-4 C2,-6 2,-10 0,-12 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Top-right petal -->
+    <path d="M6,-10.4 C4,-8.4 2,-6 4,-4 C6,-6 8,-8.4 6,-10.4 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Right petal -->
+    <path d="M10.4,-6 C8.4,-4 6,-2 4,0 C6,2 8.4,4 10.4,6 C12,4 12,0 12,-2 C12,-4 12,-6 10.4,-6 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Bottom-right petal -->
+    <path d="M6,10.4 C8,8.4 8,6 6,4 C4,6 2,8.4 6,10.4 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Bottom petal -->
+    <path d="M0,12 C2,10 2,6 0,4 C-2,6 -2,10 0,12 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Bottom-left petal -->
+    <path d="M-6,10.4 C-2,8.4 -4,6 -6,4 C-8,6 -8,8.4 -6,10.4 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Left petal -->
+    <path d="M-10.4,6 C-12,4 -12,0 -12,-2 C-12,-4 -12,-6 -10.4,-6 C-8.4,-4 -6,-2 -4,0 C-6,2 -8.4,4 -10.4,6 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Top-left petal -->
+    <path d="M-6,-10.4 C-8,-8.4 -8,-6 -6,-4 C-4,-6 -2,-8.4 -6,-10.4 Z" fill="#8B5A3C" stroke="#2D1810" stroke-width="0.4"/>
+    
+    <!-- Inner layer petals -->
+    <!-- Top inner -->
+    <path d="M0,-8 C-1.5,-7 -1.5,-5 0,-4 C1.5,-5 1.5,-7 0,-8 Z" fill="#C6905D" stroke="#2D1810" stroke-width="0.3"/>
+    
+    <!-- Right inner -->
+    <path d="M7,-5.5 C6,-4 4,-3 2.8,0 C4,3 6,4 7,5.5 C8.5,4 8.5,0 8.5,-1.5 C8.5,-3 8.5,-4.5 7,-5.5 Z" fill="#C6905D" stroke="#2D1810" stroke-width="0.3"/>
+    
+    <!-- Bottom inner -->
+    <path d="M0,8 C1.5,7 1.5,5 0,4 C-1.5,5 -1.5,7 0,8 Z" fill="#C6905D" stroke="#2D1810" stroke-width="0.3"/>
+    
+    <!-- Left inner -->
+    <path d="M-7,5.5 C-8.5,4 -8.5,0 -8.5,-1.5 C-8.5,-3 -8.5,-4.5 -7,-5.5 C-6,-4 -4,-3 -2.8,0 C-4,3 -6,4 -7,5.5 Z" fill="#C6905D" stroke="#2D1810" stroke-width="0.3"/>
+    
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="2.5" fill="#E6B676" stroke="#2D1810" stroke-width="0.3"/>
+    
+    <!-- Inner center -->
+    <circle cx="0" cy="0" r="1.2" fill="#F2D19C" stroke="#2D1810" stroke-width="0.2"/>
+  </g>
+</svg>
