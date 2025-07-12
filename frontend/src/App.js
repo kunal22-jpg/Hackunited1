@@ -2411,8 +2411,6 @@ const HealthPage = () => {
   const navigationTabs = [
     { id: 'symptoms', label: 'Symptom Checker', icon: '🩺' },
     { id: 'chatbot', label: 'Medical Bot', icon: '🤖' },
-    { id: 'locator', label: 'Resource Locator', icon: '📍' },
-    { id: 'community', label: 'Community', icon: '👥' },
     { id: 'education', label: 'Health Education', icon: '📚' },
     { id: 'notifications', label: 'Smart Notifications', icon: '🔔' }
   ];
