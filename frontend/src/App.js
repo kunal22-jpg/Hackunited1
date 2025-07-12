@@ -2427,17 +2427,60 @@ const HealthPage = () => {
               <p className="text-white/80">Get personalized health insights based on your symptoms</p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20">
               <div className="space-y-6">
+                {/* Predefined Symptoms Selection */}
                 <div>
-                  <label className="block text-white font-semibold mb-3">Describe your symptoms</label>
+                  <label className="block text-white font-semibold mb-3">Select Your Symptoms</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {commonSymptoms.map((symptom) => (
+                      <button
+                        key={symptom}
+                        onClick={() => toggleSymptom(symptom)}
+                        className={`p-3 rounded-lg text-sm font-medium transition-all ${
+                          symptomData.symptoms.includes(symptom)
+                            ? 'bg-blue-500 text-white border-2 border-blue-400'
+                            : 'bg-white/10 text-white/80 border-2 border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {symptom}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom Symptoms Input */}
+                <div>
+                  <label className="block text-white font-semibold mb-3">
+                    Describe Additional Symptoms (Optional)
+                  </label>
                   <textarea
-                    value={symptomData.symptoms}
-                    onChange={(e) => setSymptomData({...symptomData, symptoms: e.target.value})}
-                    placeholder="e.g., headache, fever, cough, fatigue..."
+                    value={symptomData.custom_symptoms}
+                    onChange={(e) => setSymptomData({...symptomData, custom_symptoms: e.target.value})}
+                    placeholder="Describe any other symptoms not listed above..."
                     className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    rows="4"
+                    rows="3"
                   />
+                </div>
+
+                {/* Body Parts Selection */}
+                <div>
+                  <label className="block text-white font-semibold mb-3">Affected Body Parts (Optional)</label>
+                  <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {bodyParts.map((bodyPart) => (
+                      <button
+                        key={bodyPart}
+                        onClick={() => toggleBodyPart(bodyPart)}
+                        className={`p-2 rounded-lg text-xs font-medium transition-all ${
+                          symptomData.body_parts.includes(bodyPart)
+                            ? 'bg-green-500 text-white border-2 border-green-400'
+                            : 'bg-white/10 text-white/80 border-2 border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {bodyPart}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2453,6 +2496,7 @@ const HealthPage = () => {
                       <option value="1-3-days" className="bg-gray-800">1-3 days</option>
                       <option value="1-week" className="bg-gray-800">About a week</option>
                       <option value="more-than-week" className="bg-gray-800">More than a week</option>
+                      <option value="chronic" className="bg-gray-800">Chronic (ongoing)</option>
                     </select>
                   </div>
 
@@ -2473,8 +2517,8 @@ const HealthPage = () => {
                 <div>
                   <label className="block text-white font-semibold mb-3">Additional Information (Optional)</label>
                   <textarea
-                    value={symptomData.additionalInfo}
-                    onChange={(e) => setSymptomData({...symptomData, additionalInfo: e.target.value})}
+                    value={symptomData.additional_info}
+                    onChange={(e) => setSymptomData({...symptomData, additional_info: e.target.value})}
                     placeholder="Any other relevant information about your symptoms..."
                     className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     rows="3"
@@ -2483,60 +2527,85 @@ const HealthPage = () => {
 
                 <button
                   onClick={analyzeSymptoms}
-                  disabled={loading || !symptomData.symptoms.trim()}
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-4 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading || (symptomData.symptoms.length === 0 && !symptomData.custom_symptoms.trim())}
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-4 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
-                  {loading ? 'Analyzing...' : 'Analyze Symptoms'}
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Analyzing Symptoms...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🔍</span>
+                      <span>Analyze Symptoms</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
 
             {analysisResult && (
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-                <h3 className="text-2xl font-bold text-white mb-6">Analysis Results</h3>
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20">
+                <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
+                  <span>📊</span>
+                  <span>Analysis Results</span>
+                </h3>
                 
                 <div className="space-y-6">
                   <div className="bg-white/10 rounded-xl p-4">
-                    <h4 className="text-white font-semibold mb-2">Urgency Level</h4>
+                    <h4 className="text-white font-semibold mb-2 flex items-center space-x-2">
+                      <span>⚠️</span>
+                      <span>Urgency Level</span>
+                    </h4>
                     <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                      analysisResult.urgencyLevel === 'High' ? 'bg-red-500/20 text-red-200' :
-                      analysisResult.urgencyLevel === 'Medium' ? 'bg-yellow-500/20 text-yellow-200' :
-                      'bg-green-500/20 text-green-200'
+                      analysisResult.urgency_level === 'High' ? 'bg-red-500/20 text-red-200 border border-red-500/30' :
+                      analysisResult.urgency_level === 'Medium' ? 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/30' :
+                      'bg-green-500/20 text-green-200 border border-green-500/30'
                     }`}>
-                      {analysisResult.urgencyLevel}
+                      {analysisResult.urgency_level}
                     </span>
                   </div>
 
                   <div className="bg-white/10 rounded-xl p-4">
-                    <h4 className="text-white font-semibold mb-3">Possible Conditions</h4>
+                    <h4 className="text-white font-semibold mb-3 flex items-center space-x-2">
+                      <span>🔍</span>
+                      <span>Possible Conditions</span>
+                    </h4>
                     <div className="space-y-3">
-                      {analysisResult.possibleConditions.map((condition, index) => (
-                        <div key={index} className="flex justify-between items-start">
-                          <div>
+                      {analysisResult.possible_conditions.map((condition, index) => (
+                        <div key={index} className="flex justify-between items-start bg-white/5 rounded-lg p-3">
+                          <div className="flex-1">
                             <p className="text-white font-medium">{condition.name}</p>
-                            <p className="text-white/70 text-sm">{condition.description}</p>
+                            <p className="text-white/70 text-sm mt-1">{condition.description}</p>
                           </div>
-                          <span className="text-blue-300 font-semibold">{condition.probability}</span>
+                          <span className="text-blue-300 font-semibold ml-4">{condition.probability}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div className="bg-white/10 rounded-xl p-4">
-                    <h4 className="text-white font-semibold mb-3">Recommendations</h4>
+                    <h4 className="text-white font-semibold mb-3 flex items-center space-x-2">
+                      <span>💡</span>
+                      <span>Recommendations</span>
+                    </h4>
                     <ul className="space-y-2">
                       {analysisResult.recommendations.map((rec, index) => (
                         <li key={index} className="text-white/90 flex items-start">
-                          <span className="text-green-400 mr-2">•</span>
-                          {rec}
+                          <span className="text-green-400 mr-2 mt-1">•</span>
+                          <span>{rec}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                    <h4 className="text-red-200 font-semibold mb-2">When to Seek Care</h4>
-                    <p className="text-red-100">{analysisResult.whenToSeekCare}</p>
+                    <h4 className="text-red-200 font-semibold mb-2 flex items-center space-x-2">
+                      <span>🏥</span>
+                      <span>When to Seek Care</span>
+                    </h4>
+                    <p className="text-red-100">{analysisResult.when_to_seek_care}</p>
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4">
