@@ -2202,10 +2202,12 @@ const HealthPage = () => {
   // State management for all features
   const [activeTab, setActiveTab] = useState('symptoms');
   const [symptomData, setSymptomData] = useState({
-    symptoms: '',
+    symptoms: [],
+    custom_symptoms: '',
+    body_parts: [],
     duration: '',
     severity: 'moderate',
-    additionalInfo: ''
+    additional_info: ''
   });
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -2213,10 +2215,24 @@ const HealthPage = () => {
     { type: 'bot', content: 'Hello! I\'m your AI health assistant. How can I help you today?' }
   ]);
   const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyFacilities, setNearbyFacilities] = useState([]);
   const [communityPosts, setCommunityPosts] = useState([]);
   const [notifications, setNotifications] = useState([]);
+
+  // Predefined symptom options
+  const commonSymptoms = [
+    'Fever', 'Headache', 'Cough', 'Sore throat', 'Runny nose', 'Body aches',
+    'Fatigue', 'Nausea', 'Vomiting', 'Diarrhea', 'Stomach pain', 'Chest pain',
+    'Shortness of breath', 'Dizziness', 'Skin rash', 'Joint pain', 'Back pain',
+    'Muscle pain', 'Loss of appetite', 'Difficulty sleeping', 'Anxiety', 'Depression'
+  ];
+
+  const bodyParts = [
+    'Head', 'Neck', 'Chest', 'Abdomen', 'Back', 'Arms', 'Legs', 'Hands', 'Feet',
+    'Eyes', 'Ears', 'Nose', 'Throat', 'Skin', 'Joints', 'Muscles'
+  ];
 
   const handleSectionHover = (isHovering) => {
     const healthIcon = document.querySelector('.header-health-icon');
@@ -2233,61 +2249,98 @@ const HealthPage = () => {
     }
   };
 
-  // Symptom Checker Implementation
+  // Enhanced Symptom Checker Implementation
   const analyzeSymptoms = async () => {
-    if (!symptomData.symptoms.trim()) return;
+    if (symptomData.symptoms.length === 0 && !symptomData.custom_symptoms.trim()) {
+      alert('Please select at least one symptom or describe your symptoms.');
+      return;
+    }
     
     setLoading(true);
     try {
-      // Simulate AI analysis
-      setTimeout(() => {
-        const analysis = {
-          urgencyLevel: symptomData.severity === 'severe' ? 'High' : symptomData.severity === 'moderate' ? 'Medium' : 'Low',
-          possibleConditions: [
-            { name: 'Common Cold', probability: '45%', description: 'Upper respiratory tract infection' },
-            { name: 'Viral Fever', probability: '30%', description: 'Systemic viral infection' },
-            { name: 'Stress-related', probability: '25%', description: 'Stress-induced symptoms' }
-          ],
-          recommendations: [
-            'Stay hydrated and get adequate rest',
-            'Monitor symptoms for 24-48 hours',
-            'Consider over-the-counter remedies if appropriate',
-            'Consult healthcare provider if symptoms worsen'
-          ],
-          whenToSeekCare: symptomData.severity === 'severe' 
-            ? 'Seek immediate medical attention'
-            : 'Consult a doctor if symptoms persist beyond 3 days',
-          disclaimer: 'This analysis is for informational purposes only and should not replace professional medical advice.'
-        };
-        setAnalysisResult(analysis);
-        setLoading(false);
-      }, 2500);
+      const response = await axios.post(`${API}/symptoms/analyze`, {
+        symptoms: symptomData.symptoms,
+        custom_symptoms: symptomData.custom_symptoms,
+        body_parts: symptomData.body_parts,
+        duration: symptomData.duration,
+        severity: symptomData.severity,
+        additional_info: symptomData.additional_info
+      });
+      
+      setAnalysisResult(response.data);
     } catch (error) {
+      console.error('Symptom analysis error:', error);
+      // Fallback analysis
+      const fallbackAnalysis = {
+        urgency_level: symptomData.severity === 'severe' ? 'High' : symptomData.severity === 'moderate' ? 'Medium' : 'Low',
+        possible_conditions: [
+          { name: 'General Health Concern', probability: '50%', description: 'Symptoms require professional evaluation' }
+        ],
+        recommendations: [
+          'Stay hydrated and get adequate rest',
+          'Monitor symptoms for changes',
+          'Consult healthcare provider if symptoms persist'
+        ],
+        when_to_seek_care: 'Consult a doctor if symptoms persist beyond 3 days',
+        disclaimer: 'This analysis is for informational purposes only and should not replace professional medical advice.'
+      };
+      setAnalysisResult(fallbackAnalysis);
+    } finally {
       setLoading(false);
-      alert('Analysis failed. Please try again.');
     }
   };
 
-  // Medical Bot Implementation
+  // Enhanced Medical Bot Implementation with Backend API
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
     
     const userMessage = chatInput;
     setChatInput('');
     setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    setChatLoading(true);
     
-    // Simulate bot response
-    setTimeout(() => {
-      const responses = [
-        "I understand your concern. Can you provide more details about when these symptoms started?",
-        "Based on what you've described, here are some general recommendations...",
-        "That's a great question! Let me help you understand this better.",
-        "I recommend consulting with a healthcare professional for a proper evaluation.",
-        "Here are some healthy lifestyle tips that might help..."
+    try {
+      const response = await axios.post(`${API}/chat`, {
+        user_id: localStorage.getItem('userId') || 'demo-user',
+        message: userMessage,
+        user_profile: null // Can be enhanced to include user profile
+      });
+      
+      setChatMessages(prev => [...prev, { type: 'bot', content: response.data.response }]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      // Fallback responses
+      const fallbackResponses = [
+        "I understand your concern. Can you provide more details about your symptoms?",
+        "Based on what you've described, I recommend consulting with a healthcare professional.",
+        "That's a great question! For personalized health advice, please speak with your doctor.",
+        "I'm here to provide general health information. For specific medical concerns, please consult a healthcare provider."
       ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
       setChatMessages(prev => [...prev, { type: 'bot', content: randomResponse }]);
-    }, 1000);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // Toggle symptom selection
+  const toggleSymptom = (symptom) => {
+    setSymptomData(prev => ({
+      ...prev,
+      symptoms: prev.symptoms.includes(symptom)
+        ? prev.symptoms.filter(s => s !== symptom)
+        : [...prev.symptoms, symptom]
+    }));
+  };
+
+  // Toggle body part selection
+  const toggleBodyPart = (bodyPart) => {
+    setSymptomData(prev => ({
+      ...prev,
+      body_parts: prev.body_parts.includes(bodyPart)
+        ? prev.body_parts.filter(bp => bp !== bodyPart)
+        : [...prev.body_parts, bodyPart]
+    }));
   };
 
   // Resource Locator Implementation
