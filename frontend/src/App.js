@@ -2216,9 +2216,6 @@ const HealthPage = () => {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
-  const [nearbyFacilities, setNearbyFacilities] = useState([]);
-  const [communityPosts, setCommunityPosts] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
   // Predefined symptom options
