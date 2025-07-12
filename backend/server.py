@@ -882,6 +882,241 @@ I'm your personal health coach, and I'm here to help you with:
 
 What would you like to know about? Just ask me about workouts, skincare, nutrition, or general health tips!"""
 
+# Symptom Checker API Endpoint
+@api_router.post("/symptoms/analyze", response_model=SymptomCheckResponse)
+async def analyze_symptoms(request: SymptomCheckRequest):
+    """AI-powered symptom analysis with intelligent health recommendations"""
+    try:
+        # Combine predefined and custom symptoms
+        all_symptoms = request.symptoms.copy()
+        if request.custom_symptoms.strip():
+            all_symptoms.append(request.custom_symptoms)
+        
+        # Determine urgency level based on symptoms and severity
+        urgency_level = determine_urgency_level(all_symptoms, request.severity, request.duration)
+        
+        # Generate possible conditions based on symptoms
+        possible_conditions = generate_possible_conditions(all_symptoms, request.body_parts, request.age, request.gender)
+        
+        # Generate recommendations
+        recommendations = generate_health_recommendations(all_symptoms, request.severity, urgency_level)
+        
+        # Determine when to seek care
+        when_to_seek_care = get_care_guidance(urgency_level, request.severity, request.duration)
+        
+        # Generate follow-up questions
+        follow_up_questions = generate_follow_up_questions(all_symptoms, request.body_parts)
+        
+        analysis_id = str(uuid.uuid4())
+        
+        # Store analysis in database
+        analysis_obj = {
+            "id": analysis_id,
+            "symptoms": all_symptoms,
+            "body_parts": request.body_parts,
+            "duration": request.duration,
+            "severity": request.severity,
+            "urgency_level": urgency_level,
+            "possible_conditions": possible_conditions,
+            "recommendations": recommendations,
+            "timestamp": datetime.utcnow()
+        }
+        await db.symptom_analyses.insert_one(analysis_obj)
+        
+        return SymptomCheckResponse(
+            analysis_id=analysis_id,
+            urgency_level=urgency_level,
+            possible_conditions=possible_conditions,
+            recommendations=recommendations,
+            when_to_seek_care=when_to_seek_care,
+            disclaimer="This analysis is for informational purposes only and should not replace professional medical advice. Consult a healthcare provider for proper diagnosis and treatment.",
+            follow_up_questions=follow_up_questions
+        )
+        
+    except Exception as e:
+        print(f"Error in symptom analysis: {str(e)}")
+        # Fallback response
+        return SymptomCheckResponse(
+            analysis_id=str(uuid.uuid4()),
+            urgency_level="Medium",
+            possible_conditions=[
+                {"name": "General Health Concern", "probability": "Unknown", "description": "Unable to analyze symptoms at this time"}
+            ],
+            recommendations=[
+                "Stay hydrated and get adequate rest",
+                "Monitor symptoms closely",
+                "Consult a healthcare provider if symptoms persist or worsen"
+            ],
+            when_to_seek_care="Consult a healthcare provider if symptoms persist beyond 2-3 days or worsen",
+            disclaimer="This analysis is for informational purposes only. Please consult a healthcare provider for proper medical advice."
+        )
+
+def determine_urgency_level(symptoms: List[str], severity: str, duration: str) -> str:
+    """Determine urgency level based on symptoms, severity, and duration"""
+    high_urgency_symptoms = [
+        "chest pain", "difficulty breathing", "severe headache", "high fever", 
+        "severe abdominal pain", "loss of consciousness", "severe allergic reaction",
+        "severe bleeding", "severe burns", "severe injury"
+    ]
+    
+    # Check for high urgency symptoms
+    if any(symptom.lower() in ' '.join(symptoms).lower() for symptom in high_urgency_symptoms):
+        return "High"
+    
+    # Check severity and duration
+    if severity == "severe":
+        return "High"
+    elif severity == "moderate" and duration in ["more-than-week", "chronic"]:
+        return "Medium"
+    elif severity == "mild" and duration in ["less-than-1-day", "1-3-days"]:
+        return "Low"
+    else:
+        return "Medium"
+
+def generate_possible_conditions(symptoms: List[str], body_parts: List[str], age: int = None, gender: str = None) -> List[Dict[str, Any]]:
+    """Generate possible conditions based on symptoms and patient info"""
+    symptom_text = ' '.join(symptoms).lower()
+    
+    conditions = []
+    
+    # Common conditions based on symptoms
+    if any(word in symptom_text for word in ["fever", "cough", "runny nose", "sore throat"]):
+        conditions.append({
+            "name": "Upper Respiratory Infection",
+            "probability": "65%",
+            "description": "Common cold or viral infection affecting nose, throat, and sinuses"
+        })
+        conditions.append({
+            "name": "Flu (Influenza)",
+            "probability": "25%", 
+            "description": "Viral infection affecting respiratory system with systemic symptoms"
+        })
+    
+    if any(word in symptom_text for word in ["headache", "head"]):
+        conditions.append({
+            "name": "Tension Headache",
+            "probability": "50%",
+            "description": "Most common type of headache, often stress-related"
+        })
+        conditions.append({
+            "name": "Migraine",
+            "probability": "30%",
+            "description": "Severe headache often accompanied by nausea and light sensitivity"
+        })
+    
+    if any(word in symptom_text for word in ["stomach", "abdominal", "nausea", "vomiting"]):
+        conditions.append({
+            "name": "Gastroenteritis",
+            "probability": "45%",
+            "description": "Inflammation of stomach and intestines, often viral or bacterial"
+        })
+        conditions.append({
+            "name": "Food Poisoning",
+            "probability": "35%",
+            "description": "Illness caused by contaminated food or drink"
+        })
+    
+    if any(word in symptom_text for word in ["fatigue", "tired", "exhausted"]):
+        conditions.append({
+            "name": "Viral Syndrome",
+            "probability": "40%",
+            "description": "General viral infection causing fatigue and malaise"
+        })
+        conditions.append({
+            "name": "Sleep Deprivation",
+            "probability": "30%",
+            "description": "Insufficient or poor quality sleep affecting daily function"
+        })
+    
+    # Default condition if no specific match
+    if not conditions:
+        conditions.append({
+            "name": "General Health Concern",
+            "probability": "Unknown",
+            "description": "Symptoms require professional medical evaluation for proper diagnosis"
+        })
+    
+    return conditions[:3]  # Return top 3 conditions
+
+def generate_health_recommendations(symptoms: List[str], severity: str, urgency_level: str) -> List[str]:
+    """Generate health recommendations based on symptoms and urgency"""
+    recommendations = []
+    
+    # General recommendations
+    recommendations.extend([
+        "Stay well hydrated by drinking plenty of fluids",
+        "Get adequate rest and sleep (7-9 hours per night)",
+        "Monitor your symptoms and note any changes"
+    ])
+    
+    # Severity-based recommendations
+    if severity == "severe" or urgency_level == "High":
+        recommendations.extend([
+            "Seek immediate medical attention",
+            "Consider visiting an emergency room or urgent care",
+            "Have someone stay with you if possible"
+        ])
+    elif severity == "moderate":
+        recommendations.extend([
+            "Consider over-the-counter remedies if appropriate",
+            "Contact your healthcare provider if symptoms worsen",
+            "Avoid strenuous activities until symptoms improve"
+        ])
+    else:  # mild symptoms
+        recommendations.extend([
+            "Try home remedies and self-care measures",
+            "Continue normal activities if you feel up to it",
+            "Watch for symptom progression over the next 24-48 hours"
+        ])
+    
+    # Symptom-specific recommendations
+    symptom_text = ' '.join(symptoms).lower()
+    
+    if any(word in symptom_text for word in ["fever", "temperature"]):
+        recommendations.append("Use fever-reducing medication if needed (follow package instructions)")
+    
+    if any(word in symptom_text for word in ["cough"]):
+        recommendations.append("Use honey or throat lozenges to soothe throat irritation")
+    
+    if any(word in symptom_text for word in ["headache", "head pain"]):
+        recommendations.append("Try relaxation techniques and ensure you're in a quiet, dark environment")
+    
+    return recommendations[:6]  # Return top 6 recommendations
+
+def get_care_guidance(urgency_level: str, severity: str, duration: str) -> str:
+    """Provide guidance on when to seek medical care"""
+    if urgency_level == "High":
+        return "Seek immediate medical attention. Visit the emergency room or call emergency services if symptoms are life-threatening."
+    elif urgency_level == "Medium":
+        return "Schedule an appointment with your healthcare provider within 24-48 hours, or sooner if symptoms worsen."
+    else:
+        return "Monitor symptoms for 2-3 days. Consult a healthcare provider if symptoms persist, worsen, or new concerning symptoms develop."
+
+def generate_follow_up_questions(symptoms: List[str], body_parts: List[str]) -> List[str]:
+    """Generate relevant follow-up questions based on symptoms"""
+    questions = []
+    
+    # General follow-up questions
+    questions.extend([
+        "Have you experienced these symptoms before?",
+        "Are you currently taking any medications?",
+        "Have you been in contact with anyone who was sick recently?"
+    ])
+    
+    # Symptom-specific follow-up questions
+    symptom_text = ' '.join(symptoms).lower()
+    
+    if any(word in symptom_text for word in ["fever"]):
+        questions.append("What is your current temperature?")
+    
+    if any(word in symptom_text for word in ["pain"]):
+        questions.append("On a scale of 1-10, how would you rate your pain?")
+    
+    if any(word in symptom_text for word in ["headache"]):
+        questions.append("Do you experience sensitivity to light or sound?")
+    
+    return questions[:4]  # Return top 4 questions
+
 # Enhanced Grocery Agent - AI-Powered Shopping Assistant
 import sys
 import os
