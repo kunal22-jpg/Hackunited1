@@ -506,6 +506,26 @@ class HealthChatResponse(BaseModel):
     requires_profile: bool = False
     profile_fields: List[str] = []
 
+# Symptom Checker Models
+class SymptomCheckRequest(BaseModel):
+    symptoms: List[str]  # Selected predefined symptoms
+    custom_symptoms: str = ""  # Custom symptoms text
+    body_parts: List[str] = []  # Affected body parts
+    duration: str  # Duration of symptoms
+    severity: str  # mild, moderate, severe
+    additional_info: str = ""
+    age: Optional[int] = None
+    gender: Optional[str] = None
+
+class SymptomCheckResponse(BaseModel):
+    analysis_id: str
+    urgency_level: str  # Low, Medium, High
+    possible_conditions: List[Dict[str, Any]]
+    recommendations: List[str]
+    when_to_seek_care: str
+    disclaimer: str
+    follow_up_questions: List[str] = []
+
 # Health Knowledge Base
 HEALTH_KNOWLEDGE_BASE = """
 You are Nutracía AI Health Coach, an expert in fitness, nutrition, and skincare. You provide personalized recommendations based on:
