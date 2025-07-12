@@ -2340,54 +2340,6 @@ const HealthPage = () => {
     }));
   };
 
-  // Resource Locator Implementation
-  const findNearbyFacilities = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          
-          // Mock nearby facilities data
-          const mockFacilities = [
-            { name: 'City General Hospital', type: 'Hospital', distance: '2.3 km', rating: 4.5, address: '123 Main St' },
-            { name: 'Health Plus Clinic', type: 'Clinic', distance: '1.8 km', rating: 4.2, address: '456 Oak Ave' },
-            { name: 'MedCare Center', type: 'Medical Center', distance: '3.1 km', rating: 4.7, address: '789 Pine Rd' },
-            { name: 'Wellness Pharmacy', type: 'Pharmacy', distance: '0.9 km', rating: 4.3, address: '321 Elm St' }
-          ];
-          setNearbyFacilities(mockFacilities);
-        },
-        (error) => {
-          alert('Location access denied. Please enable location services.');
-        }
-      );
-    }
-  };
-
-  // Community Posts Mock Data
-  const mockCommunityPosts = [
-    {
-      id: 1,
-      author: 'HealthSeeker123',
-      title: 'Managing Diabetes - My Journey',
-      content: 'Sharing my experience with lifestyle changes that helped control my blood sugar...',
-      likes: 45,
-      comments: 12,
-      timeAgo: '2 hours ago'
-    },
-    {
-      id: 2,
-      author: 'WellnessWarrior',
-      title: 'Mental Health Resources',
-      content: 'Compiled a list of helpful mental health resources and support groups...',
-      likes: 67,
-      comments: 23,
-      timeAgo: '5 hours ago'
-    }
-  ];
-
   // Health Education Topics
   const educationTopics = [
     { title: 'Heart Health', description: 'Prevention and management of cardiovascular diseases', icon: '❤️' },
