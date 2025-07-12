@@ -2199,11 +2199,24 @@ const DietPage = () => {
 };
 
 const HealthPage = () => {
-  const [activeFeature, setActiveFeature] = useState('symptom-checker');
-  const [showAIConsultation, setShowAIConsultation] = useState(false);
-  const [symptomInput, setSymptomInput] = useState('');
-  const [aiAnalysis, setAiAnalysis] = useState('');
+  // State management for all features
+  const [activeTab, setActiveTab] = useState('symptoms');
+  const [symptomData, setSymptomData] = useState({
+    symptoms: '',
+    duration: '',
+    severity: 'moderate',
+    additionalInfo: ''
+  });
+  const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { type: 'bot', content: 'Hello! I\'m your AI health assistant. How can I help you today?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearbyFacilities, setNearbyFacilities] = useState([]);
+  const [communityPosts, setCommunityPosts] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   const handleSectionHover = (isHovering) => {
     const healthIcon = document.querySelector('.header-health-icon');
@@ -2220,254 +2233,425 @@ const HealthPage = () => {
     }
   };
 
-  const healthFeatures = [
-    {
-      id: 'symptom-checker',
-      title: 'AI Symptom Checker',
-      description: 'Advanced symptom analysis with AI-powered health assessments',
-      icon: '🩺',
-      color: 'from-red-400 to-pink-500',
-      bgColor: 'from-red-500/20 to-pink-500/20'
-    },
-    {
-      id: 'health-assistant',
-      title: 'Medical Assistant',
-      description: 'Interactive AI-powered health companion for personalized guidance',
-      icon: '🤖',
-      color: 'from-blue-400 to-cyan-500',
-      bgColor: 'from-blue-500/20 to-cyan-500/20'
-    },
-    {
-      id: 'health-tracker',
-      title: 'Health Tracker',
-      description: 'Monitor your wellness metrics and health goals',
-      icon: '📊',
-      color: 'from-green-400 to-emerald-500',
-      bgColor: 'from-green-500/20 to-emerald-500/20'
-    },
-    {
-      id: 'wellness-center',
-      title: 'Wellness Center',
-      description: 'Educational resources and wellness programs',
-      icon: '🏥',
-      color: 'from-purple-400 to-violet-500',
-      bgColor: 'from-purple-500/20 to-violet-500/20'
-    },
-    {
-      id: 'community',
-      title: 'Health Community',
-      description: 'Connect with others on similar health journeys',
-      icon: '👥',
-      color: 'from-orange-400 to-red-500',
-      bgColor: 'from-orange-500/20 to-red-500/20'
-    },
-    {
-      id: 'reminders',
-      title: 'Smart Reminders',
-      description: 'Personalized health notifications and medication reminders',
-      icon: '⏰',
-      color: 'from-amber-400 to-orange-500',
-      bgColor: 'from-amber-500/20 to-orange-500/20'
-    }
-  ];
-
-  const handleSymptomAnalysis = async () => {
-    if (!symptomInput.trim()) return;
+  // Symptom Checker Implementation
+  const analyzeSymptoms = async () => {
+    if (!symptomData.symptoms.trim()) return;
     
     setLoading(true);
     try {
-      // Simulate AI analysis - in real implementation, this would call the healnav-style AI service
+      // Simulate AI analysis
       setTimeout(() => {
-        setAiAnalysis(`Based on your symptoms "${symptomInput}", here's my analysis:
-
-• **Urgency Level**: Low to Moderate
-• **Possible Causes**: Several conditions could be related to your symptoms
-• **Recommendations**: 
-  - Stay hydrated and get adequate rest
-  - Monitor symptoms for 24-48 hours
-  - Consult healthcare provider if symptoms worsen
-  - Consider lifestyle modifications
-
-• **When to Seek Care**: If symptoms persist beyond 48 hours or if you experience severe discomfort
-
-*Note: This analysis is for informational purposes only and should not replace professional medical advice.*`);
+        const analysis = {
+          urgencyLevel: symptomData.severity === 'severe' ? 'High' : symptomData.severity === 'moderate' ? 'Medium' : 'Low',
+          possibleConditions: [
+            { name: 'Common Cold', probability: '45%', description: 'Upper respiratory tract infection' },
+            { name: 'Viral Fever', probability: '30%', description: 'Systemic viral infection' },
+            { name: 'Stress-related', probability: '25%', description: 'Stress-induced symptoms' }
+          ],
+          recommendations: [
+            'Stay hydrated and get adequate rest',
+            'Monitor symptoms for 24-48 hours',
+            'Consider over-the-counter remedies if appropriate',
+            'Consult healthcare provider if symptoms worsen'
+          ],
+          whenToSeekCare: symptomData.severity === 'severe' 
+            ? 'Seek immediate medical attention'
+            : 'Consult a doctor if symptoms persist beyond 3 days',
+          disclaimer: 'This analysis is for informational purposes only and should not replace professional medical advice.'
+        };
+        setAnalysisResult(analysis);
         setLoading(false);
-      }, 2000);
+      }, 2500);
     } catch (error) {
       setLoading(false);
-      setAiAnalysis('Unable to analyze symptoms at this time. Please try again later.');
+      alert('Analysis failed. Please try again.');
     }
   };
 
-  const renderFeatureContent = () => {
-    const feature = healthFeatures.find(f => f.id === activeFeature);
-    if (!feature) return null;
+  // Medical Bot Implementation
+  const sendChatMessage = async () => {
+    if (!chatInput.trim()) return;
+    
+    const userMessage = chatInput;
+    setChatInput('');
+    setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    
+    // Simulate bot response
+    setTimeout(() => {
+      const responses = [
+        "I understand your concern. Can you provide more details about when these symptoms started?",
+        "Based on what you've described, here are some general recommendations...",
+        "That's a great question! Let me help you understand this better.",
+        "I recommend consulting with a healthcare professional for a proper evaluation.",
+        "Here are some healthy lifestyle tips that might help..."
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      setChatMessages(prev => [...prev, { type: 'bot', content: randomResponse }]);
+    }, 1000);
+  };
 
-    switch (activeFeature) {
-      case 'symptom-checker':
+  // Resource Locator Implementation
+  const findNearbyFacilities = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          
+          // Mock nearby facilities data
+          const mockFacilities = [
+            { name: 'City General Hospital', type: 'Hospital', distance: '2.3 km', rating: 4.5, address: '123 Main St' },
+            { name: 'Health Plus Clinic', type: 'Clinic', distance: '1.8 km', rating: 4.2, address: '456 Oak Ave' },
+            { name: 'MedCare Center', type: 'Medical Center', distance: '3.1 km', rating: 4.7, address: '789 Pine Rd' },
+            { name: 'Wellness Pharmacy', type: 'Pharmacy', distance: '0.9 km', rating: 4.3, address: '321 Elm St' }
+          ];
+          setNearbyFacilities(mockFacilities);
+        },
+        (error) => {
+          alert('Location access denied. Please enable location services.');
+        }
+      );
+    }
+  };
+
+  // Community Posts Mock Data
+  const mockCommunityPosts = [
+    {
+      id: 1,
+      author: 'HealthSeeker123',
+      title: 'Managing Diabetes - My Journey',
+      content: 'Sharing my experience with lifestyle changes that helped control my blood sugar...',
+      likes: 45,
+      comments: 12,
+      timeAgo: '2 hours ago'
+    },
+    {
+      id: 2,
+      author: 'WellnessWarrior',
+      title: 'Mental Health Resources',
+      content: 'Compiled a list of helpful mental health resources and support groups...',
+      likes: 67,
+      comments: 23,
+      timeAgo: '5 hours ago'
+    }
+  ];
+
+  // Health Education Topics
+  const educationTopics = [
+    { title: 'Heart Health', description: 'Prevention and management of cardiovascular diseases', icon: '❤️' },
+    { title: 'Mental Wellness', description: 'Understanding and maintaining mental health', icon: '🧠' },
+    { title: 'Nutrition Basics', description: 'Essential nutrition for optimal health', icon: '🥗' },
+    { title: 'Exercise & Fitness', description: 'Building and maintaining physical fitness', icon: '💪' },
+    { title: 'Preventive Care', description: 'Screenings and preventive measures', icon: '🛡️' },
+    { title: 'Sleep Health', description: 'Importance of quality sleep for health', icon: '😴' }
+  ];
+
+  // Smart Notifications Mock Data
+  const mockNotifications = [
+    { id: 1, type: 'medication', message: 'Time to take your morning medication', time: '9:00 AM' },
+    { id: 2, type: 'appointment', message: 'Doctor appointment reminder - Tomorrow 2:00 PM', time: 'Tomorrow' },
+    { id: 3, type: 'wellness', message: 'Weekly wellness check-in available', time: 'Today' }
+  ];
+
+  const navigationTabs = [
+    { id: 'symptoms', label: 'Symptom Checker', icon: '🩺' },
+    { id: 'chatbot', label: 'Medical Bot', icon: '🤖' },
+    { id: 'locator', label: 'Resource Locator', icon: '📍' },
+    { id: 'community', label: 'Community', icon: '👥' },
+    { id: 'education', label: 'Health Education', icon: '📚' },
+    { id: 'notifications', label: 'Smart Notifications', icon: '🔔' }
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'symptoms':
         return (
           <div className="space-y-6">
-            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-                <span className="text-red-400">🩺</span>
-                <span>AI Symptom Analysis</span>
-              </h3>
-              <div className="space-y-4">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">AI-Powered Symptom Checker</h2>
+              <p className="text-white/80">Get personalized health insights based on your symptoms</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-white/90 mb-2 font-medium">
-                    Describe your symptoms
-                  </label>
+                  <label className="block text-white font-semibold mb-3">Describe your symptoms</label>
                   <textarea
-                    value={symptomInput}
-                    onChange={(e) => setSymptomInput(e.target.value)}
-                    placeholder="e.g., headache, fatigue, stomach pain..."
-                    className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                    value={symptomData.symptoms}
+                    onChange={(e) => setSymptomData({...symptomData, symptoms: e.target.value})}
+                    placeholder="e.g., headache, fever, cough, fatigue..."
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     rows="4"
                   />
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-white font-semibold mb-3">Duration</label>
+                    <select
+                      value={symptomData.duration}
+                      onChange={(e) => setSymptomData({...symptomData, duration: e.target.value})}
+                      className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="" className="bg-gray-800">Select duration</option>
+                      <option value="less-than-1-day" className="bg-gray-800">Less than 1 day</option>
+                      <option value="1-3-days" className="bg-gray-800">1-3 days</option>
+                      <option value="1-week" className="bg-gray-800">About a week</option>
+                      <option value="more-than-week" className="bg-gray-800">More than a week</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-3">Severity Level</label>
+                    <select
+                      value={symptomData.severity}
+                      onChange={(e) => setSymptomData({...symptomData, severity: e.target.value})}
+                      className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="mild" className="bg-gray-800">Mild</option>
+                      <option value="moderate" className="bg-gray-800">Moderate</option>
+                      <option value="severe" className="bg-gray-800">Severe</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-white font-semibold mb-3">Additional Information (Optional)</label>
+                  <textarea
+                    value={symptomData.additionalInfo}
+                    onChange={(e) => setSymptomData({...symptomData, additionalInfo: e.target.value})}
+                    placeholder="Any other relevant information about your symptoms..."
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows="3"
+                  />
+                </div>
+
                 <button
-                  onClick={handleSymptomAnalysis}
-                  disabled={loading || !symptomInput.trim()}
-                  className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={analyzeSymptoms}
+                  disabled={loading || !symptomData.symptoms.trim()}
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-4 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Analyzing...' : 'Analyze Symptoms'}
                 </button>
               </div>
             </div>
 
-            {aiAnalysis && (
-              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-                <h4 className="text-xl font-semibold text-white mb-4">AI Analysis Results</h4>
-                <div className="text-white/90 whitespace-pre-line leading-relaxed">
-                  {aiAnalysis}
+            {analysisResult && (
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+                <h3 className="text-2xl font-bold text-white mb-6">Analysis Results</h3>
+                
+                <div className="space-y-6">
+                  <div className="bg-white/10 rounded-xl p-4">
+                    <h4 className="text-white font-semibold mb-2">Urgency Level</h4>
+                    <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                      analysisResult.urgencyLevel === 'High' ? 'bg-red-500/20 text-red-200' :
+                      analysisResult.urgencyLevel === 'Medium' ? 'bg-yellow-500/20 text-yellow-200' :
+                      'bg-green-500/20 text-green-200'
+                    }`}>
+                      {analysisResult.urgencyLevel}
+                    </span>
+                  </div>
+
+                  <div className="bg-white/10 rounded-xl p-4">
+                    <h4 className="text-white font-semibold mb-3">Possible Conditions</h4>
+                    <div className="space-y-3">
+                      {analysisResult.possibleConditions.map((condition, index) => (
+                        <div key={index} className="flex justify-between items-start">
+                          <div>
+                            <p className="text-white font-medium">{condition.name}</p>
+                            <p className="text-white/70 text-sm">{condition.description}</p>
+                          </div>
+                          <span className="text-blue-300 font-semibold">{condition.probability}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 rounded-xl p-4">
+                    <h4 className="text-white font-semibold mb-3">Recommendations</h4>
+                    <ul className="space-y-2">
+                      {analysisResult.recommendations.map((rec, index) => (
+                        <li key={index} className="text-white/90 flex items-start">
+                          <span className="text-green-400 mr-2">•</span>
+                          {rec}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <h4 className="text-red-200 font-semibold mb-2">When to Seek Care</h4>
+                    <p className="text-red-100">{analysisResult.whenToSeekCare}</p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-4">
+                    <p className="text-white/60 text-sm italic">{analysisResult.disclaimer}</p>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         );
 
-      case 'health-assistant':
+      case 'chatbot':
         return (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-              <span className="text-blue-400">🤖</span>
-              <span>Health Assistant</span>
-            </h3>
-            <div className="space-y-4">
-              <p className="text-white/90 leading-relaxed">
-                Your AI-powered health companion is ready to help with personalized guidance, 
-                health questions, and wellness recommendations.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-500/20 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Natural Language Support</h4>
-                  <p className="text-white/80 text-sm">Ask questions in everyday language</p>
-                </div>
-                <div className="bg-blue-500/20 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Personalized Advice</h4>
-                  <p className="text-white/80 text-sm">Get recommendations based on your health profile</p>
-                </div>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Medical AI Assistant</h2>
+              <p className="text-white/80">Get instant health guidance and support</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
+              <div className="h-96 overflow-y-auto mb-4 space-y-4">
+                {chatMessages.map((message, index) => (
+                  <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      message.type === 'user' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-white/20 text-white'
+                    }`}>
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
               </div>
+
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
+                  placeholder="Ask about your health concerns..."
+                  className="flex-1 p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={sendChatMessage}
+                  className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'locator':
+        return (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Healthcare Resource Locator</h2>
+              <p className="text-white/80">Find nearby health services and facilities</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
               <button
-                onClick={() => setShowAIConsultation(true)}
-                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all"
+                onClick={findNearbyFacilities}
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-4 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all mb-6"
               >
-                Start AI Consultation
+                📍 Find Nearby Healthcare Facilities
               </button>
-            </div>
-          </div>
-        );
 
-      case 'health-tracker':
-        return (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-              <span className="text-green-400">📊</span>
-              <span>Health Metrics Dashboard</span>
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-green-500/20 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-2">7.2k</div>
-                <div className="text-white/70">Daily Steps</div>
-              </div>
-              <div className="bg-green-500/20 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-2">120/80</div>
-                <div className="text-white/70">Blood Pressure</div>
-              </div>
-              <div className="bg-green-500/20 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-2">72</div>
-                <div className="text-white/70">Heart Rate</div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'wellness-center':
-        return (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-              <span className="text-purple-400">🏥</span>
-              <span>Wellness Programs</span>
-            </h3>
-            <div className="space-y-4">
-              <div className="bg-purple-500/20 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Hypertension Management</h4>
-                <p className="text-white/80 text-sm mb-3">Comprehensive program for blood pressure control</p>
-                <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-white/70">📅 10-30 min/day</span>
-                  <span className="text-white/70">📈 Beginner-Intermediate</span>
+              {nearbyFacilities.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold text-lg">Nearby Facilities</h3>
+                  {nearbyFacilities.map((facility, index) => (
+                    <div key={index} className="bg-white/10 rounded-xl p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-white font-semibold">{facility.name}</h4>
+                          <p className="text-white/70">{facility.type} • {facility.address}</p>
+                          <p className="text-white/60">{facility.distance}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-yellow-400">⭐ {facility.rating}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="bg-purple-500/20 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Diabetes Prevention</h4>
-                <p className="text-white/80 text-sm mb-3">Evidence-based lifestyle interventions</p>
-                <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-white/70">📅 Daily guidance</span>
-                  <span className="text-white/70">🎯 Prevention focused</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         );
 
       case 'community':
         return (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-              <span className="text-orange-400">👥</span>
-              <span>Health Community</span>
-            </h3>
-            <div className="space-y-4">
-              <p className="text-white/90">Connect with others on similar health journeys and share experiences securely.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-orange-500/20 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Support Groups</h4>
-                  <p className="text-white/80 text-sm">Join condition-specific communities</p>
-                </div>
-                <div className="bg-orange-500/20 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Success Stories</h4>
-                  <p className="text-white/80 text-sm">Get inspired by others' journeys</p>
-                </div>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Community Support</h2>
+              <p className="text-white/80">Connect with others and share experiences</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+              <div className="space-y-6">
+                {mockCommunityPosts.map((post) => (
+                  <div key={post.id} className="bg-white/10 rounded-xl p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-white font-semibold">{post.title}</h3>
+                        <p className="text-white/70 text-sm">by {post.author} • {post.timeAgo}</p>
+                      </div>
+                    </div>
+                    <p className="text-white/90 mb-4">{post.content}</p>
+                    <div className="flex space-x-4 text-white/70">
+                      <span>👍 {post.likes} likes</span>
+                      <span>💬 {post.comments} comments</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         );
 
-      case 'reminders':
+      case 'education':
         return (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-              <span className="text-amber-400">⏰</span>
-              <span>Smart Health Reminders</span>
-            </h3>
-            <div className="space-y-4">
-              <div className="bg-amber-500/20 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Medication Reminders</h4>
-                <p className="text-white/80 text-sm">Never miss a dose with personalized alerts</p>
-              </div>
-              <div className="bg-amber-500/20 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Health Goals</h4>
-                <p className="text-white/80 text-sm">Track progress and stay motivated</p>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Health Education Center</h2>
+              <p className="text-white/80">Learn about health topics and wellness</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {educationTopics.map((topic, index) => (
+                <div key={index} className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
+                  <div className="text-4xl mb-4">{topic.icon}</div>
+                  <h3 className="text-white font-semibold text-lg mb-2">{topic.title}</h3>
+                  <p className="text-white/70">{topic.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'notifications':
+        return (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Smart Health Notifications</h2>
+              <p className="text-white/80">Stay on top of your health with personalized reminders</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+              <div className="space-y-4">
+                {mockNotifications.map((notification) => (
+                  <div key={notification.id} className="bg-white/10 rounded-xl p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">
+                        {notification.type === 'medication' ? '💊' : 
+                         notification.type === 'appointment' ? '📅' : '🎯'}
+                      </span>
+                      <div>
+                        <p className="text-white font-medium">{notification.message}</p>
+                        <p className="text-white/70 text-sm">{notification.time}</p>
+                      </div>
+                    </div>
+                    <button className="text-blue-400 hover:text-blue-300">Mark as read</button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -2502,46 +2686,43 @@ const HealthPage = () => {
               <span className="text-3xl">🏥</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-              AI-Powered Health Navigation
+              HealNav - Complete Health Platform
             </h1>
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Your comprehensive health companion powered by advanced AI technology
+              AI-powered health navigation with comprehensive tools for symptom checking, medical assistance, and wellness management
             </p>
           </motion.div>
 
-          {/* Feature Navigation */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-            {healthFeatures.map((feature, index) => (
+          {/* Navigation Tabs */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {navigationTabs.map((tab) => (
               <motion.button
-                key={feature.id}
+                key={tab.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                onClick={() => setActiveFeature(feature.id)}
-                className={`bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300 ${
-                  activeFeature === feature.id 
-                    ? 'ring-2 ring-amber-400 bg-white/20' 
-                    : ''
+                transition={{ duration: 0.6 }}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 border border-white/20'
                 }`}
               >
-                <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-full flex items-center justify-center mx-auto mb-3`}>
-                  <span className="text-2xl">{feature.icon}</span>
-                </div>
-                <h3 className="text-white font-semibold text-sm mb-1">{feature.title}</h3>
-                <p className="text-white/70 text-xs leading-tight">{feature.description}</p>
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
               </motion.button>
             ))}
           </div>
 
-          {/* Feature Content */}
+          {/* Content */}
           <motion.div
-            key={activeFeature}
+            key={activeTab}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
             className="mb-8"
           >
-            {renderFeatureContent()}
+            {renderContent()}
           </motion.div>
 
           {/* Privacy Notice */}
@@ -2554,7 +2735,7 @@ const HealthPage = () => {
             <h3 className="text-white font-semibold mb-2">🔒 Privacy & Security</h3>
             <p className="text-white/70 text-sm">
               Your health data is secure. We use advanced encryption and follow strict privacy protocols. 
-              No personal health information is stored permanently.
+              No personal health information is stored permanently. All AI analysis happens in real-time.
             </p>
           </motion.div>
         </div>
