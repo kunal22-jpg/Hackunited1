@@ -2625,11 +2625,11 @@ const HealthPage = () => {
               <p className="text-white/80">Get instant health guidance and support</p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
-              <div className="h-96 overflow-y-auto mb-4 space-y-4">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+              <div className="h-80 md:h-96 overflow-y-auto mb-4 space-y-4 p-2">
                 {chatMessages.map((message, index) => (
                   <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
                       message.type === 'user' 
                         ? 'bg-blue-500 text-white' 
                         : 'bg-white/20 text-white'
@@ -2638,6 +2638,21 @@ const HealthPage = () => {
                     </div>
                   </div>
                 ))}
+                
+                {chatLoading && (
+                  <div className="flex justify-start">
+                    <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-lg bg-white/20 text-white">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                          <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        </div>
+                        <span className="text-sm">AI is thinking...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex space-x-2">
@@ -2645,16 +2660,39 @@ const HealthPage = () => {
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
+                  onKeyPress={(e) => e.key === 'Enter' && !chatLoading && sendChatMessage()}
                   placeholder="Ask about your health concerns..."
                   className="flex-1 p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={chatLoading}
                 />
                 <button
                   onClick={sendChatMessage}
-                  className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                  disabled={!chatInput.trim() || chatLoading}
+                  className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
-                  Send
+                  {chatLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <span>Send</span>
+                      <span>💬</span>
+                    </>
+                  )}
                 </button>
+              </div>
+              
+              {/* Quick suggestions */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {['💪 Workout advice', '🥗 Nutrition tips', '✨ Skincare help', '🧘 Stress management'].map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setChatInput(suggestion)}
+                    className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-white/80 text-sm transition-colors"
+                    disabled={chatLoading}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
