@@ -1110,6 +1110,315 @@ def test_personalized_wellness_recommendations():
         print(f"❌ Personalized wellness recommendations endpoint test failed: {str(e)}")
         return False
 
+def test_symptom_checker_api():
+    """Test the symptom checker API endpoint with comprehensive test cases"""
+    print("\n=== Testing Symptom Checker API Endpoint ===")
+    
+    test_cases = [
+        {
+            "name": "Predefined symptoms - fever, headache, cough",
+            "payload": {
+                "symptoms": ["fever", "headache", "cough"],
+                "custom_symptoms": "",
+                "body_parts": ["head", "throat"],
+                "duration": "3-7-days",
+                "severity": "moderate",
+                "additional_info": "Started 3 days ago",
+                "age": 28,
+                "gender": "female"
+            }
+        },
+        {
+            "name": "Custom symptoms with body parts",
+            "payload": {
+                "symptoms": [],
+                "custom_symptoms": "muscle aches and joint pain",
+                "body_parts": ["arms", "legs", "back"],
+                "duration": "1-3-days",
+                "severity": "mild",
+                "additional_info": "After workout session",
+                "age": 35,
+                "gender": "male"
+            }
+        },
+        {
+            "name": "Severe symptoms test",
+            "payload": {
+                "symptoms": ["chest pain", "difficulty breathing"],
+                "custom_symptoms": "",
+                "body_parts": ["chest"],
+                "duration": "less-than-1-day",
+                "severity": "severe",
+                "additional_info": "Sudden onset",
+                "age": 45,
+                "gender": "male"
+            }
+        },
+        {
+            "name": "Mild symptoms with long duration",
+            "payload": {
+                "symptoms": ["fatigue", "mild headache"],
+                "custom_symptoms": "occasional dizziness",
+                "body_parts": ["head"],
+                "duration": "more-than-week",
+                "severity": "mild",
+                "additional_info": "Gradual onset over past 2 weeks",
+                "age": 22,
+                "gender": "female"
+            }
+        },
+        {
+            "name": "Digestive symptoms",
+            "payload": {
+                "symptoms": ["nausea", "stomach pain"],
+                "custom_symptoms": "bloating after meals",
+                "body_parts": ["abdomen"],
+                "duration": "1-3-days",
+                "severity": "moderate",
+                "additional_info": "Started after eating at new restaurant",
+                "age": 30,
+                "gender": "female"
+            }
+        }
+    ]
+    
+    all_passed = True
+    
+    for test_case in test_cases:
+        print(f"\n--- Testing: {test_case['name']} ---")
+        try:
+            response = requests.post(f"{API_URL}/symptoms/analyze", json=test_case['payload'])
+            print(f"Status Code: {response.status_code}")
+            data = response.json()
+            
+            # Basic validation
+            assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+            
+            # Validate required response fields
+            required_fields = ["analysis_id", "urgency_level", "possible_conditions", 
+                             "recommendations", "when_to_seek_care", "disclaimer"]
+            for field in required_fields:
+                assert field in data, f"Response missing required field: {field}"
+            
+            # Validate field types and content
+            assert isinstance(data["analysis_id"], str), "analysis_id should be a string"
+            assert data["urgency_level"] in ["Low", "Medium", "High"], f"Invalid urgency level: {data['urgency_level']}"
+            assert isinstance(data["possible_conditions"], list), "possible_conditions should be a list"
+            assert isinstance(data["recommendations"], list), "recommendations should be a list"
+            assert isinstance(data["when_to_seek_care"], str), "when_to_seek_care should be a string"
+            assert isinstance(data["disclaimer"], str), "disclaimer should be a string"
+            
+            # Validate possible conditions structure
+            if data["possible_conditions"]:
+                for condition in data["possible_conditions"]:
+                    assert "name" in condition, "Condition missing 'name' field"
+                    assert "probability" in condition, "Condition missing 'probability' field"
+                    assert "description" in condition, "Condition missing 'description' field"
+            
+            # Validate recommendations are not empty
+            assert len(data["recommendations"]) > 0, "Recommendations list is empty"
+            
+            # Validate disclaimer is present
+            assert len(data["disclaimer"]) > 0, "Disclaimer is empty"
+            assert "informational purposes" in data["disclaimer"].lower(), "Disclaimer should mention informational purposes"
+            
+            # Validate urgency level logic
+            if test_case["payload"]["severity"] == "severe":
+                assert data["urgency_level"] == "High", f"Severe symptoms should result in High urgency, got {data['urgency_level']}"
+            elif "chest pain" in test_case["payload"]["symptoms"] or "difficulty breathing" in test_case["payload"]["symptoms"]:
+                assert data["urgency_level"] == "High", f"Serious symptoms should result in High urgency, got {data['urgency_level']}"
+            
+            # Print sample response for inspection
+            print(f"Analysis ID: {data['analysis_id']}")
+            print(f"Urgency Level: {data['urgency_level']}")
+            print(f"Possible Conditions: {len(data['possible_conditions'])} found")
+            if data["possible_conditions"]:
+                print(f"  - {data['possible_conditions'][0]['name']}: {data['possible_conditions'][0]['probability']}")
+            print(f"Recommendations: {len(data['recommendations'])} provided")
+            print(f"When to seek care: {data['when_to_seek_care'][:100]}...")
+            
+            # Check for follow-up questions if present
+            if "follow_up_questions" in data:
+                assert isinstance(data["follow_up_questions"], list), "follow_up_questions should be a list"
+                print(f"Follow-up questions: {len(data['follow_up_questions'])} provided")
+            
+            print(f"✅ Test case '{test_case['name']}' passed")
+            
+        except Exception as e:
+            print(f"❌ Test case '{test_case['name']}' failed: {str(e)}")
+            all_passed = False
+    
+    if all_passed:
+        print("\n✅ All symptom checker API test cases passed")
+    else:
+        print("\n❌ Some symptom checker API test cases failed")
+    
+    return all_passed
+
+def test_health_chat_api():
+    """Test the health chat API endpoint with various health-related messages"""
+    print("\n=== Testing Health Chat API Endpoint ===")
+    
+    # Generate a unique user ID for testing
+    test_user_id = str(uuid.uuid4())
+    
+    test_cases = [
+        {
+            "name": "General health question",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "What are some tips for staying healthy?"
+            }
+        },
+        {
+            "name": "Workout advice request",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "Can you recommend a good workout routine for beginners?"
+            }
+        },
+        {
+            "name": "Nutrition question",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "What should I eat to lose weight safely?"
+            }
+        },
+        {
+            "name": "Skincare advice",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "How can I improve my skincare routine for acne-prone skin?"
+            }
+        },
+        {
+            "name": "Personalized request with profile",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "What workout would be best for my fitness level?",
+                "user_profile": {
+                    "weight": "70kg",
+                    "allergies": "peanuts",
+                    "skin_concern": "dry skin"
+                }
+            }
+        },
+        {
+            "name": "Sleep and wellness",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "How can I improve my sleep quality and reduce stress?"
+            }
+        },
+        {
+            "name": "Diet with allergies",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "What diet plan would work for someone with nut allergies?",
+                "user_profile": {
+                    "weight": "65kg",
+                    "allergies": "nuts, shellfish",
+                    "skin_concern": "normal"
+                }
+            }
+        },
+        {
+            "name": "Muscle building advice",
+            "payload": {
+                "user_id": test_user_id,
+                "message": "I want to build muscle mass. What exercises and nutrition do you recommend?",
+                "user_profile": {
+                    "weight": "75kg",
+                    "allergies": "none",
+                    "skin_concern": "oily"
+                }
+            }
+        }
+    ]
+    
+    all_passed = True
+    
+    for test_case in test_cases:
+        print(f"\n--- Testing: {test_case['name']} ---")
+        try:
+            response = requests.post(f"{API_URL}/chat", json=test_case['payload'])
+            print(f"Status Code: {response.status_code}")
+            data = response.json()
+            
+            # Basic validation
+            assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+            
+            # Validate required response fields
+            required_fields = ["response", "message_id"]
+            for field in required_fields:
+                assert field in data, f"Response missing required field: {field}"
+            
+            # Validate field types and content
+            assert isinstance(data["response"], str), "response should be a string"
+            assert isinstance(data["message_id"], str), "message_id should be a string"
+            assert len(data["response"]) > 0, "Response should not be empty"
+            assert len(data["message_id"]) > 0, "Message ID should not be empty"
+            
+            # Check for optional fields
+            if "requires_profile" in data:
+                assert isinstance(data["requires_profile"], bool), "requires_profile should be a boolean"
+                if data["requires_profile"] and "profile_fields" in data:
+                    assert isinstance(data["profile_fields"], list), "profile_fields should be a list"
+            
+            # Validate response relevance to the question
+            message_lower = test_case["payload"]["message"].lower()
+            response_lower = data["response"].lower()
+            
+            # Check if response is relevant to the question topic
+            if "workout" in message_lower or "exercise" in message_lower:
+                relevant_terms = ["workout", "exercise", "fitness", "training", "muscle", "strength", "cardio"]
+                assert any(term in response_lower for term in relevant_terms), \
+                    f"Workout-related response should contain relevant terms. Response: {data['response'][:100]}..."
+            
+            elif "diet" in message_lower or "nutrition" in message_lower or "eat" in message_lower:
+                relevant_terms = ["diet", "nutrition", "food", "eat", "meal", "protein", "calories", "healthy"]
+                assert any(term in response_lower for term in relevant_terms), \
+                    f"Nutrition-related response should contain relevant terms. Response: {data['response'][:100]}..."
+            
+            elif "skincare" in message_lower or "skin" in message_lower:
+                relevant_terms = ["skin", "skincare", "routine", "cleanser", "moisturizer", "acne", "dry", "oily"]
+                assert any(term in response_lower for term in relevant_terms), \
+                    f"Skincare-related response should contain relevant terms. Response: {data['response'][:100]}..."
+            
+            elif "sleep" in message_lower or "stress" in message_lower:
+                relevant_terms = ["sleep", "stress", "rest", "relax", "wellness", "health", "routine"]
+                assert any(term in response_lower for term in relevant_terms), \
+                    f"Sleep/stress-related response should contain relevant terms. Response: {data['response'][:100]}..."
+            
+            # Check if allergies are mentioned when provided in user profile
+            if "user_profile" in test_case["payload"] and test_case["payload"]["user_profile"].get("allergies"):
+                allergies = test_case["payload"]["user_profile"]["allergies"]
+                if allergies != "none" and "diet" in message_lower:
+                    # For diet-related questions with allergies, response should mention avoiding allergens
+                    assert "avoid" in response_lower or allergies.lower() in response_lower, \
+                        f"Diet response should address user's allergies: {allergies}"
+            
+            # Print sample response for inspection
+            print(f"Message ID: {data['message_id']}")
+            print(f"Response preview: {data['response'][:150]}...")
+            if "requires_profile" in data:
+                print(f"Requires profile: {data['requires_profile']}")
+                if data.get("requires_profile") and "profile_fields" in data:
+                    print(f"Profile fields requested: {data['profile_fields']}")
+            
+            print(f"✅ Test case '{test_case['name']}' passed")
+            
+        except Exception as e:
+            print(f"❌ Test case '{test_case['name']}' failed: {str(e)}")
+            all_passed = False
+    
+    if all_passed:
+        print("\n✅ All health chat API test cases passed")
+    else:
+        print("\n❌ Some health chat API test cases failed")
+    
+    return all_passed
+
 def run_all_tests():
     """Run all tests and return results"""
     results = {}
@@ -1158,6 +1467,10 @@ def run_all_tests():
     # Test personalized wellness recommendations
     results["personalized_wellness_recommendations"] = test_personalized_wellness_recommendations()
     results["personalized_wellness_recommendations_alt"] = test_personalized_wellness_recommendations_alt()
+    
+    # Test NEW symptom checker and health chat APIs
+    results["symptom_checker_api"] = test_symptom_checker_api()
+    results["health_chat_api"] = test_health_chat_api()
     
     # Print summary
     print("\n=== Test Summary ===")
