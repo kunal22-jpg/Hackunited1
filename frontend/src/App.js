@@ -2199,6 +2199,12 @@ const DietPage = () => {
 };
 
 const HealthPage = () => {
+  const [activeFeature, setActiveFeature] = useState('symptom-checker');
+  const [showAIConsultation, setShowAIConsultation] = useState(false);
+  const [symptomInput, setSymptomInput] = useState('');
+  const [aiAnalysis, setAiAnalysis] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleSectionHover = (isHovering) => {
     const healthIcon = document.querySelector('.header-health-icon');
     if (healthIcon) {
@@ -2214,6 +2220,264 @@ const HealthPage = () => {
     }
   };
 
+  const healthFeatures = [
+    {
+      id: 'symptom-checker',
+      title: 'AI Symptom Checker',
+      description: 'Advanced symptom analysis with AI-powered health assessments',
+      icon: '🩺',
+      color: 'from-red-400 to-pink-500',
+      bgColor: 'from-red-500/20 to-pink-500/20'
+    },
+    {
+      id: 'health-assistant',
+      title: 'Medical Assistant',
+      description: 'Interactive AI-powered health companion for personalized guidance',
+      icon: '🤖',
+      color: 'from-blue-400 to-cyan-500',
+      bgColor: 'from-blue-500/20 to-cyan-500/20'
+    },
+    {
+      id: 'health-tracker',
+      title: 'Health Tracker',
+      description: 'Monitor your wellness metrics and health goals',
+      icon: '📊',
+      color: 'from-green-400 to-emerald-500',
+      bgColor: 'from-green-500/20 to-emerald-500/20'
+    },
+    {
+      id: 'wellness-center',
+      title: 'Wellness Center',
+      description: 'Educational resources and wellness programs',
+      icon: '🏥',
+      color: 'from-purple-400 to-violet-500',
+      bgColor: 'from-purple-500/20 to-violet-500/20'
+    },
+    {
+      id: 'community',
+      title: 'Health Community',
+      description: 'Connect with others on similar health journeys',
+      icon: '👥',
+      color: 'from-orange-400 to-red-500',
+      bgColor: 'from-orange-500/20 to-red-500/20'
+    },
+    {
+      id: 'reminders',
+      title: 'Smart Reminders',
+      description: 'Personalized health notifications and medication reminders',
+      icon: '⏰',
+      color: 'from-amber-400 to-orange-500',
+      bgColor: 'from-amber-500/20 to-orange-500/20'
+    }
+  ];
+
+  const handleSymptomAnalysis = async () => {
+    if (!symptomInput.trim()) return;
+    
+    setLoading(true);
+    try {
+      // Simulate AI analysis - in real implementation, this would call the healnav-style AI service
+      setTimeout(() => {
+        setAiAnalysis(`Based on your symptoms "${symptomInput}", here's my analysis:
+
+• **Urgency Level**: Low to Moderate
+• **Possible Causes**: Several conditions could be related to your symptoms
+• **Recommendations**: 
+  - Stay hydrated and get adequate rest
+  - Monitor symptoms for 24-48 hours
+  - Consult healthcare provider if symptoms worsen
+  - Consider lifestyle modifications
+
+• **When to Seek Care**: If symptoms persist beyond 48 hours or if you experience severe discomfort
+
+*Note: This analysis is for informational purposes only and should not replace professional medical advice.*`);
+        setLoading(false);
+      }, 2000);
+    } catch (error) {
+      setLoading(false);
+      setAiAnalysis('Unable to analyze symptoms at this time. Please try again later.');
+    }
+  };
+
+  const renderFeatureContent = () => {
+    const feature = healthFeatures.find(f => f.id === activeFeature);
+    if (!feature) return null;
+
+    switch (activeFeature) {
+      case 'symptom-checker':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+                <span className="text-red-400">🩺</span>
+                <span>AI Symptom Analysis</span>
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-white/90 mb-2 font-medium">
+                    Describe your symptoms
+                  </label>
+                  <textarea
+                    value={symptomInput}
+                    onChange={(e) => setSymptomInput(e.target.value)}
+                    placeholder="e.g., headache, fatigue, stomach pain..."
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                    rows="4"
+                  />
+                </div>
+                <button
+                  onClick={handleSymptomAnalysis}
+                  disabled={loading || !symptomInput.trim()}
+                  className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Analyzing...' : 'Analyze Symptoms'}
+                </button>
+              </div>
+            </div>
+
+            {aiAnalysis && (
+              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+                <h4 className="text-xl font-semibold text-white mb-4">AI Analysis Results</h4>
+                <div className="text-white/90 whitespace-pre-line leading-relaxed">
+                  {aiAnalysis}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'health-assistant':
+        return (
+          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+              <span className="text-blue-400">🤖</span>
+              <span>Health Assistant</span>
+            </h3>
+            <div className="space-y-4">
+              <p className="text-white/90 leading-relaxed">
+                Your AI-powered health companion is ready to help with personalized guidance, 
+                health questions, and wellness recommendations.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-500/20 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Natural Language Support</h4>
+                  <p className="text-white/80 text-sm">Ask questions in everyday language</p>
+                </div>
+                <div className="bg-blue-500/20 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Personalized Advice</h4>
+                  <p className="text-white/80 text-sm">Get recommendations based on your health profile</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAIConsultation(true)}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all"
+              >
+                Start AI Consultation
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'health-tracker':
+        return (
+          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+              <span className="text-green-400">📊</span>
+              <span>Health Metrics Dashboard</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-green-500/20 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-white mb-2">7.2k</div>
+                <div className="text-white/70">Daily Steps</div>
+              </div>
+              <div className="bg-green-500/20 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-white mb-2">120/80</div>
+                <div className="text-white/70">Blood Pressure</div>
+              </div>
+              <div className="bg-green-500/20 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-white mb-2">72</div>
+                <div className="text-white/70">Heart Rate</div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'wellness-center':
+        return (
+          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+              <span className="text-purple-400">🏥</span>
+              <span>Wellness Programs</span>
+            </h3>
+            <div className="space-y-4">
+              <div className="bg-purple-500/20 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Hypertension Management</h4>
+                <p className="text-white/80 text-sm mb-3">Comprehensive program for blood pressure control</p>
+                <div className="flex items-center space-x-4 text-sm">
+                  <span className="text-white/70">📅 10-30 min/day</span>
+                  <span className="text-white/70">📈 Beginner-Intermediate</span>
+                </div>
+              </div>
+              <div className="bg-purple-500/20 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Diabetes Prevention</h4>
+                <p className="text-white/80 text-sm mb-3">Evidence-based lifestyle interventions</p>
+                <div className="flex items-center space-x-4 text-sm">
+                  <span className="text-white/70">📅 Daily guidance</span>
+                  <span className="text-white/70">🎯 Prevention focused</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'community':
+        return (
+          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+              <span className="text-orange-400">👥</span>
+              <span>Health Community</span>
+            </h3>
+            <div className="space-y-4">
+              <p className="text-white/90">Connect with others on similar health journeys and share experiences securely.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-orange-500/20 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Support Groups</h4>
+                  <p className="text-white/80 text-sm">Join condition-specific communities</p>
+                </div>
+                <div className="bg-orange-500/20 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Success Stories</h4>
+                  <p className="text-white/80 text-sm">Get inspired by others' journeys</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'reminders':
+        return (
+          <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
+              <span className="text-amber-400">⏰</span>
+              <span>Smart Health Reminders</span>
+            </h3>
+            <div className="space-y-4">
+              <div className="bg-amber-500/20 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Medication Reminders</h4>
+                <p className="text-white/80 text-sm">Never miss a dose with personalized alerts</p>
+              </div>
+              <div className="bg-amber-500/20 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Health Goals</h4>
+                <p className="text-white/80 text-sm">Track progress and stay motivated</p>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div 
       className="min-h-screen relative overflow-hidden"
@@ -2225,144 +2489,73 @@ const HealthPage = () => {
         overlay="bg-black/70"
       />
       
-      <div className="relative z-10 pt-20 px-6 flex items-center justify-center min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          {/* Hypertension Wellness Program Card */}
+      <div className="relative z-10 pt-20 px-6 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-            }}
+            className="text-center mb-12"
           >
-            {/* Header with Icon */}
-            <div className="text-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-red-400 via-pink-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg ring-4 ring-white/20">
-                <span className="text-4xl">🩺</span>
-              </div>
-              <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
-                Hypertension Wellness Program
-              </h1>
-              <p className="text-xl text-amber-200 font-medium mb-4">
-                Category: Cardiovascular Health
-              </p>
-              <p className="text-white/90 text-lg leading-relaxed max-w-2xl mx-auto">
-                Manage high blood pressure through simple, structured exercises based on evidence-backed isometric and low-impact cardio routines. Designed for all fitness levels.
-              </p>
+            <div className="w-20 h-20 bg-gradient-to-br from-red-400 via-pink-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg ring-4 ring-white/20">
+              <span className="text-3xl">🏥</span>
             </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+              AI-Powered Health Navigation
+            </h1>
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Your comprehensive health companion powered by advanced AI technology
+            </p>
+          </motion.div>
 
-            {/* Duration and Level */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-                <div className="flex items-center space-x-4 text-white">
-                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <Clock size={24} className="text-blue-400" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">10–30 min</div>
-                    <div className="text-white/70">Duration</div>
-                  </div>
+          {/* Feature Navigation */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            {healthFeatures.map((feature, index) => (
+              <motion.button
+                key={feature.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                onClick={() => setActiveFeature(feature.id)}
+                className={`bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300 ${
+                  activeFeature === feature.id 
+                    ? 'ring-2 ring-amber-400 bg-white/20' 
+                    : ''
+                }`}
+              >
+                <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-full flex items-center justify-center mx-auto mb-3`}>
+                  <span className="text-2xl">{feature.icon}</span>
                 </div>
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-                <div className="flex items-center space-x-4 text-white">
-                  <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center">
-                    <Star size={24} className="text-amber-400" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">Beginner to Intermediate</div>
-                    <div className="text-white/70">Level</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <h3 className="text-white font-semibold text-sm mb-1">{feature.title}</h3>
+                <p className="text-white/70 text-xs leading-tight">{feature.description}</p>
+              </motion.button>
+            ))}
+          </div>
 
-            {/* Requirements Section */}
-            <div className="bg-white/10 rounded-xl p-6 border border-white/20 mb-8">
-              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-                <span className="text-orange-400">🎯</span>
-                <span>Requirements</span>
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-white/90">Sturdy wall space or chair for isometric holds (e.g., wall sits, static lunges)</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-white/90">Yoga mat or non-slip floor surface</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-white/90">Comfortable footwear</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-white/90">Optional stopwatch or timer</span>
-                </div>
-              </div>
-            </div>
+          {/* Feature Content */}
+          <motion.div
+            key={activeFeature}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            {renderFeatureContent()}
+          </motion.div>
 
-            {/* Tutorial Video Section */}
-            <div className="bg-white/10 rounded-xl p-6 border border-white/20 mb-8">
-              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-                <Play size={24} className="text-red-400" />
-                <span>Tutorial Video</span>
-              </h3>
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Play size={24} className="text-white ml-1" />
-                </div>
-                <h4 className="text-lg font-semibold text-white mb-2">
-                  Workout To Lower Your Blood Pressure Permanently – 10 Minutes
-                </h4>
-                <p className="text-white/70 mb-4">
-                  A focused routine with cardio and isometric exercises
-                </p>
-                <a
-                  href="https://youtu.be/lenl104oiFU?si=68OqXGVUxu3nYmnq"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors font-medium"
-                >
-                  <Play size={16} />
-                  <span>Watch on YouTube</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Why It Works Section */}
-            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-              <h3 className="text-2xl font-semibold text-white mb-4 flex items-center space-x-3">
-                <span className="text-green-400">🧠</span>
-                <span>Why It Works</span>
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-white/90 leading-relaxed">
-                    Isometric exercises like wall sits and plank holds can significantly reduce both systolic and diastolic blood pressure
-                  </p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-white/90 leading-relaxed">
-                    A focused 10-minute routine, 3–4 times per week, is effective and time-efficient
-                  </p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-white/90 leading-relaxed">
-                    Cardio complements isometrics, supporting better cardiovascular health overall
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Privacy Notice */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 text-center"
+          >
+            <h3 className="text-white font-semibold mb-2">🔒 Privacy & Security</h3>
+            <p className="text-white/70 text-sm">
+              Your health data is secure. We use advanced encryption and follow strict privacy protocols. 
+              No personal health information is stored permanently.
+            </p>
           </motion.div>
         </div>
       </div>
