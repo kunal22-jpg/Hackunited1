@@ -2884,20 +2884,6 @@ const HealthPage = () => {
           >
             {renderContent()}
           </motion.div>
-
-          {/* Privacy Notice */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 text-center"
-          >
-            <h3 className="text-white font-semibold mb-2">🔒 Privacy & Security</h3>
-            <p className="text-white/70 text-sm">
-              Your health data is secure. We use advanced encryption and follow strict privacy protocols. 
-              No personal health information is stored permanently. All AI analysis happens in real-time.
-            </p>
-          </motion.div>
         </div>
       </div>
     </div>
