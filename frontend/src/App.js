@@ -4321,15 +4321,11 @@ const MindSoulPage = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ 
-          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          filter: 'brightness(0.8)'
-        }}
+      {/* Background Video - Same as Login Page */}
+      <VideoBackground 
+        videoSrc="/video/login.mp4" 
+        overlay="bg-black/50"
       />
-      <div className="absolute inset-0 bg-black/30" />
       
       <div className="relative z-10 pt-24 px-4">
         <div className="max-w-7xl mx-auto">
