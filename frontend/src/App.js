@@ -4598,6 +4598,38 @@ const SkincareQuotePage = () => (
   </div>
 );
 
+const MindSoulQuotePage = () => (
+  <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ 
+        backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        filter: 'brightness(0.6)'
+      }}
+    />
+    <div className="absolute inset-0 bg-black/40" />
+    
+    <div className="relative z-10 pt-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 mb-8">
+            <h1 className="text-6xl md:text-7xl font-['Great_Vibes'] text-white mb-8 leading-tight">
+              "Peace comes from within, mindfulness is the key."
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-purple-400 to-pink-500 mx-auto rounded-full"></div>
+          </div>
+        </motion.div>
+        
+        <LoginCallToAction sectionName="Mind & Soul" />
+      </div>
+    </div>
+  </div>
+);
+
 const DietQuotePage = () => (
   <div className="min-h-screen relative overflow-hidden">
     <VideoBackground 
