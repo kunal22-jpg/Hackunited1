@@ -2342,6 +2342,9 @@ const HealthPage = () => {
     severity: 'moderate',
     additional_info: ''
   });
+  // Health Education Popup State
+  const [selectedEducationTopic, setSelectedEducationTopic] = useState(null);
+  const [isEducationModalOpen, setEducationModalOpen] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [chatMessages, setChatMessages] = useState([
