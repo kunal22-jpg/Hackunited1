@@ -1331,6 +1331,120 @@ const Modal = ({ isOpen, onClose, item, type }) => {
               )}
             </div>
           )}
+
+          {type === 'meditation' && (
+            <div className="space-y-6">
+              {/* YouTube Video Embed */}
+              {item.youtube_video && (
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+                    <Play size={20} />
+                    <span>Guided Practice</span>
+                  </h3>
+                  <div className="relative w-full pb-[56.25%] h-0 rounded-lg overflow-hidden">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={item.youtube_video}
+                      title={`${item.title} Guided Practice`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+
+              {/* Duration, Type and Difficulty */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Clock size={20} className="text-blue-400" />
+                    <div>
+                      <div className="text-lg font-bold">{item.duration}</div>
+                      <div className="text-sm text-white/70">Duration</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <span className="text-purple-400 text-lg">🧘‍♀️</span>
+                    <div>
+                      <div className="text-lg font-bold capitalize">{item.type.replace('_', ' ')}</div>
+                      <div className="text-sm text-white/70">Type</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 text-white">
+                    <Star size={20} className="text-amber-400" />
+                    <div>
+                      <div className="text-lg font-bold capitalize">{item.difficulty}</div>
+                      <div className="text-sm text-white/70">Level</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefits Section */}
+              {item.benefits && item.benefits.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                    <span className="text-green-400">✨</span>
+                    <span>Benefits</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {item.benefits.map((benefit, idx) => (
+                      <span key={idx} className="bg-green-500/20 text-green-200 px-3 py-1 rounded-full text-sm">
+                        {benefit}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step-by-Step Instructions */}
+              {item.instructions && item.instructions.length > 0 && (
+                <div className="bg-white/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-4 flex items-center space-x-2">
+                    <span className="text-purple-400">📝</span>
+                    <span>Practice Instructions</span>
+                  </h4>
+                  <ul className="space-y-3">
+                    {item.instructions.map((instruction, idx) => (
+                      <li key={idx} className="flex items-start space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-purple-500 text-white rounded-full text-sm flex items-center justify-center font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-white/90 leading-relaxed">{instruction}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Category Tag */}
+              <div className="bg-white/10 rounded-xl p-4">
+                <h4 className="font-semibold text-white mb-3 flex items-center space-x-2">
+                  <span className="text-amber-400">🏷️</span>
+                  <span>Category</span>
+                </h4>
+                <span className="inline-block bg-amber-500/20 text-amber-200 px-4 py-2 rounded-full text-sm font-medium capitalize">
+                  {item.category.replace('_', ' ')}
+                </span>
+              </div>
+
+              {/* Action Button */}
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={onClose}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+                >
+                  <span>🧘‍♀️</span>
+                  <span>Start This Practice</span>
+                </button>
+              </div>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
