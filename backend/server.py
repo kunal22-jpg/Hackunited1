@@ -1653,6 +1653,442 @@ def get_fallback_recommendations(category: str, request: PersonalizedWellnessReq
     
     return [WellnessRecommendation(**rec) for rec in fallback_data.get(category, [])]
 
+# Mind and Soul API Models
+class MoodEntry(BaseModel):
+    user_id: str
+    date: str
+    mood: int = Field(..., ge=1, le=5)  # 1-5 scale
+    mood_label: str  # "Very Sad", "Sad", "Neutral", "Happy", "Very Happy"
+    energy: int = Field(..., ge=1, le=5)
+    stress: int = Field(..., ge=1, le=5)
+    notes: Optional[str] = ""
+
+class MeditationSession(BaseModel):
+    user_id: str
+    session_type: str  # "meditation", "breathing", "mindfulness", etc.
+    duration_minutes: int
+    completed: bool
+    date: str
+    session_id: str
+
+class HabitProgress(BaseModel):
+    user_id: str
+    habit_name: str
+    date: str
+    completed: bool
+    streak_count: int
+
+# Mind and Soul API Endpoints
+
+@api_router.get("/mind-soul/meditation-content")
+async def get_meditation_content():
+    """Get meditation and mindfulness content"""
+    meditation_content = [
+        {
+            "id": "guided-meditation-1",
+            "title": "Morning Mindfulness",
+            "description": "Start your day with clarity and focus through guided morning meditation",
+            "duration": "10 minutes",
+            "type": "guided_meditation",
+            "difficulty": "Beginner",
+            "benefits": ["Reduces stress", "Improves focus", "Increases energy"],
+            "instructions": [
+                "Find a comfortable seated position",
+                "Close your eyes gently",
+                "Focus on your breathing",
+                "Follow the guided instructions",
+                "End with gratitude practice"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/inpok4MKVLM",
+            "category": "morning_routine",
+            "image_url": "meditation_morning.jpg"
+        },
+        {
+            "id": "breathing-exercise-1", 
+            "title": "4-7-8 Breathing Technique",
+            "description": "Powerful breathing exercise for anxiety relief and better sleep",
+            "duration": "5 minutes",
+            "type": "breathing_exercise",
+            "difficulty": "Beginner",
+            "benefits": ["Reduces anxiety", "Improves sleep", "Calms nervous system"],
+            "instructions": [
+                "Sit comfortably with back straight",
+                "Exhale completely through mouth",
+                "Inhale through nose for 4 counts",
+                "Hold breath for 7 counts", 
+                "Exhale through mouth for 8 counts",
+                "Repeat cycle 4 times"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/YRPh_GaiL8s",
+            "category": "breathing",
+            "image_url": "breathing_exercise.jpg"
+        },
+        {
+            "id": "mindfulness-practice-1",
+            "title": "Body Scan Meditation",
+            "description": "Deep relaxation technique to release tension and increase awareness",
+            "duration": "15 minutes", 
+            "type": "mindfulness",
+            "difficulty": "Intermediate",
+            "benefits": ["Releases tension", "Increases body awareness", "Promotes relaxation"],
+            "instructions": [
+                "Lie down comfortably",
+                "Start with deep breathing",
+                "Focus on each body part systematically",
+                "Notice sensations without judgment",
+                "Complete with whole body awareness"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/yCJ6fNd-jCE",
+            "category": "relaxation",
+            "image_url": "body_scan.jpg"
+        },
+        {
+            "id": "stress-relief-1",
+            "title": "Quick Stress Relief",
+            "description": "5-minute emergency stress relief technique for busy schedules",
+            "duration": "5 minutes",
+            "type": "stress_relief",
+            "difficulty": "Beginner", 
+            "benefits": ["Immediate stress relief", "Lowers cortisol", "Improves mood"],
+            "instructions": [
+                "Take 3 deep breaths",
+                "Tense and release each muscle group",
+                "Visualize a calm place",
+                "Practice gratitude",
+                "Return to normal breathing"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/p8fjYPC-7bM",
+            "category": "stress_relief",
+            "image_url": "stress_relief.jpg"
+        },
+        {
+            "id": "sleep-meditation-1",
+            "title": "Sleep Preparation Meditation",
+            "description": "Gentle meditation to prepare mind and body for restful sleep",
+            "duration": "20 minutes",
+            "type": "sleep_meditation",
+            "difficulty": "Beginner",
+            "benefits": ["Improves sleep quality", "Calms racing thoughts", "Promotes deep rest"],
+            "instructions": [
+                "Lie down in bed comfortably",
+                "Progressive muscle relaxation",
+                "Guided visualization for peace",
+                "Focus on releasing the day",
+                "Drift into natural sleep"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/j2YWMaDQ9LI",
+            "category": "sleep",
+            "image_url": "sleep_meditation.jpg"
+        },
+        {
+            "id": "focus-meditation-1",
+            "title": "Concentration Enhancement",
+            "description": "Meditation practice to improve focus and mental clarity",
+            "duration": "12 minutes",
+            "type": "focus_meditation", 
+            "difficulty": "Intermediate",
+            "benefits": ["Enhances concentration", "Improves productivity", "Strengthens mental clarity"],
+            "instructions": [
+                "Sit with spine straight",
+                "Focus on single point of attention",
+                "When mind wanders, gently return focus",
+                "Gradually extend concentration periods",
+                "End with appreciation for the practice"
+            ],
+            "youtube_video": "https://www.youtube.com/embed/oNkIzE_4WB8",
+            "category": "focus",
+            "image_url": "focus_meditation.jpg"
+        }
+    ]
+    
+    return {
+        "status": "success",
+        "content": meditation_content,
+        "total_count": len(meditation_content)
+    }
+
+@api_router.post("/mind-soul/mood-tracker")
+async def log_mood(mood_entry: MoodEntry):
+    """Log daily mood entry"""
+    try:
+        # Create mood entry document
+        mood_doc = {
+            "user_id": mood_entry.user_id,
+            "date": mood_entry.date,
+            "mood": mood_entry.mood,
+            "mood_label": mood_entry.mood_label,
+            "energy": mood_entry.energy,
+            "stress": mood_entry.stress,
+            "notes": mood_entry.notes,
+            "timestamp": datetime.utcnow()
+        }
+        
+        # Check if entry for this date already exists
+        existing_entry = await db.mood_entries.find_one({
+            "user_id": mood_entry.user_id,
+            "date": mood_entry.date
+        })
+        
+        if existing_entry:
+            # Update existing entry
+            await db.mood_entries.update_one(
+                {"user_id": mood_entry.user_id, "date": mood_entry.date},
+                {"$set": mood_doc}
+            )
+            message = "Mood entry updated successfully"
+        else:
+            # Create new entry
+            await db.mood_entries.insert_one(mood_doc)
+            message = "Mood entry logged successfully"
+        
+        return {
+            "status": "success",
+            "message": message,
+            "mood_data": mood_doc
+        }
+        
+    except Exception as e:
+        print(f"Error logging mood: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error logging mood: {str(e)}")
+
+@api_router.get("/mind-soul/mood-history/{user_id}")
+async def get_mood_history(user_id: str, days: int = 30):
+    """Get mood history for a user"""
+    try:
+        # Get mood entries for the last N days
+        mood_entries = await db.mood_entries.find(
+            {"user_id": user_id}
+        ).sort("date", -1).limit(days).to_list(length=days)
+        
+        # Calculate mood statistics
+        if mood_entries:
+            moods = [entry["mood"] for entry in mood_entries]
+            energy_levels = [entry["energy"] for entry in mood_entries]
+            stress_levels = [entry["stress"] for entry in mood_entries]
+            
+            avg_mood = sum(moods) / len(moods)
+            avg_energy = sum(energy_levels) / len(energy_levels)
+            avg_stress = sum(stress_levels) / len(stress_levels)
+        else:
+            avg_mood = avg_energy = avg_stress = 0
+        
+        return {
+            "status": "success",
+            "mood_history": mood_entries,
+            "statistics": {
+                "average_mood": round(avg_mood, 2),
+                "average_energy": round(avg_energy, 2), 
+                "average_stress": round(avg_stress, 2),
+                "total_entries": len(mood_entries)
+            }
+        }
+        
+    except Exception as e:
+        print(f"Error getting mood history: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting mood history: {str(e)}")
+
+@api_router.post("/mind-soul/meditation-session")
+async def log_meditation_session(session: MeditationSession):
+    """Log a meditation session"""
+    try:
+        session_doc = {
+            "user_id": session.user_id,
+            "session_type": session.session_type,
+            "duration_minutes": session.duration_minutes,
+            "completed": session.completed,
+            "date": session.date,
+            "session_id": session.session_id,
+            "timestamp": datetime.utcnow()
+        }
+        
+        await db.meditation_sessions.insert_one(session_doc)
+        
+        # Update user's meditation streak and total time
+        await update_meditation_progress(session.user_id, session.duration_minutes, session.completed)
+        
+        return {
+            "status": "success",
+            "message": "Meditation session logged successfully",
+            "session_data": session_doc
+        }
+        
+    except Exception as e:
+        print(f"Error logging meditation session: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error logging session: {str(e)}")
+
+@api_router.get("/mind-soul/meditation-progress/{user_id}")
+async def get_meditation_progress(user_id: str):
+    """Get meditation progress for a user"""
+    try:
+        # Get total meditation time and sessions
+        sessions = await db.meditation_sessions.find({"user_id": user_id}).to_list(length=1000)
+        
+        total_sessions = len(sessions)
+        total_minutes = sum(session["duration_minutes"] for session in sessions if session["completed"])
+        
+        # Calculate current streak
+        current_streak = await calculate_meditation_streak(user_id)
+        
+        # Get this week's sessions
+        from datetime import datetime, timedelta
+        today = datetime.now()
+        week_start = today - timedelta(days=today.weekday())
+        this_week_sessions = [s for s in sessions if datetime.fromisoformat(s["date"]) >= week_start]
+        
+        return {
+            "status": "success",
+            "progress": {
+                "total_sessions": total_sessions,
+                "total_minutes": total_minutes,
+                "current_streak": current_streak,
+                "this_week_sessions": len(this_week_sessions),
+                "average_session_length": round(total_minutes / total_sessions if total_sessions > 0 else 0, 1)
+            }
+        }
+        
+    except Exception as e:
+        print(f"Error getting meditation progress: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting progress: {str(e)}")
+
+@api_router.post("/mind-soul/habit-tracker")
+async def log_habit_progress(habit: HabitProgress):
+    """Log habit progress"""
+    try:
+        habit_doc = {
+            "user_id": habit.user_id,
+            "habit_name": habit.habit_name,
+            "date": habit.date,
+            "completed": habit.completed,
+            "streak_count": habit.streak_count,
+            "timestamp": datetime.utcnow()
+        }
+        
+        # Check if entry exists for this date and habit
+        existing_habit = await db.habit_progress.find_one({
+            "user_id": habit.user_id,
+            "habit_name": habit.habit_name,
+            "date": habit.date
+        })
+        
+        if existing_habit:
+            await db.habit_progress.update_one(
+                {"user_id": habit.user_id, "habit_name": habit.habit_name, "date": habit.date},
+                {"$set": habit_doc}
+            )
+        else:
+            await db.habit_progress.insert_one(habit_doc)
+        
+        return {
+            "status": "success",
+            "message": "Habit progress logged successfully",
+            "habit_data": habit_doc
+        }
+        
+    except Exception as e:
+        print(f"Error logging habit: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error logging habit: {str(e)}")
+
+@api_router.get("/mind-soul/habits/{user_id}")
+async def get_user_habits(user_id: str):
+    """Get all habits for a user with current streaks"""
+    try:
+        # Get all habit entries for user
+        habits = await db.habit_progress.find({"user_id": user_id}).to_list(length=1000)
+        
+        # Group by habit name and calculate streaks
+        habit_summary = {}
+        for habit in habits:
+            habit_name = habit["habit_name"]
+            if habit_name not in habit_summary:
+                habit_summary[habit_name] = {
+                    "habit_name": habit_name,
+                    "current_streak": 0,
+                    "total_completions": 0,
+                    "last_completed": None
+                }
+            
+            if habit["completed"]:
+                habit_summary[habit_name]["total_completions"] += 1
+                if not habit_summary[habit_name]["last_completed"] or habit["date"] > habit_summary[habit_name]["last_completed"]:
+                    habit_summary[habit_name]["last_completed"] = habit["date"]
+        
+        # Calculate current streaks for each habit
+        for habit_name, data in habit_summary.items():
+            data["current_streak"] = await calculate_habit_streak(user_id, habit_name)
+        
+        return {
+            "status": "success",
+            "habits": list(habit_summary.values())
+        }
+        
+    except Exception as e:
+        print(f"Error getting habits: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting habits: {str(e)}")
+
+# Helper functions
+async def update_meditation_progress(user_id: str, duration_minutes: int, completed: bool):
+    """Update user's overall meditation progress"""
+    if not completed:
+        return
+    
+    # This could be expanded to update user profile with meditation stats
+    pass
+
+async def calculate_meditation_streak(user_id: str) -> int:
+    """Calculate current meditation streak"""
+    try:
+        sessions = await db.meditation_sessions.find(
+            {"user_id": user_id, "completed": True}
+        ).sort("date", -1).to_list(length=100)
+        
+        if not sessions:
+            return 0
+        
+        # Count consecutive days from today backwards
+        from datetime import datetime, timedelta
+        today = datetime.now().date()
+        streak = 0
+        current_date = today
+        
+        session_dates = set(datetime.fromisoformat(s["date"]).date() for s in sessions)
+        
+        while current_date in session_dates:
+            streak += 1
+            current_date -= timedelta(days=1)
+        
+        return streak
+        
+    except Exception as e:
+        print(f"Error calculating streak: {str(e)}")
+        return 0
+
+async def calculate_habit_streak(user_id: str, habit_name: str) -> int:
+    """Calculate current habit streak"""
+    try:
+        habits = await db.habit_progress.find(
+            {"user_id": user_id, "habit_name": habit_name, "completed": True}
+        ).sort("date", -1).to_list(length=100)
+        
+        if not habits:
+            return 0
+        
+        from datetime import datetime, timedelta
+        today = datetime.now().date()
+        streak = 0
+        current_date = today
+        
+        habit_dates = set(datetime.fromisoformat(h["date"]).date() for h in habits)
+        
+        while current_date in habit_dates:
+            streak += 1
+            current_date -= timedelta(days=1)
+        
+        return streak
+        
+    except Exception as e:
+        print(f"Error calculating habit streak: {str(e)}")
+        return 0
+
 # Include the router in the main app
 app.include_router(api_router)
 
