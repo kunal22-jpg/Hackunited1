@@ -442,18 +442,29 @@ const Header = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white/10 backdrop-blur-md border-t border-white/20"
           >
-            <div className="px-4 py-4 space-y-2">
+            <div className="px-4 py-4 space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all"
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                      isActive 
+                        ? 'bg-white/20 text-white shadow-lg' 
+                        : 'text-white/90 hover:text-white hover:bg-white/15'
+                    }`}
+                    style={{
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}
                   >
-                    <Icon size={20} className={item.iconClass} />
-                    <span>{item.label}</span>
+                    <Icon size={18} className={item.iconClass} />
+                    <span className="font-medium">{item.label}</span>
                   </Link>
                 );
               })}
