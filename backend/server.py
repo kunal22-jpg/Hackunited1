@@ -1864,11 +1864,20 @@ async def get_mood_history(user_id: str, days: int = 30):
             {"user_id": user_id}
         ).sort("date", -1).limit(days).to_list(length=days)
         
+        # Remove MongoDB ObjectId and ensure datetime serialization
+        clean_entries = []
+        for entry in mood_entries:
+            clean_entry = {k: v for k, v in entry.items() if k != '_id'}
+            # Convert datetime to string if it exists
+            if 'timestamp' in clean_entry and hasattr(clean_entry['timestamp'], 'isoformat'):
+                clean_entry['timestamp'] = clean_entry['timestamp'].isoformat()
+            clean_entries.append(clean_entry)
+        
         # Calculate mood statistics
-        if mood_entries:
-            moods = [entry["mood"] for entry in mood_entries]
-            energy_levels = [entry["energy"] for entry in mood_entries]
-            stress_levels = [entry["stress"] for entry in mood_entries]
+        if clean_entries:
+            moods = [entry["mood"] for entry in clean_entries]
+            energy_levels = [entry["energy"] for entry in clean_entries]
+            stress_levels = [entry["stress"] for entry in clean_entries]
             
             avg_mood = sum(moods) / len(moods)
             avg_energy = sum(energy_levels) / len(energy_levels)
@@ -1878,12 +1887,12 @@ async def get_mood_history(user_id: str, days: int = 30):
         
         return {
             "status": "success",
-            "mood_history": mood_entries,
+            "mood_history": clean_entries,
             "statistics": {
                 "average_mood": round(avg_mood, 2),
                 "average_energy": round(avg_energy, 2), 
                 "average_stress": round(avg_stress, 2),
-                "total_entries": len(mood_entries)
+                "total_entries": len(clean_entries)
             }
         }
         
