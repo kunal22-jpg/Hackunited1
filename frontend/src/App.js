@@ -2476,14 +2476,146 @@ const HealthPage = () => {
     }));
   };
 
-  // Health Education Topics
+  // Health Education Topics with Detailed Information
   const educationTopics = [
-    { title: 'Heart Health', description: 'Prevention and management of cardiovascular diseases', icon: '❤️' },
-    { title: 'Mental Wellness', description: 'Understanding and maintaining mental health', icon: '🧠' },
-    { title: 'Nutrition Basics', description: 'Essential nutrition for optimal health', icon: '🥗' },
-    { title: 'Exercise & Fitness', description: 'Building and maintaining physical fitness', icon: '💪' },
-    { title: 'Preventive Care', description: 'Screenings and preventive measures', icon: '🛡️' },
-    { title: 'Sleep Health', description: 'Importance of quality sleep for health', icon: '😴' }
+    { 
+      title: 'Heart Health', 
+      description: 'Prevention and management of cardiovascular diseases', 
+      icon: '❤️',
+      detailedInfo: {
+        overview: 'Cardiovascular health is crucial for overall well-being. Learn how to maintain a healthy heart through lifestyle choices.',
+        keyPoints: [
+          'Regular exercise strengthens the heart muscle',
+          'A balanced diet low in saturated fats',
+          'Managing stress levels effectively',
+          'Avoiding smoking and excessive alcohol',
+          'Regular health check-ups and monitoring'
+        ],
+        tips: [
+          'Aim for 150 minutes of moderate exercise weekly',
+          'Include omega-3 rich foods like fish and nuts',
+          'Monitor blood pressure and cholesterol regularly',
+          'Practice stress-reduction techniques like meditation',
+          'Get adequate sleep (7-9 hours per night)'
+        ],
+        warning: 'Consult your healthcare provider for personalized advice and if you experience chest pain, shortness of breath, or irregular heartbeat.'
+      }
+    },
+    { 
+      title: 'Mental Wellness', 
+      description: 'Understanding and maintaining mental health', 
+      icon: '🧠',
+      detailedInfo: {
+        overview: 'Mental health is just as important as physical health. Learn strategies to maintain emotional well-being and resilience.',
+        keyPoints: [
+          'Mental health affects daily functioning',
+          'Stress management is essential for mental wellness',
+          'Social connections support mental health',
+          'Professional help is available when needed',
+          'Self-care practices improve mental resilience'
+        ],
+        tips: [
+          'Practice mindfulness and meditation daily',
+          'Maintain strong social relationships',
+          'Set realistic goals and boundaries',
+          'Engage in activities you enjoy',
+          'Seek help when feeling overwhelmed'
+        ],
+        warning: 'If you experience persistent sadness, anxiety, or thoughts of self-harm, please reach out to a mental health professional immediately.'
+      }
+    },
+    { 
+      title: 'Nutrition Basics', 
+      description: 'Essential nutrition for optimal health', 
+      icon: '🥗',
+      detailedInfo: {
+        overview: 'Proper nutrition provides the foundation for good health, energy, and disease prevention.',
+        keyPoints: [
+          'Balanced meals include all food groups',
+          'Hydration is crucial for body function',
+          'Portion control helps maintain healthy weight',
+          'Fresh, whole foods are preferred',
+          'Individual needs vary based on lifestyle'
+        ],
+        tips: [
+          'Fill half your plate with fruits and vegetables',
+          'Choose whole grains over refined grains',
+          'Include lean protein sources',
+          'Drink 8-10 glasses of water daily',
+          'Limit processed foods and added sugars'
+        ],
+        warning: 'Consult a registered dietitian for personalized nutrition plans, especially if you have food allergies or medical conditions.'
+      }
+    },
+    { 
+      title: 'Exercise & Fitness', 
+      description: 'Building and maintaining physical fitness', 
+      icon: '💪',
+      detailedInfo: {
+        overview: 'Regular physical activity is essential for maintaining strength, flexibility, and overall health throughout life.',
+        keyPoints: [
+          'Exercise improves cardiovascular health',
+          'Strength training maintains muscle mass',
+          'Flexibility exercises prevent injury',
+          'Consistency is more important than intensity',
+          'Physical activity boosts mental health'
+        ],
+        tips: [
+          'Start slowly and gradually increase intensity',
+          'Find activities you enjoy to stay motivated',
+          'Include both cardio and strength training',
+          'Allow rest days for muscle recovery',
+          'Set realistic and achievable fitness goals'
+        ],
+        warning: 'Consult your doctor before starting a new exercise program, especially if you have existing health conditions.'
+      }
+    },
+    { 
+      title: 'Preventive Care', 
+      description: 'Screenings and preventive measures', 
+      icon: '🛡️',
+      detailedInfo: {
+        overview: 'Preventive healthcare focuses on maintaining health and detecting potential issues early when they are most treatable.',
+        keyPoints: [
+          'Regular check-ups detect issues early',
+          'Vaccinations prevent serious diseases',
+          'Screenings catch problems before symptoms',
+          'Lifestyle changes prevent many conditions',
+          'Prevention is more cost-effective than treatment'
+        ],
+        tips: [
+          'Schedule annual physical examinations',
+          'Keep up with recommended vaccinations',
+          'Follow screening guidelines for your age',
+          'Maintain a family health history record',
+          'Discuss risk factors with your doctor'
+        ],
+        warning: 'Dont skip recommended screenings even if you feel healthy. Early detection saves lives.'
+      }
+    },
+    { 
+      title: 'Sleep Health', 
+      description: 'Importance of quality sleep for health', 
+      icon: '😴',
+      detailedInfo: {
+        overview: 'Quality sleep is essential for physical health, mental well-being, and cognitive function.',
+        keyPoints: [
+          'Sleep allows the body to repair and restore',
+          'Quality matters as much as quantity',
+          'Sleep affects immune system function',
+          'Poor sleep impacts mental health',
+          'Sleep patterns affect hormone regulation'
+        ],
+        tips: [
+          'Maintain a consistent sleep schedule',
+          'Create a relaxing bedtime routine',
+          'Keep your bedroom cool and dark',
+          'Avoid screens 1 hour before bedtime',
+          'Limit caffeine and large meals before bed'
+        ],
+        warning: 'If you experience chronic insomnia, sleep apnea symptoms, or excessive daytime fatigue, consult a sleep specialist.'
+      }
+    }
   ];
 
   // Smart Notifications Mock Data
