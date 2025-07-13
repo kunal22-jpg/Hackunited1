@@ -1976,7 +1976,7 @@ async def log_habit_progress(habit: HabitProgress):
             "date": habit.date,
             "completed": habit.completed,
             "streak_count": habit.streak_count,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow().isoformat()
         }
         
         # Check if entry exists for this date and habit
@@ -1994,10 +1994,13 @@ async def log_habit_progress(habit: HabitProgress):
         else:
             await db.habit_progress.insert_one(habit_doc)
         
+        # Remove MongoDB _id from response
+        response_data = {k: v for k, v in habit_doc.items() if k != '_id'}
+        
         return {
             "status": "success",
             "message": "Habit progress logged successfully",
-            "habit_data": habit_doc
+            "habit_data": response_data
         }
         
     except Exception as e:
