@@ -1819,5 +1819,543 @@ def test_enhanced_user_profile():
     except Exception as e:
         print(f"❌ Enhanced user profile functionality test failed: {str(e)}")
         return False
+def test_mind_soul_meditation_content():
+    """Test the Mind & Soul meditation content endpoint"""
+    print("\n=== Testing Mind & Soul Meditation Content Endpoint ===")
+    try:
+        response = requests.get(f"{API_URL}/mind-soul/meditation-content")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "content" in data, "Response missing 'content' field"
+        assert "total_count" in data, "Response missing 'total_count' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        content = data["content"]
+        assert isinstance(content, list), "Content should be a list"
+        assert len(content) >= 6, f"Expected at least 6 meditation exercises, found {len(content)}"
+        
+        # Validate each meditation exercise
+        required_fields = ["id", "title", "description", "duration", "type", "difficulty", 
+                          "benefits", "instructions", "youtube_video", "category", "image_url"]
+        
+        categories_found = set()
+        types_found = set()
+        
+        for i, exercise in enumerate(content):
+            print(f"\nValidating meditation exercise {i+1}: {exercise.get('title', 'Unknown')}")
+            
+            # Check all required fields exist
+            for field in required_fields:
+                assert field in exercise, f"Exercise missing '{field}' field"
+            
+            # Validate field types
+            assert isinstance(exercise["id"], str), "Exercise 'id' is not a string"
+            assert isinstance(exercise["title"], str), "Exercise 'title' is not a string"
+            assert isinstance(exercise["description"], str), "Exercise 'description' is not a string"
+            assert isinstance(exercise["duration"], str), "Exercise 'duration' is not a string"
+            assert isinstance(exercise["type"], str), "Exercise 'type' is not a string"
+            assert isinstance(exercise["difficulty"], str), "Exercise 'difficulty' is not a string"
+            assert isinstance(exercise["benefits"], list), "Exercise 'benefits' is not a list"
+            assert isinstance(exercise["instructions"], list), "Exercise 'instructions' is not a list"
+            assert isinstance(exercise["youtube_video"], str), "Exercise 'youtube_video' is not a string"
+            assert isinstance(exercise["category"], str), "Exercise 'category' is not a string"
+            assert isinstance(exercise["image_url"], str), "Exercise 'image_url' is not a string"
+            
+            # Validate content
+            assert len(exercise["title"]) > 0, "Exercise title is empty"
+            assert len(exercise["description"]) > 0, "Exercise description is empty"
+            assert len(exercise["benefits"]) > 0, "Exercise has no benefits"
+            assert len(exercise["instructions"]) > 0, "Exercise has no instructions"
+            assert exercise["difficulty"] in ["Beginner", "Intermediate", "Advanced"], f"Invalid difficulty: {exercise['difficulty']}"
+            assert exercise["youtube_video"].startswith("https://www.youtube.com/embed/"), "YouTube video is not in embed format"
+            
+            categories_found.add(exercise["category"])
+            types_found.add(exercise["type"])
+            
+            print(f"✓ Exercise {i+1} validated successfully")
+        
+        # Check for required categories and types
+        expected_categories = ["morning_routine", "breathing", "relaxation", "stress_relief", "sleep", "focus"]
+        expected_types = ["guided_meditation", "breathing_exercise", "mindfulness", "stress_relief", "sleep_meditation", "focus_meditation"]
+        
+        print(f"\nFound categories: {sorted(categories_found)}")
+        print(f"Found types: {sorted(types_found)}")
+        
+        # Verify we have diverse content
+        assert len(categories_found) >= 5, f"Expected at least 5 different categories, found {len(categories_found)}"
+        assert len(types_found) >= 5, f"Expected at least 5 different types, found {len(types_found)}"
+        
+        # Print sample exercise for inspection
+        sample_exercise = content[0]
+        print(f"\nSample meditation exercise:")
+        print(f"  Title: {sample_exercise['title']}")
+        print(f"  Type: {sample_exercise['type']}")
+        print(f"  Duration: {sample_exercise['duration']}")
+        print(f"  Category: {sample_exercise['category']}")
+        print(f"  Benefits: {', '.join(sample_exercise['benefits'])}")
+        print(f"  Instructions: {len(sample_exercise['instructions'])} steps")
+        
+        print("\n✅ Mind & Soul meditation content endpoint test passed")
+        return True
+    except Exception as e:
+        print(f"❌ Mind & Soul meditation content endpoint test failed: {str(e)}")
+        return False
+
+def test_mind_soul_mood_tracker(user_id):
+    """Test the Mind & Soul mood tracking endpoints"""
+    print("\n=== Testing Mind & Soul Mood Tracking Endpoints ===")
+    if not user_id:
+        print("❌ Mood tracking test skipped: No user ID available")
+        return False
+    
+    all_passed = True
+    
+    # Test 1: Log mood entry
+    print("\n--- Test 1: Log mood entry (POST /mind-soul/mood-tracker) ---")
+    try:
+        from datetime import datetime
+        today = datetime.now().strftime("%Y-%m-%d")
+        
+        mood_data = {
+            "user_id": user_id,
+            "date": today,
+            "mood": 4,  # 1-5 scale
+            "mood_label": "Happy",
+            "energy": 3,
+            "stress": 2,
+            "notes": "Had a great workout session today and feeling energized!"
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/mood-tracker", json=mood_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Mood tracking response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "message" in data, "Response missing 'message' field"
+        assert "mood_data" in data, "Response missing 'mood_data' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate mood data structure
+        mood_response = data["mood_data"]
+        assert mood_response["user_id"] == user_id, "User ID doesn't match"
+        assert mood_response["date"] == today, "Date doesn't match"
+        assert mood_response["mood"] == 4, "Mood value doesn't match"
+        assert mood_response["mood_label"] == "Happy", "Mood label doesn't match"
+        assert mood_response["energy"] == 3, "Energy value doesn't match"
+        assert mood_response["stress"] == 2, "Stress value doesn't match"
+        assert mood_response["notes"] == mood_data["notes"], "Notes don't match"
+        
+        print("✅ Test 1 - Log mood entry passed")
+    except Exception as e:
+        print(f"❌ Test 1 - Log mood entry failed: {str(e)}")
+        all_passed = False
+    
+    # Test 2: Get mood history
+    print("\n--- Test 2: Get mood history (GET /mind-soul/mood-history/{user_id}) ---")
+    try:
+        response = requests.get(f"{API_URL}/mind-soul/mood-history/{user_id}")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Mood history response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "mood_history" in data, "Response missing 'mood_history' field"
+        assert "statistics" in data, "Response missing 'statistics' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate mood history structure
+        mood_history = data["mood_history"]
+        assert isinstance(mood_history, list), "Mood history should be a list"
+        
+        # Validate statistics
+        stats = data["statistics"]
+        required_stat_fields = ["average_mood", "average_energy", "average_stress", "total_entries"]
+        for field in required_stat_fields:
+            assert field in stats, f"Statistics missing '{field}' field"
+        
+        # If we have entries, validate their structure
+        if mood_history:
+            entry = mood_history[0]
+            required_entry_fields = ["user_id", "date", "mood", "mood_label", "energy", "stress", "notes"]
+            for field in required_entry_fields:
+                assert field in entry, f"Mood entry missing '{field}' field"
+            
+            assert entry["user_id"] == user_id, "User ID in history doesn't match"
+            assert 1 <= entry["mood"] <= 5, f"Mood value out of range: {entry['mood']}"
+            assert 1 <= entry["energy"] <= 5, f"Energy value out of range: {entry['energy']}"
+            assert 1 <= entry["stress"] <= 5, f"Stress value out of range: {entry['stress']}"
+            
+            print(f"Found {len(mood_history)} mood entries")
+            print(f"Average mood: {stats['average_mood']}")
+            print(f"Average energy: {stats['average_energy']}")
+            print(f"Average stress: {stats['average_stress']}")
+        
+        print("✅ Test 2 - Get mood history passed")
+    except Exception as e:
+        print(f"❌ Test 2 - Get mood history failed: {str(e)}")
+        all_passed = False
+    
+    # Test 3: Update existing mood entry
+    print("\n--- Test 3: Update existing mood entry ---")
+    try:
+        updated_mood_data = {
+            "user_id": user_id,
+            "date": today,
+            "mood": 5,  # Updated mood
+            "mood_label": "Very Happy",
+            "energy": 4,  # Updated energy
+            "stress": 1,  # Updated stress
+            "notes": "Updated: Had an amazing day with great workout and healthy meals!"
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/mood-tracker", json=updated_mood_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert data["status"] == "success", "Status should be 'success'"
+        assert "updated" in data["message"].lower(), "Message should indicate update"
+        
+        # Verify the update
+        mood_response = data["mood_data"]
+        assert mood_response["mood"] == 5, "Updated mood value doesn't match"
+        assert mood_response["mood_label"] == "Very Happy", "Updated mood label doesn't match"
+        assert mood_response["energy"] == 4, "Updated energy value doesn't match"
+        assert mood_response["stress"] == 1, "Updated stress value doesn't match"
+        
+        print("✅ Test 3 - Update existing mood entry passed")
+    except Exception as e:
+        print(f"❌ Test 3 - Update existing mood entry failed: {str(e)}")
+        all_passed = False
+    
+    if all_passed:
+        print("\n✅ All mood tracking tests passed")
+    else:
+        print("\n❌ Some mood tracking tests failed")
+    
+    return all_passed
+
+def test_mind_soul_meditation_sessions(user_id):
+    """Test the Mind & Soul meditation session logging endpoints"""
+    print("\n=== Testing Mind & Soul Meditation Session Endpoints ===")
+    if not user_id:
+        print("❌ Meditation session test skipped: No user ID available")
+        return False
+    
+    all_passed = True
+    
+    # Test 1: Log meditation session
+    print("\n--- Test 1: Log meditation session (POST /mind-soul/meditation-session) ---")
+    try:
+        from datetime import datetime
+        today = datetime.now().strftime("%Y-%m-%d")
+        session_id = str(uuid.uuid4())
+        
+        session_data = {
+            "user_id": user_id,
+            "session_type": "guided_meditation",
+            "duration_minutes": 15,
+            "completed": True,
+            "date": today,
+            "session_id": session_id
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/meditation-session", json=session_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Meditation session response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "message" in data, "Response missing 'message' field"
+        assert "session_data" in data, "Response missing 'session_data' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate session data structure
+        session_response = data["session_data"]
+        assert session_response["user_id"] == user_id, "User ID doesn't match"
+        assert session_response["session_type"] == "guided_meditation", "Session type doesn't match"
+        assert session_response["duration_minutes"] == 15, "Duration doesn't match"
+        assert session_response["completed"] == True, "Completed status doesn't match"
+        assert session_response["date"] == today, "Date doesn't match"
+        assert session_response["session_id"] == session_id, "Session ID doesn't match"
+        
+        print("✅ Test 1 - Log meditation session passed")
+    except Exception as e:
+        print(f"❌ Test 1 - Log meditation session failed: {str(e)}")
+        all_passed = False
+    
+    # Test 2: Log another session with different type
+    print("\n--- Test 2: Log breathing exercise session ---")
+    try:
+        session_data_2 = {
+            "user_id": user_id,
+            "session_type": "breathing_exercise",
+            "duration_minutes": 5,
+            "completed": True,
+            "date": today,
+            "session_id": str(uuid.uuid4())
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/meditation-session", json=session_data_2)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        print("✅ Test 2 - Log breathing exercise session passed")
+    except Exception as e:
+        print(f"❌ Test 2 - Log breathing exercise session failed: {str(e)}")
+        all_passed = False
+    
+    # Test 3: Get meditation progress
+    print("\n--- Test 3: Get meditation progress (GET /mind-soul/meditation-progress/{user_id}) ---")
+    try:
+        response = requests.get(f"{API_URL}/mind-soul/meditation-progress/{user_id}")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Meditation progress response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "progress" in data, "Response missing 'progress' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate progress structure
+        progress = data["progress"]
+        required_progress_fields = ["total_sessions", "total_minutes", "current_streak", 
+                                  "this_week_sessions", "average_session_length"]
+        for field in required_progress_fields:
+            assert field in progress, f"Progress missing '{field}' field"
+        
+        # Validate progress values
+        assert isinstance(progress["total_sessions"], int), "Total sessions should be an integer"
+        assert isinstance(progress["total_minutes"], int), "Total minutes should be an integer"
+        assert isinstance(progress["current_streak"], int), "Current streak should be an integer"
+        assert isinstance(progress["this_week_sessions"], int), "This week sessions should be an integer"
+        assert isinstance(progress["average_session_length"], (int, float)), "Average session length should be a number"
+        
+        assert progress["total_sessions"] >= 2, f"Expected at least 2 sessions, found {progress['total_sessions']}"
+        assert progress["total_minutes"] >= 20, f"Expected at least 20 minutes total, found {progress['total_minutes']}"
+        
+        print(f"Total sessions: {progress['total_sessions']}")
+        print(f"Total minutes: {progress['total_minutes']}")
+        print(f"Current streak: {progress['current_streak']}")
+        print(f"This week sessions: {progress['this_week_sessions']}")
+        print(f"Average session length: {progress['average_session_length']} minutes")
+        
+        print("✅ Test 3 - Get meditation progress passed")
+    except Exception as e:
+        print(f"❌ Test 3 - Get meditation progress failed: {str(e)}")
+        all_passed = False
+    
+    # Test 4: Log incomplete session
+    print("\n--- Test 4: Log incomplete session ---")
+    try:
+        incomplete_session = {
+            "user_id": user_id,
+            "session_type": "mindfulness",
+            "duration_minutes": 10,
+            "completed": False,  # Incomplete session
+            "date": today,
+            "session_id": str(uuid.uuid4())
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/meditation-session", json=incomplete_session)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Verify incomplete session is logged
+        session_response = data["session_data"]
+        assert session_response["completed"] == False, "Completed status should be False"
+        
+        print("✅ Test 4 - Log incomplete session passed")
+    except Exception as e:
+        print(f"❌ Test 4 - Log incomplete session failed: {str(e)}")
+        all_passed = False
+    
+    if all_passed:
+        print("\n✅ All meditation session tests passed")
+    else:
+        print("\n❌ Some meditation session tests failed")
+    
+    return all_passed
+
+def test_mind_soul_habit_tracker(user_id):
+    """Test the Mind & Soul habit tracking endpoints"""
+    print("\n=== Testing Mind & Soul Habit Tracking Endpoints ===")
+    if not user_id:
+        print("❌ Habit tracking test skipped: No user ID available")
+        return False
+    
+    all_passed = True
+    
+    # Test 1: Log habit progress
+    print("\n--- Test 1: Log habit progress (POST /mind-soul/habit-tracker) ---")
+    try:
+        from datetime import datetime, timedelta
+        today = datetime.now().strftime("%Y-%m-%d")
+        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        # Log habit for today
+        habit_data = {
+            "user_id": user_id,
+            "habit_name": "Daily Meditation",
+            "date": today,
+            "completed": True,
+            "streak_count": 1
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/habit-tracker", json=habit_data)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"Habit tracking response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "message" in data, "Response missing 'message' field"
+        assert "habit_data" in data, "Response missing 'habit_data' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate habit data structure
+        habit_response = data["habit_data"]
+        assert habit_response["user_id"] == user_id, "User ID doesn't match"
+        assert habit_response["habit_name"] == "Daily Meditation", "Habit name doesn't match"
+        assert habit_response["date"] == today, "Date doesn't match"
+        assert habit_response["completed"] == True, "Completed status doesn't match"
+        assert habit_response["streak_count"] == 1, "Streak count doesn't match"
+        
+        print("✅ Test 1 - Log habit progress passed")
+    except Exception as e:
+        print(f"❌ Test 1 - Log habit progress failed: {str(e)}")
+        all_passed = False
+    
+    # Test 2: Log multiple habits
+    print("\n--- Test 2: Log multiple different habits ---")
+    try:
+        habits_to_log = [
+            {
+                "user_id": user_id,
+                "habit_name": "Morning Exercise",
+                "date": today,
+                "completed": True,
+                "streak_count": 3
+            },
+            {
+                "user_id": user_id,
+                "habit_name": "Healthy Eating",
+                "date": today,
+                "completed": True,
+                "streak_count": 5
+            },
+            {
+                "user_id": user_id,
+                "habit_name": "Reading",
+                "date": today,
+                "completed": False,
+                "streak_count": 0
+            }
+        ]
+        
+        for habit in habits_to_log:
+            response = requests.post(f"{API_URL}/mind-soul/habit-tracker", json=habit)
+            assert response.status_code == 200, f"Failed to log habit: {habit['habit_name']}"
+            data = response.json()
+            assert data["status"] == "success", f"Failed to log habit: {habit['habit_name']}"
+        
+        print("✅ Test 2 - Log multiple different habits passed")
+    except Exception as e:
+        print(f"❌ Test 2 - Log multiple different habits failed: {str(e)}")
+        all_passed = False
+    
+    # Test 3: Get user habits
+    print("\n--- Test 3: Get user habits (GET /mind-soul/habits/{user_id}) ---")
+    try:
+        response = requests.get(f"{API_URL}/mind-soul/habits/{user_id}")
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        print(f"User habits response: {json.dumps(data, indent=2)}")
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert "status" in data, "Response missing 'status' field"
+        assert "habits" in data, "Response missing 'habits' field"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Validate habits structure
+        habits = data["habits"]
+        assert isinstance(habits, list), "Habits should be a list"
+        assert len(habits) >= 4, f"Expected at least 4 habits, found {len(habits)}"
+        
+        # Validate each habit structure
+        habit_names_found = set()
+        for habit in habits:
+            required_habit_fields = ["habit_name", "current_streak", "total_completions", "last_completed"]
+            for field in required_habit_fields:
+                assert field in habit, f"Habit missing '{field}' field"
+            
+            assert isinstance(habit["habit_name"], str), "Habit name should be a string"
+            assert isinstance(habit["current_streak"], int), "Current streak should be an integer"
+            assert isinstance(habit["total_completions"], int), "Total completions should be an integer"
+            
+            habit_names_found.add(habit["habit_name"])
+            
+            print(f"Habit: {habit['habit_name']}")
+            print(f"  Current streak: {habit['current_streak']}")
+            print(f"  Total completions: {habit['total_completions']}")
+            print(f"  Last completed: {habit['last_completed']}")
+        
+        # Verify we have the expected habits
+        expected_habits = {"Daily Meditation", "Morning Exercise", "Healthy Eating", "Reading"}
+        assert expected_habits.issubset(habit_names_found), f"Missing expected habits. Found: {habit_names_found}"
+        
+        print("✅ Test 3 - Get user habits passed")
+    except Exception as e:
+        print(f"❌ Test 3 - Get user habits failed: {str(e)}")
+        all_passed = False
+    
+    # Test 4: Update existing habit
+    print("\n--- Test 4: Update existing habit ---")
+    try:
+        updated_habit = {
+            "user_id": user_id,
+            "habit_name": "Daily Meditation",
+            "date": today,
+            "completed": True,
+            "streak_count": 2  # Updated streak
+        }
+        
+        response = requests.post(f"{API_URL}/mind-soul/habit-tracker", json=updated_habit)
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+        assert data["status"] == "success", "Status should be 'success'"
+        
+        # Verify the update
+        habit_response = data["habit_data"]
+        assert habit_response["streak_count"] == 2, "Updated streak count doesn't match"
+        
+        print("✅ Test 4 - Update existing habit passed")
+    except Exception as e:
+        print(f"❌ Test 4 - Update existing habit failed: {str(e)}")
+        all_passed = False
+    
+    if all_passed:
+        print("\n✅ All habit tracking tests passed")
+    else:
+        print("\n❌ Some habit tracking tests failed")
+    
+    return all_passed
+
 if __name__ == "__main__":
     run_all_tests()
