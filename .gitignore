@@ -3,7 +3,7 @@
 # IDE and editors
 .idea/
 .vscode/
-
+# nutracia
 # Dependencies
 node_modules/
 /node_modules
