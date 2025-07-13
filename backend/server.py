@@ -1911,7 +1911,7 @@ async def log_meditation_session(session: MeditationSession):
             "completed": session.completed,
             "date": session.date,
             "session_id": session.session_id,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow().isoformat()
         }
         
         await db.meditation_sessions.insert_one(session_doc)
@@ -1919,10 +1919,13 @@ async def log_meditation_session(session: MeditationSession):
         # Update user's meditation streak and total time
         await update_meditation_progress(session.user_id, session.duration_minutes, session.completed)
         
+        # Remove MongoDB _id from response
+        response_data = {k: v for k, v in session_doc.items() if k != '_id'}
+        
         return {
             "status": "success",
             "message": "Meditation session logged successfully",
-            "session_data": session_doc
+            "session_data": response_data
         }
         
     except Exception as e:
