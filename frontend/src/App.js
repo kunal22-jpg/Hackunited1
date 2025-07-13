@@ -326,7 +326,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-4 lg:space-x-6">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -334,14 +334,20 @@ const Header = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                     isActive 
-                      ? 'bg-white/20 text-white' 
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                      ? 'bg-white/20 text-white shadow-lg' 
+                      : 'text-white/90 hover:text-white hover:bg-white/15 hover:shadow-md'
                   }`}
+                  style={{
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
                 >
-                  <Icon size={18} className={item.iconClass} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={16} className={item.iconClass} />
+                  <span className="font-medium text-sm lg:text-base">{item.label}</span>
                 </Link>
               );
             })}
