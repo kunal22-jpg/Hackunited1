@@ -25,6 +25,25 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Custom Zen Symbol Icon Component
+const ZenIcon = ({ size = 18, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 2a10 10 0 0 0 0 20"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
 // Video Background Component
 const VideoBackground = ({ videoSrc, overlay = 'bg-black/40', className = '' }) => (
   <div className={`absolute inset-0 ${className}`}>
