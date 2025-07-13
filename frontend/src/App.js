@@ -3045,6 +3045,124 @@ const HealthPage = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Health Education Modal */}
+      <AnimatePresence>
+        {isEducationModalOpen && selectedEducationTopic && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ 
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.6)'
+            }}
+            onClick={() => setEducationModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 25 
+              }}
+              className="relative bg-white/15 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setEducationModalOpen(false)}
+                className="absolute top-6 right-6 p-3 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 backdrop-blur-sm border border-white/20 hover:border-white/40 group"
+              >
+                <X size={20} className="text-white group-hover:text-white/80 transition-colors" />
+              </button>
+
+              {/* Header */}
+              <div className="text-center mb-8 pt-4">
+                <div className="text-6xl mb-4">{selectedEducationTopic.icon}</div>
+                <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">{selectedEducationTopic.title}</h2>
+                <p className="text-white/80 text-lg">{selectedEducationTopic.description}</p>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-6">
+                {/* Overview */}
+                <div className="bg-white/8 rounded-xl p-6 border border-white/10 backdrop-blur-sm">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+                    Overview
+                  </h3>
+                  <p className="text-white/90 leading-relaxed">{selectedEducationTopic.detailedInfo.overview}</p>
+                </div>
+
+                {/* Key Points */}
+                <div className="bg-white/8 rounded-xl p-6 border border-white/10 backdrop-blur-sm">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+                    Key Points
+                  </h3>
+                  <ul className="space-y-3">
+                    {selectedEducationTopic.detailedInfo.keyPoints.map((point, index) => (
+                      <li key={index} className="flex items-start space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full text-sm flex items-center justify-center font-bold mt-0.5">
+                          {index + 1}
+                        </span>
+                        <span className="text-white/90 leading-relaxed">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Practical Tips */}
+                <div className="bg-white/8 rounded-xl p-6 border border-white/10 backdrop-blur-sm">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mr-3"></div>
+                    Practical Tips
+                  </h3>
+                  <ul className="space-y-3">
+                    {selectedEducationTopic.detailedInfo.tips.map((tip, index) => (
+                      <li key={index} className="flex items-start space-x-3">
+                        <span className="text-amber-400 text-lg flex-shrink-0 mt-0.5">💡</span>
+                        <span className="text-white/90 leading-relaxed">{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Important Warning */}
+                <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-xl p-6 border border-red-500/30 backdrop-blur-sm">
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <span className="text-red-400 text-xl mr-3">⚠️</span>
+                    Important Note
+                  </h3>
+                  <p className="text-white/90 leading-relaxed">{selectedEducationTopic.detailedInfo.warning}</p>
+                </div>
+
+                {/* Action Button */}
+                <div className="flex justify-center pt-4">
+                  <button 
+                    onClick={() => setEducationModalOpen(false)}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105 flex items-center space-x-2"
+                  >
+                    <span>✅</span>
+                    <span>Got It!</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
