@@ -441,20 +441,10 @@ const Header = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                      isActive 
-                        ? 'bg-white/20 text-white shadow-lg' 
-                        : 'text-white/90 hover:text-white hover:bg-white/15'
-                    }`}
-                    style={{
-                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
-                      backdropFilter: 'blur(8px)',
-                      WebkitBackdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}
+                    className={`mobile-nav-button flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300`}
                   >
                     <Icon size={18} className={item.iconClass} />
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium nav-text-nowrap">{item.label}</span>
                   </Link>
                 );
               })}
