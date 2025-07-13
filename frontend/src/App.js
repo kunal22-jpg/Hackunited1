@@ -298,6 +298,7 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: Home, iconClass: 'header-home-icon' },
     { path: '/workout', label: 'Workout', icon: Dumbbell, iconClass: 'header-workout-icon' },
+    { path: '/mind-soul', label: 'Mind & Soul', icon: ZenIcon, iconClass: 'header-mindsoul-icon' },
     { path: '/skincare', label: 'Skincare', icon: Sparkles, iconClass: 'header-skincare-icon' },
     { path: '/diet', label: 'Diet', icon: Apple, iconClass: 'header-diet-icon' },
     { path: '/health', label: 'Health', icon: Heart, iconClass: 'header-health-icon' },
