@@ -7,7 +7,7 @@ from pathlib import Path
 
 # Load environment variables from frontend/.env to get the backend URL
 load_dotenv(Path('/app/frontend/.env'))
-
+# nutracia
 # Get the backend URL from environment variables
 BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL')
 if not BACKEND_URL:
