@@ -4,7 +4,7 @@ Verification script to confirm all files have the nutracia comment added.
 """
 
 import os
-
+# nutracia
 def main():
     repo_path = '/app/Hackunited1'
     
