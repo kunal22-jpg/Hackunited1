@@ -3,7 +3,7 @@ console.log('Testing authentication behavior...');
 
 // Clear localStorage to simulate non-authenticated user
 localStorage.clear();
-
+// nutracia
 // Check if user and userId exist
 const user = localStorage.getItem('user');
 const userId = localStorage.getItem('userId');
