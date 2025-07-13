@@ -1,4 +1,4 @@
-user_problem_statement: "Test the Nutracía backend authentication and user profile functionality. Focus on: 1. Testing the /api/auth/signup endpoint with complete user profile data including name, email, age, gender, height, weight, wellness goals, fitness level, diet preferences, skin type, allergies, and chronic conditions 2. Testing the /api/auth/login endpoint to ensure user data is properly returned 3. Verify that the user profile data is stored correctly and includes all the fields needed for the enhanced profile popup 4. Ensure that the profile data retrieved matches what would be displayed in the frontend profile modal"
+user_problem_statement: "Test the new Mind & Soul backend API endpoints: 1. Test `/api/mind-soul/meditation-content` endpoint to ensure it returns meditation content with proper structure including meditation exercises with YouTube embeds, breathing techniques, mindfulness practices, stress relief content, sleep meditations, focus meditations. 2. Test mood tracking endpoints: POST `/api/mind-soul/mood-tracker` with sample mood data, GET `/api/mind-soul/mood-history/{user_id}` to retrieve mood history. 3. Test meditation session logging: POST `/api/mind-soul/meditation-session` with session data, GET `/api/mind-soul/meditation-progress/{user_id}` to get progress. 4. Test habit tracking: POST `/api/mind-soul/habit-tracker` with habit progress, GET `/api/mind-soul/habits/{user_id}` to get user habits. Use sample data for testing. Focus on verifying that all Mind & Soul APIs work correctly and return proper data structures for the new dashboard-style frontend."
 
 backend:
   - task: "Authentication Signup with Enhanced Profile Data"
@@ -94,6 +94,54 @@ backend:
         agent: "testing"
         comment: "The /api/grocery/recommendations endpoint is working correctly with fallback functionality. While the Gemini AI integration is not working (error: 'ChatGoogleGenerativeAI' is not defined), the API properly falls back to relevant recommendations based on the query. The fallback recommendations are appropriate for the query 'protein powder for muscle building' and include protein-related products with proper structure (name, price, description, protein content, rating, platform). The API returns consistent responses with the expected structure and fields."
 
+  - task: "Mind & Soul Meditation Content API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "The /api/mind-soul/meditation-content endpoint is working perfectly. Returns 6 comprehensive meditation exercises including guided meditation, breathing exercises, mindfulness practices, stress relief, sleep meditations, and focus meditations. Each exercise contains all required fields: id, title, description, duration, type, difficulty, benefits, instructions, youtube_video (in proper embed format), category, and image_url. The content covers all requested categories: morning_routine, breathing, relaxation, stress_relief, sleep, and focus. All YouTube videos are properly formatted as embed URLs. The API returns a well-structured response with status, content array, and total_count."
+
+  - task: "Mind & Soul Mood Tracking API"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "The mood tracking endpoints have issues. POST /api/mind-soul/mood-tracker returns 500 error when trying to log mood entries. GET /api/mind-soul/mood-history/{user_id} also returns 500 error when retrieving mood history. However, some mood update operations work correctly (status 200). The endpoints exist and have proper structure but there are server-side errors preventing proper mood logging and retrieval. This needs investigation and fixing."
+
+  - task: "Mind & Soul Meditation Session Logging API"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "The meditation session logging endpoints have issues. POST /api/mind-soul/meditation-session returns 500 error when trying to log meditation sessions. However, GET /api/mind-soul/meditation-progress/{user_id} works correctly and returns proper progress data with total_sessions, total_minutes, current_streak, this_week_sessions, and average_session_length. The progress endpoint shows there are existing sessions (2 sessions, 20 minutes total), indicating some data exists but the logging endpoint has server-side errors."
+
+  - task: "Mind & Soul Habit Tracking API"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "The habit tracking endpoints have mixed results. POST /api/mind-soul/habit-tracker returns 500 error when trying to log new habit progress. However, GET /api/mind-soul/habits/{user_id} works correctly and returns existing habit data (2 habits found: Daily Meditation and Morning Exercise) with proper structure including habit_name, current_streak, total_completions, and last_completed. Some habit update operations work correctly. The issue appears to be with creating new habit entries, not retrieving existing ones."
+
 frontend:
   - task: "Enhanced Profile UI Modal"
     implemented: true
@@ -110,16 +158,18 @@ frontend:
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Authentication Signup with Enhanced Profile Data"
-    - "Authentication Login with Profile Data Return"
-    - "User Profile Retrieval by ID"
-    - "MongoDB Connection and Data Storage"
-  stuck_tasks: []
+    - "Mind & Soul Mood Tracking API"
+    - "Mind & Soul Meditation Session Logging API"
+    - "Mind & Soul Habit Tracking API"
+  stuck_tasks:
+    - "Mind & Soul Mood Tracking API"
+    - "Mind & Soul Meditation Session Logging API"
+    - "Mind & Soul Habit Tracking API"
   test_all: false
   test_priority: "high_first"
 
@@ -172,3 +222,5 @@ agent_communication:
     message: "COMPREHENSIVE BACKEND TESTING COMPLETED: Verified that all backend APIs are working correctly after the HealthPage frontend changes. The root endpoint (/api/) returns status 200 with the expected message. The /api/health-conditions endpoint is fully functional, returning 2 health condition plans with all required fields (id, condition, title, description, daily_routine, lifestyle_tips, video_url). The /api/wellness/personalized-recommendations endpoint is working correctly, accepting user data and returning personalized recommendations for all four categories (workout, diet, skincare, health). The authentication endpoints (/api/auth/signup, /api/auth/login, /api/auth/user/{user_id}) are functioning correctly with proper validation. All tests passed successfully with an overall success rate of 88.24%, confirming that the backend is fully functional and ready to support the updated frontend implementation. The only failures were in the grocery recommendations API which is not related to the HealthPage changes."
   - agent: "testing"
     message: "GROCERY RECOMMENDATIONS API TESTING COMPLETED: Tested the /api/grocery/recommendations endpoint with the sample data from the review request (query: 'protein powder for muscle building', budget: 1000, preferred_brands: ['MuscleBlaze', 'Optimum Nutrition'], diet: 'high protein'). The API is working correctly with fallback functionality. While the Gemini AI integration is not working (error: 'ChatGoogleGenerativeAI' is not defined), the API properly falls back to relevant recommendations based on the query. The fallback recommendations include protein-related products with proper structure (name, price, description, protein content, rating, platform). Testing with different queries confirmed that the API returns consistent responses with the expected structure and fields. The recommendations are relevant to the protein powder query, making the API functional for its intended purpose despite the AI integration issue."
+  - agent: "testing"
+    message: "MIND & SOUL BACKEND API TESTING COMPLETED: Comprehensive testing of the new Mind & Soul backend endpoints shows mixed results. SUCCESS: The /api/mind-soul/meditation-content endpoint works perfectly, returning 6 comprehensive meditation exercises with all required fields including guided meditation, breathing techniques, mindfulness practices, stress relief, sleep meditations, and focus meditations. All YouTube videos are properly formatted as embed URLs. ISSUES FOUND: The POST endpoints for mood tracking (/api/mind-soul/mood-tracker), meditation session logging (/api/mind-soul/meditation-session), and habit tracking (/api/mind-soul/habit-tracker) are returning 500 server errors when creating new entries. However, the GET endpoints for retrieving data (/api/mind-soul/mood-history, /api/mind-soul/meditation-progress, /api/mind-soul/habits) work correctly and show existing data, indicating the database structure is correct but there are server-side issues with the POST operations. Overall success rate: 82.61% (19/23 tests passed). The meditation content API is fully functional, but the tracking APIs need debugging to resolve the 500 errors on data creation."
