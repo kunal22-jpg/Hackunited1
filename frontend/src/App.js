@@ -14,7 +14,9 @@ import {
   Clock,
   Star,
   User,
-  MessageCircle
+  MessageCircle,
+  Brain,
+  Zap
 } from 'lucide-react';
 import CircularGallery from './CircularGallery';
 import './App.css';
