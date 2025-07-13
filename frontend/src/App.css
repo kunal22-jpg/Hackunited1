@@ -494,6 +494,73 @@ button:focus {
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
+/* Header Navigation Enhancements */
+.header-nav-button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  white-space: nowrap !important;
+  min-width: fit-content !important;
+}
+
+.header-nav-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.header-nav-button.active {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Mobile Menu Enhancement */
+.mobile-nav-button {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.mobile-nav-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Icon Hover Animation for Mind & Soul */
+.header-mindsoul-icon:hover {
+  animation: zenRotate 0.8s ease-in-out;
+  color: #a855f7 !important;
+  filter: drop-shadow(0 0 8px #a855f7);
+}
+
+@keyframes zenRotate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+  }
+}
+
+/* Ensure text doesn't wrap */
+.nav-text-nowrap {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .glassmorphic,
