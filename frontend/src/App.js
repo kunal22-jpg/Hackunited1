@@ -4066,6 +4066,430 @@ const GetStartedPage = () => {
   );
 };
 
+// Mind & Soul Page Component - Unique Dashboard Layout
+const MindSoulPage = () => {
+  // State management for all Mind & Soul features
+  const [currentUser, setCurrentUser] = useState(null);
+  const [meditationContent, setMeditationContent] = useState([]);
+  const [moodHistory, setMoodHistory] = useState([]);
+  const [meditationProgress, setMeditationProgress] = useState({});
+  const [userHabits, setUserHabits] = useState([]);
+  
+  // Modal and UI states
+  const [selectedMeditation, setSelectedMeditation] = useState(null);
+  const [isMeditationModalOpen, setMeditationModalOpen] = useState(false);
+  const [showMoodTracker, setShowMoodTracker] = useState(false);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [timerDuration, setTimerDuration] = useState(10); // minutes
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  
+  // Mood tracking states
+  const [todayMood, setTodayMood] = useState({
+    mood: 3,
+    energy: 3,
+    stress: 3,
+    notes: ''
+  });
+
+  // Timer functionality
+  useEffect(() => {
+    let interval = null;
+    if (isTimerActive && timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining(time => {
+          if (time <= 1) {
+            setIsTimerActive(false);
+            // Log meditation session
+            logMeditationSession();
+            return 0;
+          }
+          return time - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerActive, timeRemaining]);
+
+  // Load user and data on component mount
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
+    loadMeditationContent();
+    if (user) {
+      loadUserData(JSON.parse(user).id);
+    }
+  }, []);
+
+  const loadMeditationContent = async () => {
+    try {
+      const response = await axios.get(`${API}/mind-soul/meditation-content`);
+      setMeditationContent(response.data.content);
+    } catch (error) {
+      console.error('Error loading meditation content:', error);
+    }
+  };
+
+  const loadUserData = async (userId) => {
+    try {
+      // Load mood history
+      const moodResponse = await axios.get(`${API}/mind-soul/mood-history/${userId}`);
+      setMoodHistory(moodResponse.data.mood_history);
+      
+      // Load meditation progress
+      const progressResponse = await axios.get(`${API}/mind-soul/meditation-progress/${userId}`);
+      setMeditationProgress(progressResponse.data.progress);
+      
+      // Load user habits
+      const habitsResponse = await axios.get(`${API}/mind-soul/habits/${userId}`);
+      setUserHabits(habitsResponse.data.habits);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  const logMoodEntry = async () => {
+    if (!currentUser) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const moodLabels = ['Very Sad', 'Sad', 'Neutral', 'Happy', 'Very Happy'];
+    
+    try {
+      await axios.post(`${API}/mind-soul/mood-tracker`, {
+        user_id: currentUser.id,
+        date: today,
+        mood: todayMood.mood,
+        mood_label: moodLabels[todayMood.mood - 1],
+        energy: todayMood.energy,
+        stress: todayMood.stress,
+        notes: todayMood.notes
+      });
+      setShowMoodTracker(false);
+      loadUserData(currentUser.id);
+    } catch (error) {
+      console.error('Error logging mood:', error);
+    }
+  };
+
+  const logMeditationSession = async () => {
+    if (!currentUser) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      await axios.post(`${API}/mind-soul/meditation-session`, {
+        user_id: currentUser.id,
+        session_type: selectedMeditation?.type || 'general',
+        duration_minutes: timerDuration,
+        completed: true,
+        date: today,
+        session_id: `session_${Date.now()}`
+      });
+      loadUserData(currentUser.id);
+    } catch (error) {
+      console.error('Error logging meditation session:', error);
+    }
+  };
+
+  const startTimer = (duration) => {
+    setTimerDuration(duration);
+    setTimeRemaining(duration * 60); // Convert to seconds
+    setIsTimerActive(true);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getMoodEmoji = (mood) => {
+    const emojis = ['😢', '😔', '😐', '😊', '😄'];
+    return emojis[mood - 1] || '😐';
+  };
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          filter: 'brightness(0.8)'
+        }}
+      />
+      <div className="absolute inset-0 bg-black/30" />
+      
+      <div className="relative z-10 pt-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          
+          {/* Header */}
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+              Mind & Soul
+            </h1>
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Nurture your inner peace through meditation, mindfulness, and emotional wellness
+            </p>
+          </motion.div>
+
+          {/* Dashboard Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            {/* Left Column - Mood Tracker & Progress */}
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              
+              {/* Today's Mood Tracker */}
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold text-white flex items-center">
+                    <span className="text-2xl mr-2">🎭</span>
+                    Today's Mood
+                  </h3>
+                  <button
+                    onClick={() => setShowMoodTracker(!showMoodTracker)}
+                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    {showMoodTracker ? 'Cancel' : 'Track'}
+                  </button>
+                </div>
+                
+                {showMoodTracker ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-white/80 text-sm mb-2 block">Mood: {getMoodEmoji(todayMood.mood)}</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={todayMood.mood}
+                        onChange={(e) => setTodayMood(prev => ({...prev, mood: parseInt(e.target.value)}))}
+                        className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-2 block">Energy: ⚡</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={todayMood.energy}
+                        onChange={(e) => setTodayMood(prev => ({...prev, energy: parseInt(e.target.value)}))}
+                        className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-2 block">Stress: 😰</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={todayMood.stress}
+                        onChange={(e) => setTodayMood(prev => ({...prev, stress: parseInt(e.target.value)}))}
+                        className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                    
+                    <textarea
+                      placeholder="Optional notes..."
+                      value={todayMood.notes}
+                      onChange={(e) => setTodayMood(prev => ({...prev, notes: e.target.value}))}
+                      className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 resize-none"
+                      rows="2"
+                    />
+                    
+                    <button
+                      onClick={logMoodEntry}
+                      className="w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+                    >
+                      Save Today's Mood
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <div className="text-4xl mb-2">
+                      {moodHistory.length > 0 ? getMoodEmoji(moodHistory[0]?.mood || 3) : '😐'}
+                    </div>
+                    <p className="text-white/70">
+                      {moodHistory.length > 0 ? 'Last tracked mood' : 'Track your mood today'}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Progress Summary */}
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <span className="text-2xl mr-2">📊</span>
+                  Progress Summary
+                </h3>
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Total Sessions</span>
+                    <span className="text-white font-semibold">{meditationProgress.total_sessions || 0}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Total Minutes</span>
+                    <span className="text-white font-semibold">{meditationProgress.total_minutes || 0}m</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Current Streak</span>
+                    <span className="text-amber-400 font-semibold">🔥 {meditationProgress.current_streak || 0} days</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">This Week</span>
+                    <span className="text-green-400 font-semibold">{meditationProgress.this_week_sessions || 0} sessions</span>
+                  </div>
+                </div>
+              </div>
+
+            </motion.div>
+
+            {/* Center Column - Meditation Content */}
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="lg:col-span-2"
+            >
+              
+              {/* Meditation Timer */}
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 mb-6">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <span className="text-2xl mr-2">⏱️</span>
+                  Meditation Timer
+                </h3>
+                
+                <div className="flex items-center justify-center space-x-6">
+                  {!isTimerActive ? (
+                    <>
+                      <button
+                        onClick={() => startTimer(5)}
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                      >
+                        5 min
+                      </button>
+                      <button
+                        onClick={() => startTimer(10)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                      >
+                        10 min
+                      </button>
+                      <button
+                        onClick={() => startTimer(15)}
+                        className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                      >
+                        15 min
+                      </button>
+                      <button
+                        onClick={() => startTimer(20)}
+                        className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
+                      >
+                        20 min
+                      </button>
+                    </>
+                  ) : (
+                    <div className="text-center">
+                      <div className="text-6xl font-mono text-white mb-4">
+                        {formatTime(timeRemaining)}
+                      </div>
+                      <button
+                        onClick={() => setIsTimerActive(false)}
+                        className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        Stop Timer
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Meditation Content Grid */}
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
+                <h3 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <span className="text-2xl mr-2">🧘‍♀️</span>
+                  Meditation & Mindfulness
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {meditationContent.map((content) => (
+                    <motion.div
+                      key={content.id}
+                      whileHover={{ y: -5, scale: 1.02 }}
+                      onClick={() => {
+                        setSelectedMeditation(content);
+                        setMeditationModalOpen(true);
+                      }}
+                      className="bg-white/10 rounded-xl p-4 border border-white/20 cursor-pointer hover:bg-white/20 transition-all duration-300"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center flex-shrink-0">
+                          <span className="text-xl">
+                            {content.type === 'breathing_exercise' ? '🫁' :
+                             content.type === 'guided_meditation' ? '🧘‍♀️' :
+                             content.type === 'mindfulness' ? '🧠' :
+                             content.type === 'stress_relief' ? '😌' :
+                             content.type === 'sleep_meditation' ? '🌙' : '✨'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h4 className="text-white font-semibold mb-1">{content.title}</h4>
+                          <p className="text-white/70 text-sm mb-2 line-clamp-2">{content.description}</p>
+                          
+                          <div className="flex items-center space-x-4 text-xs text-white/60">
+                            <span>⏱️ {content.duration}</span>
+                            <span>📊 {content.difficulty}</span>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {content.benefits.slice(0, 2).map((benefit, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-white/10 text-white/80 text-xs rounded-full">
+                                {benefit}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Meditation Modal */}
+      <Modal
+        isOpen={isMeditationModalOpen}
+        onClose={() => setMeditationModalOpen(false)}
+        item={selectedMeditation}
+        type="meditation"
+      />
+
+      <EnhancedAIChatbot />
+    </div>
+  );
+};
+
 // Quote-Only Page Components for Non-Authenticated Users
 
 // Login Call-to-Action Component
