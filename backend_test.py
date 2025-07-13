@@ -1452,7 +1452,10 @@ def run_all_tests():
     results["enhanced_user_profile"] = test_enhanced_user_profile()
     
     # Test user creation
-    results["user_creation"], user_id = test_user_creation()
+    results["user_creation"], created_user_id = test_user_creation()
+    
+    # Use created_user_id if available, otherwise use user_id from auth
+    test_user_id = created_user_id if created_user_id else user_id
     
     # Test grocery agent
     results["grocery_recommendations"], recommendations = test_grocery_recommendations()
@@ -1471,6 +1474,19 @@ def run_all_tests():
     # Test NEW symptom checker and health chat APIs
     results["symptom_checker_api"] = test_symptom_checker_api()
     results["health_chat_api"] = test_health_chat_api()
+    
+    # Test NEW Mind & Soul API endpoints
+    results["mind_soul_meditation_content"] = test_mind_soul_meditation_content()
+    
+    if test_user_id:
+        results["mind_soul_mood_tracker"] = test_mind_soul_mood_tracker(test_user_id)
+        results["mind_soul_meditation_sessions"] = test_mind_soul_meditation_sessions(test_user_id)
+        results["mind_soul_habit_tracker"] = test_mind_soul_habit_tracker(test_user_id)
+    else:
+        print("❌ Skipping Mind & Soul user-dependent tests due to no available user ID")
+        results["mind_soul_mood_tracker"] = False
+        results["mind_soul_meditation_sessions"] = False
+        results["mind_soul_habit_tracker"] = False
     
     # Print summary
     print("\n=== Test Summary ===")
