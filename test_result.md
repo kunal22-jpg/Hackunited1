@@ -138,15 +138,18 @@ backend:
 
   - task: "Mind & Soul Habit Tracking API"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "The habit tracking endpoints have mixed results. POST /api/mind-soul/habit-tracker returns 500 error when trying to log new habit progress. However, GET /api/mind-soul/habits/{user_id} works correctly and returns existing habit data (2 habits found: Daily Meditation and Morning Exercise) with proper structure including habit_name, current_streak, total_completions, and last_completed. Some habit update operations work correctly. The issue appears to be with creating new habit entries, not retrieving existing ones."
+      - working: true
+        agent: "testing"
+        comment: "FIXED: The habit tracking endpoints are now working correctly. POST /api/mind-soul/habit-tracker successfully logs habit progress with all required fields (user_id, habit_name, date, completed, streak_count). The issue was a JSON serialization error with MongoDB ObjectId fields. Fixed by converting datetime to ISO format and removing _id field from responses. The endpoint handles both new habit entries and updates to existing entries for the same date and habit. GET /api/mind-soul/habits/{user_id} continues to work correctly, returning comprehensive habit data with current streaks, total completions, and last completed dates. All habit tracking functionality is fully operational."
 
 frontend:
   - task: "Enhanced Profile UI Modal"
