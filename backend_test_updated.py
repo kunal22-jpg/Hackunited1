@@ -6,7 +6,7 @@ import uuid
 from dotenv import load_dotenv
 from pathlib import Path
 import yaml
-
+# nutracia
 # Load environment variables from frontend/.env to get the backend URL
 load_dotenv(Path('/app/frontend/.env'))
 
