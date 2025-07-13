@@ -123,15 +123,18 @@ backend:
 
   - task: "Mind & Soul Meditation Session Logging API"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "The meditation session logging endpoints have issues. POST /api/mind-soul/meditation-session returns 500 error when trying to log meditation sessions. However, GET /api/mind-soul/meditation-progress/{user_id} works correctly and returns proper progress data with total_sessions, total_minutes, current_streak, this_week_sessions, and average_session_length. The progress endpoint shows there are existing sessions (2 sessions, 20 minutes total), indicating some data exists but the logging endpoint has server-side errors."
+      - working: true
+        agent: "testing"
+        comment: "FIXED: The meditation session logging endpoints are now working correctly. POST /api/mind-soul/meditation-session successfully logs meditation sessions with all required fields (user_id, session_type, duration_minutes, completed, date, session_id). The issue was a JSON serialization error with MongoDB ObjectId fields. Fixed by converting datetime to ISO format and removing _id field from responses. GET /api/mind-soul/meditation-progress/{user_id} continues to work correctly, providing comprehensive progress tracking including total sessions, total minutes, current streak, weekly sessions, and average session length. All meditation session functionality is fully operational."
 
   - task: "Mind & Soul Habit Tracking API"
     implemented: true
