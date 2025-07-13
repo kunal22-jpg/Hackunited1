@@ -65,8 +65,9 @@ def add_comment_to_file(filepath):
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
         
-        # Check if comment already exists
-        if 'nutracia' in content.lower():
+        # Check if comment already exists at the beginning of the file
+        lines = content.split('\n')
+        if lines and 'nutracia' in lines[0].lower():
             print(f"Comment already exists in: {filepath}")
             return
         
