@@ -1811,8 +1811,9 @@ async def get_meditation_content():
 async def log_mood(mood_entry: MoodEntry):
     """Log daily mood entry"""
     try:
-        # Create mood entry document
+        # Create mood entry document with UUID instead of ObjectId
         mood_doc = {
+            "id": str(uuid.uuid4()),
             "user_id": mood_entry.user_id,
             "date": mood_entry.date,
             "mood": mood_entry.mood,
@@ -1820,7 +1821,7 @@ async def log_mood(mood_entry: MoodEntry):
             "energy": mood_entry.energy,
             "stress": mood_entry.stress,
             "notes": mood_entry.notes,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow().isoformat()
         }
         
         # Check if entry for this date already exists
@@ -1841,10 +1842,13 @@ async def log_mood(mood_entry: MoodEntry):
             await db.mood_entries.insert_one(mood_doc)
             message = "Mood entry logged successfully"
         
+        # Remove MongoDB _id from response
+        response_data = {k: v for k, v in mood_doc.items() if k != '_id'}
+        
         return {
             "status": "success",
             "message": message,
-            "mood_data": mood_doc
+            "mood_data": response_data
         }
         
     except Exception as e:
