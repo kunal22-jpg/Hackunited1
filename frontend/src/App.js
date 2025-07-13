@@ -4782,6 +4782,14 @@ function App() {
             } 
           />
           <Route 
+            path="/mind-soul" 
+            element={
+              <AuthRoute quotePage={<MindSoulQuotePage />}>
+                <MindSoulPage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
             path="/skincare" 
             element={
               <AuthRoute quotePage={<SkincareQuotePage />}>
