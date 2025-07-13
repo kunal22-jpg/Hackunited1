@@ -172,13 +172,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Mind & Soul Mood Tracking API"
-    - "Mind & Soul Meditation Session Logging API"
-    - "Mind & Soul Habit Tracking API"
-  stuck_tasks:
-    - "Mind & Soul Mood Tracking API"
-    - "Mind & Soul Meditation Session Logging API"
-    - "Mind & Soul Habit Tracking API"
+    - "Mind & Soul Meditation Content API"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
