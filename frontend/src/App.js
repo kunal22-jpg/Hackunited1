@@ -2923,10 +2923,23 @@ const HealthPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {educationTopics.map((topic, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
+                <div 
+                  key={index} 
+                  onClick={() => {
+                    setSelectedEducationTopic(topic);
+                    setEducationModalOpen(true);
+                  }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer transform hover:scale-105"
+                >
                   <div className="text-4xl mb-4">{topic.icon}</div>
                   <h3 className="text-white font-semibold text-lg mb-2">{topic.title}</h3>
                   <p className="text-white/70">{topic.description}</p>
+                  <div className="mt-4 text-amber-400 text-sm flex items-center">
+                    <span>Click to learn more</span>
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               ))}
             </div>
