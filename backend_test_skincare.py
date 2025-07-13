@@ -4,7 +4,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from pathlib import Path
-
+# nutracia
 # Load environment variables from frontend/.env to get the backend URL
 load_dotenv(Path('/app/frontend/.env'))
 
